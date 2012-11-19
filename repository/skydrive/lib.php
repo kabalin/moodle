@@ -25,6 +25,7 @@
  */
 
 require_once('microsoftliveapi.php');
+require_once($CFG->libdir.'/googleapi.php');
 
 class repository_skydrive extends repository {
     private $skydrive = null;
