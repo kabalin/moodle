@@ -263,4 +263,16 @@ abstract class field extends persistent {
         }
         return $fields;
     }
+
+    /**
+     * Bulk data delete
+     *
+     * @throws \coding_exception
+     * @throws \dml_exception
+     */
+    public function delete_data() {
+        global $DB;
+        $DB->delete_records('customfield_data', ['fieldid' => $this->get('id')]);
+    }
+
 }
