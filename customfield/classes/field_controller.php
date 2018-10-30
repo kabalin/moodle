@@ -31,7 +31,7 @@ defined('MOODLE_INTERNAL') || die;
  *
  * @package core_customfield
  */
-abstract class field extends persistent {
+abstract class field_controller {
     /**
      * Database table.
      */

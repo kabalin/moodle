@@ -31,55 +31,16 @@ defined('MOODLE_INTERNAL') || die;
  *
  * @package core_customfield
  */
-class category extends persistent {
-    /**
-     * Database table.
-     */
-    const TABLE = 'customfield_category';
+class category_controller {
 
-    /**
-     * Return the definition of the properties of this model.
-     *
-     * @return array
-     */
-    protected static function define_properties(): array {
-        return array(
-                'name' => [
-                        'type' => PARAM_TEXT,
-                ],
-                'description' => [
-                        'type' => PARAM_RAW,
-                        'optional' => true,
-                        'default' => null,
-                        'null' => NULL_ALLOWED
-                ],
-                'descriptionformat' => [
-                        'type' => PARAM_INT,
-                        'default' => FORMAT_MOODLE,
-                        'optional' => true
-                ],
-                'component' => [
-                        'type' => PARAM_TEXT
-                ],
-                'area' => [
-                        'type' => PARAM_TEXT
-                ],
-                'itemid' => [
-                        'type' => PARAM_INT,
-                        'optional' => true,
-                        'default' => 0
-                ],
-                'contextid' => [
-                        'type' => PARAM_INT,
-                        'optional' => false
-                ],
-                'sortorder' => [
-                        'type' => PARAM_INT,
-                        'optional' => false,
-                        'default' => -1
-                ],
-        );
+    private $category;
+
+    public function __construct() {
+
+
     }
+
+
 
     /**
      * @return field[]

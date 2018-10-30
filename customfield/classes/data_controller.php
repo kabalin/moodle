@@ -32,7 +32,7 @@ defined('MOODLE_INTERNAL') || die;
  *
  * @package core_customfield
  */
-abstract class data extends persistent {
+abstract class data_controller {
     /**
      * Database data.
      */
