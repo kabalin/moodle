@@ -45,16 +45,15 @@ function customfield_textarea_pluginfile($course, $cm, $context, $filearea, $arg
     $itemid = array_shift($args);
     if ($filearea === 'value') {
         // Value of the data, itemid = id in data table.
-        $datarecord = $DB->get_record(\core_customfield\data::TABLE, ['id' => $itemid], '*', MUST_EXIST); // TODO use api.
-        $field = \core_customfield\api::get_field($datarecord->fieldid); // TODO better.
-        $data = core_customfield\api::load_data($itemid, $datarecord, $field);
+        $data = new \core_customfield\data($itemid);
+        $field = new \core_customfield\field($data->get('fieldid'));
         $handler = \core_customfield\handler::get_handler_for_field($field);
         if (!$handler->can_view($field) || $field->get('type') !== 'textarea' || $data->get_context()->id != $context->id) {
             return false;
         }
     } else if ($filearea === 'defaultvalue') {
         // Default value of the field, itemid = id in the field table.
-        $field = \core_customfield\api::get_field($itemid); // TODO better.
+        $field = new \core_customfield\field($itemid);
         $handler = \core_customfield\handler::get_handler_for_field($field);
         if ($field->get('type') !== 'textarea' || $handler->get_configuration_context()->id != $context->id) {
             return false;

@@ -30,33 +30,6 @@ defined('MOODLE_INTERNAL') || die;
 class api {
 
     /**
-     * Fetch a field from database or create a new one if $field is given
-     *
-     * @param int $id id of the field (0 for new field)
-     * @param \stdClass|null $field
-     * @return field
-     * @throws \coding_exception
-     * @throws \dml_exception
-     */
-    public static function get_field(int $id, \stdClass $field = null): field {
-        return field::load_field($id, $field);
-    }
-
-    /**
-     * Fetch a data from database or create a new one if $data is given
-     *
-     * @param int $id id of the field (0 for new field)
-     * @param \stdClass $data a pre-fetched data
-     * @param field $field a pre-fetched field
-     * @return data
-     * @throws \coding_exception
-     * @throws \moodle_exception
-     */
-    public static function load_data(int $id, \stdClass $data, field $field): data {
-        return data::load_data($id, $data, $field);
-    }
-
-    /**
      * Retrieves list of all fields and the data associated with them
      *
      * @param array $fields
@@ -91,15 +64,13 @@ class api {
         foreach ($fieldsdata as $data) {
             $fieldobj    = (object) ['id'         => $data->field_id, 'shortname' => $data->shortname, 'type' => $data->type,
                                      'configdata' => $data->configdata, 'categoryid' => $data->categoryid];
-            $field       = self::get_field(0, $fieldobj);
-            $categoryobj = (object) ['id' => $data->categoryid, 'name' => $data->categoryname, 'component' => $data->component,
-                'area' => $data->area, 'itemid' => $data->itemid];
-            $field->set_category(new category(0, $categoryobj));
+            $field       = new field(0, $fieldobj);
+            $categoryobj = (object) ['id' => $data->categoryid, 'name' => $data->categoryname,
+                                     'component' => $data->component, 'area' => $data->area, 'itemid' => $data->itemid];
+            $field->set_category(new category($categoryobj->id, $categoryobj));
             unset($data->field_id, $data->shortname, $data->type, $data->categoryid, $data->configdata, $data->categoryname,
-                $data->component, $data->area, $data->itemid);
+                  $data->component, $data->area, $data->itemid);
             if (empty($data->id)) {
-                // TODO use new data() properly here.
-                $data->id        = 0;
                 $data->fieldid   = $field->get('id');
                 $data->contextid = $datacontext->id;
                 $data->instanceid  = $instanceid;
@@ -107,7 +78,9 @@ class api {
                 $data->value = '';
                 $data->valueformat = FORMAT_MOODLE;
             }
-            $formfields[] = self::load_data(0, $data, $field);
+            $dataobj = new data(0, $data, $field->get('type'));
+            $dataojb->set_field($field);
+            $formfields[] = $dataobj;
         }
         return $formfields;
     }
@@ -146,14 +119,15 @@ class api {
         foreach ($fieldsdata as $data) {
             $fieldobj = (object) ['id'   => $data->field_id, 'shortname' => $data->shortname,
                                   'type' => $data->type, 'categoryid' => $data->categoryid, 'configdata' => $data->configdata];
-            $field    = self::get_field(0, $fieldobj);
+            $field    = new field(0, $fieldobj);
             unset($data->field_id, $data->shortname, $data->type, $data->categoryid, $data->configdata);
             if (empty($data->id)) {
                 $data->fieldid   = $field->get('id');
                 $data->contextid = $datacontext->id;
                 $data->instanceid  = $instanceid;
             }
-            $f             = self::load_data($data->id, $data, $field);
+            $f = new data(0, $data, $field->get('type'));
+            $f->set_field($field);
             $finalfields[] = ['id'   => $f->get('id'), 'shortname' => $f->get_field()->get('shortname'),
                               'type' => $f->get_field()->get('type'), 'value' => api::datafield($f)];
         }
@@ -274,18 +248,20 @@ class api {
 
         $formfields = [];
         foreach ($fieldsdata as $data) {
-            $fieldobj    = (object) ['id'         => $data->field_id, 'shortname' => $data->shortname, 'type' => $data->type,
-                                     'configdata' => $data->configdata, 'categoryid' => $data->categoryid];
-            $field       = self::get_field(0, $fieldobj);
+            $fieldobj = (object) ['id'         => $data->field_id, 'shortname' => $data->shortname, 'type' => $data->type,
+                                  'configdata' => $data->configdata, 'categoryid' => $data->categoryid];
+            $field    = new field(0, $fieldobj);
             $categoryobj = (object) ['id' => $data->categoryid, 'name' => $data->categoryname];
-            $field->set_category(new category(0, $categoryobj));
+            $field->set_category(new category($categoryob->id, $categoryobj));
             unset($data->field_id, $data->shortname, $data->type, $data->categoryid, $data->configdata, $data->categoryname);
             if (empty($data->id)) {
                 $data->id        = 0;
                 $data->fieldid   = $field->get('id');
                 $data->contextid = $contextid;
             }
-            $formfields[] = self::load_data($data->id, $data, $field);
+            $dataobj = new data(0, $data, $field->get('type'));
+            $dataobj->set_field($field);
+            $formfields[] = $dataobj;
         }
         return $formfields;
     }
@@ -329,7 +305,7 @@ class api {
         foreach (array_values($fieldsids) as $idx => $fieldid) {
             // Use persistent class to update the sortorder for each field that needs updating.
             if ($records[$fieldid]->sortorder != $idx) {
-                $f = ($fieldid == $id) ? $field : field::load_field(0, $records[$fieldid]); // TODO should be "new field()".
+                $f = ($fieldid == $id) ? $field : new field($records[$fieldid]);
                 $f->set('sortorder', $idx);
                 $f->save();
             }
