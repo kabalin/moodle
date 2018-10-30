@@ -47,7 +47,7 @@ class display implements renderable, templatable {
      *
      * @param \core_customfield\handler $handler
      */
-    public function __construct(\core_customfield\data $data) {
+    public function __construct(\core_customfield\data_controller $data) {
         $this->data = $data;
     }
 
@@ -64,7 +64,7 @@ class display implements renderable, templatable {
             $data->fieldvalue = '';
         } else {
             $data->fieldname = format_string($this->data->get_field()->get('name'));
-            if (api::datafield($this->data->get_field()) == 0) {
+            if ($this->data->get(api::datafield($this->data->get_field())) == 0) {
                 $data->fieldvalue = get_string('no');
             } else {
                 $data->fieldvalue = get_string('yes');

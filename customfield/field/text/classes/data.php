@@ -31,7 +31,7 @@ use core_customfield\api;
  *
  * @package customfield_text
  */
-class data extends \core_customfield\data {
+class data extends \core_customfield\data_controller {
 
     /**
      * Add fields for editing a text profile field.
@@ -49,6 +49,9 @@ class data extends \core_customfield\data {
      * @param \stdClass $data
      * @param array $files
      * @return array
+     * @throws \coding_exception
+     * @throws \dml_exception
+     * @throws \moodle_exception
      */
     public function validate_data(\stdClass $data, array $files): array {
 

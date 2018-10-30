@@ -26,6 +26,7 @@ defined('MOODLE_INTERNAL') || die;
 
 use core_customfield\api;
 use core_customfield\data;
+use core_customfield\data_controller;
 use core_customfield\handler;
 use core_customfield\plugin_base;
 use tool_dataprivacy\context_instance;
@@ -77,7 +78,7 @@ class plugin extends plugin_base {
         $mform->addElement('editor', api::field_inputname($field).'_editor', format_string($field->get('name')), null, $desceditoroptions);
     }
 
-    public static function value_editor_options(\core_customfield\field $field, data $data = null) {
+    public static function value_editor_options(\core_customfield\field $field, data_controller $data = null) {
         global $CFG;
         require_once($CFG->libdir.'/formslib.php');
         if ($data) {

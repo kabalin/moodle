@@ -240,18 +240,8 @@ class field extends persistent {
         foreach ($records as $fielddata) {
             $fields[] = new field($fielddata->id, $fielddata);
         }
-        return $fields;
-    }
 
-    /**
-     * Bulk data delete
-     *
-     * @throws \coding_exception
-     * @throws \dml_exception
-     */
-    public function delete_data() {
-        global $DB;
-        $DB->delete_records('customfield_data', ['fieldid' => $this->get('id')]);
+        return $fields;
     }
 
 }

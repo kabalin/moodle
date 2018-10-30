@@ -136,6 +136,7 @@ class course_handler extends \core_customfield\handler {
         $output = $PAGE->get_renderer('core_customfield');
         $visiblefields = $this->get_visible_fields($courseid);
         $fields = $this->get_fields_with_data($visiblefields, $courseid);
+
         $content = \html_writer::start_tag('div', ['class' => 'customfields-container', 'style' => 'clear: both;']);
         foreach ($fields as $data) {
             $content .= $output->render($data->display());

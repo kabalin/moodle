@@ -48,7 +48,7 @@ class display implements renderable, templatable {
      *
      * @param \core_customfield\handler $handler
      */
-    public function __construct(\core_customfield\data $data) {
+    public function __construct(\core_customfield\data_controller $data) {
         $this->data = $data;
     }
 
@@ -67,7 +67,7 @@ class display implements renderable, templatable {
         if (is_null(api::datafield($this->data->get_field()))) {
             $data->formvalue = get_string('notset', 'core_customfield');
         } else {
-            $data->formvalue = format_string($options[api::datafield($this->data->get_field())]);
+            $data->formvalue = (empty($options)) ? '' : format_string($options[$this->data->get(api::datafield($this->data->get_field()))]);
         }
         return $data;
     }

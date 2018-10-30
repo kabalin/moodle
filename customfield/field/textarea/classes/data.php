@@ -32,7 +32,7 @@ defined('MOODLE_INTERNAL') || die;
  *
  * @package customfield_select
  */
-class data extends \core_customfield\data {
+class data extends \core_customfield\data_controller {
     /**
      * Add fields for editing a textarea field.
      *
@@ -55,8 +55,8 @@ class data extends \core_customfield\data {
         $fromform = $datanew->{api::field_inputname($this->get_field()).'_editor'};
 
         if (!$this->get('id')) {
-            $this->set('value', '');
-            $this->set('valueformat', FORMAT_MOODLE);
+            $this->data->set('value', '');
+            $this->data->set('valueformat', FORMAT_MOODLE);
             $this->save();
         }
 
@@ -65,8 +65,9 @@ class data extends \core_customfield\data {
             $data = (object) ['field_editor' => $fromform];
             $data = file_postupdate_standard_editor($data, 'field', $textoptions, $textoptions['context'],
                 'customfield_textarea', 'value', $this->get('id'));
-            $this->set('value', $data->field);
-            $this->set('valueformat', $data->fieldformat);
+            $this->data->set('value', $data->field);
+            $this->data->set('valueformat', $data->fieldformat);
+
             $this->save();
         }
     }

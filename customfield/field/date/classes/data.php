@@ -31,7 +31,7 @@ defined('MOODLE_INTERNAL') || die;
  *
  * @package customfield_date
  */
-class data extends \core_customfield\data {
+class data extends \core_customfield\data_controller {
 
     /**
      * Add fields for editing data of a textarea field on a context.
@@ -84,8 +84,8 @@ class data extends \core_customfield\data {
      */
     public function edit_save_data(\stdClass $datanew) {
         $value = $this->preprocess($datanew->{api::field_inputname($this->get_field())});
-        $this->set(api::datafield($this->get_field()), $value);
-        $this->set('value', $value);
+        $this->data->set(api::datafield($this->get_field()), $value);
+        $this->data->set('value', $value);
         $this->save();
         return $this;
     }

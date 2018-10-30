@@ -47,7 +47,7 @@ class display implements renderable, templatable {
      *
      * @param \core_customfield\handler $handler
      */
-    public function __construct(\core_customfield\data $data) {
+    public function __construct(\core_customfield\data_controller $data) {
         $this->data = $data;
     }
 
@@ -66,7 +66,7 @@ class display implements renderable, templatable {
         $data->linktarget = $linktarget;
         $data->url = str_replace('$$', api::datafield($this->data->get_field()), $link);
         $data->fieldname = $this->data->get_field()->get('name');
-        $data->formvalue = api::datafield($this->data->get_field());
+        $data->formvalue = $this->data->get(api::datafield($this->data->get_field()));
 
         return $data;
     }

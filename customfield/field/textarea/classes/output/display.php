@@ -49,7 +49,7 @@ class display implements renderable, templatable {
      *
      * @param data $data
      */
-    public function __construct(\core_customfield\data $data) {
+    public function __construct(\core_customfield\data_controller $data) {
         $this->data = $data;
     }
 

@@ -22,9 +22,6 @@
 
 namespace core_customfield;
 
-use core\persistent;
-use stdClass;
-
 defined('MOODLE_INTERNAL') || die;
 
 /**
@@ -34,9 +31,11 @@ defined('MOODLE_INTERNAL') || die;
  */
 abstract class data_controller {
     /**
-     * Database data.
+     * Data persistent
+     *
+     * @var data
      */
-    const TABLE = 'customfield_data';
+    protected $data;
 
     /**
      * Field that this data belongs to.
@@ -46,70 +45,92 @@ abstract class data_controller {
     protected $field;
 
     /**
-     * Return the definition of the properties of this model.
+     * data_controller constructor.
      *
-     * @return array
+     * @param int $id
+     * @param \stdClass|null $record
+     * @throws \coding_exception
+     * @throws \moodle_exception
      */
-    protected static function define_properties(): array {
-        return array(
-                'fieldid'        => [
-                        'type' => PARAM_TEXT,
-                ],
-                'instanceid'       => [
-                        'type' => PARAM_TEXT,
-                ],
-                'intvalue'       => [
-                        'type'     => PARAM_INT,
-                        'optional' => true,
-                        'default'  => null,
-                        'null'     => NULL_ALLOWED
-                ],
-                'decvalue'       => [
-                        'type'     => PARAM_FLOAT,
-                        'optional' => true,
-                        'default'  => null,
-                        'null'     => NULL_ALLOWED
-                ],
-                'charvalue'      => [
-                        'type'     => PARAM_TEXT,
-                        'optional' => true,
-                        'default'  => null,
-                        'null'     => NULL_ALLOWED
-                ],
-                'shortcharvalue' => [
-                        'type'     => PARAM_TEXT,
-                        'optional' => true,
-                        'default'  => null,
-                        'null'     => NULL_ALLOWED
-                ],
-                // Mandatory field.
-                'value'          => [
-                        'type'    => PARAM_RAW,
-                        'null'    => NULL_NOT_ALLOWED,
-                        'default' => ''
-                ],
-                // Mandatory field.
-                'valueformat'    => [
-                        'type'    => PARAM_INT,
-                        'null'    => NULL_NOT_ALLOWED,
-                ],
-                'contextid'      => [
-                        'type'     => PARAM_INT,
-                        'optional' => false,
-                        'null'     => NULL_NOT_ALLOWED
-                ]
-        );
+    public function __construct(int $id = 0, \stdClass $record) {
+        $this->data = new data($id, $record);
+        return $this;
+    }
+    /**
+     * Persistent getter parser.
+     *
+     * @param $property
+     * @return mixed
+     * @throws \coding_exception
+     */
+    final public function get($property) {
+        $method = "get_{$property}";
+        if (method_exists($this, $method)) {
+            return $this->$method();
+        }
+        return $this->data->get($property);
+    }
+
+    /**
+     * Persistent setter parser.
+     *
+     * @param $property
+     * @param $value
+     * @return data
+     * @throws \coding_exception
+     */
+    final public function set($property, $value) {
+        $method = "get_{$property}";
+        if (method_exists($this, $method)) {
+            return $this->$method($value);
+        }
+        return $this->data->set($property, $value);
+    }
+
+    /**
+     * Persistent delete parser.
+     *
+     * @return bool
+     * @throws \coding_exception
+     * @throws \moodle_exception
+     */
+    final public function delete() {
+        return $this->data->delete();
+    }
+
+    /**
+     * Persistent save parser.
+     *
+     * @return void
+     */
+    final public function save() {
+        if (empty($this->data->get('id'))) {
+            $this->data->set('id', 0);
+        }
+        $this->data->save();
+    }
+
+    /**
+     * Persistent record_exist parser.
+     *
+     * @param int $id
+     * @return bool
+     */
+    public static function record_exists(int $id) {
+        return data::record_exists($id);
     }
 
     /**
      * @param int $fieldid
-     * @return data
+     * @return data_controller
+     * @throws \coding_exception
      * @throws \dml_exception
+     * @throws \moodle_exception
      */
-    public static function fieldload(int $fieldid): self {
+    protected static function fieldload(int $fieldid): self {
         global $DB;
 
-        $dbdata = $DB->get_record(self::TABLE, ['fieldid' => $fieldid]);
+        $dbdata = $DB->get_record(data::TABLE, ['fieldid' => $fieldid]);
 
         if ($dbdata) {
             return new static($dbdata->id);
@@ -164,10 +185,10 @@ abstract class data_controller {
      * @throws \moodle_exception
      */
     protected function get_charvalue() {
-        if ($this->get('id') == 0) {
+        if ($this->data->get('id') == 0) {
             return $this->get_field()->get_configdata_property('defaultvalue');
         }
-        return $this->raw_get('charvalue');
+        return $this->data->get('charvalue');
     }
 
     /**
@@ -189,7 +210,7 @@ abstract class data_controller {
             $defaultvalue = $this->get_field()->get_configdata_property('defaultvalue');
             return array_search($defaultvalue, $options);
         }
-        return $this->raw_get('intvalue');
+        return $this->data->get('intvalue');
     }
 
     /**
@@ -205,7 +226,7 @@ abstract class data_controller {
             $defaultvalue = $this->get_field()->get_configdata_property('defaultvalue');
             return $defaultvalue;
         }
-        return $this->raw_get('value');
+        return $this->data->get('value');
     }
 
     /**
@@ -218,19 +239,19 @@ abstract class data_controller {
      */
     public function edit_save_data(\stdClass $datanew) {
         $value = $datanew->{api::field_inputname($this->get_field())};
-        $this->set(api::datafield($this->get_field()), $value);
-        $this->set('value', $value);
+        $this->data->set(api::datafield($this->get_field()), $value);
+        $this->data->set('value', $value);
         $this->save();
         return $this;
     }
 
     /**
-     * Loads an object with data for this field.
+     * Adds data in a given object on api::field_inputname() attribute.
      *
      * @param \stdClass $data
      * @throws \moodle_exception
      */
-    public function edit_load_data(\stdClass $data) {
+    public function add_customfield_data_to_object(\stdClass $data) {
         $data->{api::field_inputname($this->get_field())} = $this->get(api::datafield($this->get_field()));
     }
 
@@ -240,6 +261,9 @@ abstract class data_controller {
      * @param \stdClass $data
      * @param array $files
      * @return array
+     * @throws \coding_exception
+     * @throws \dml_exception
+     * @throws \moodle_exception
      */
     public function validate_data(\stdClass $data, array $files): array {
         global $DB;
@@ -283,29 +307,6 @@ abstract class data_controller {
     }
 
     /**
-     * Creates an instance of class
-     *
-     * @param int $id
-     * @param \stdClass $data
-     * @param field $field
-     * @return data
-     * @throws \coding_exception
-     * @throws \moodle_exception
-     */
-    public static function load_data(int $id, \stdClass $data, field $field): data {
-        $fieldtype      = $field->get('type');
-        $customdatatype = "\\customfield_{$fieldtype}\\data";
-        if (!class_exists($customdatatype) || !is_subclass_of($customdatatype, data::class)) {
-            throw new \moodle_exception(get_string('errordatatypenotfound', 'core_customfield', s($fieldtype)));
-        }
-
-        $dataobject = new $customdatatype($id, $data);
-        $dataobject->set_field($field);
-
-        return $dataobject;
-    }
-
-    /**
      * Return the context of the field
      *
      * @throws \coding_exception
@@ -314,4 +315,5 @@ abstract class data_controller {
     public function get_context() : \context {
         return \context::instance_by_id($this->get('contextid'));
     }
+
 }

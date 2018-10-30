@@ -48,7 +48,7 @@ class api {
         }
 
         list($sqlfields, $params) = $DB->get_in_or_equal(array_keys($fields), SQL_PARAMS_NAMED);
-        $sql = "SELECT f.id as field_id, f.shortname, f.categoryid, f.type, f.configdata,
+        $sql = "SELECT f.id as field_id, f.name, f.shortname, f.categoryid, f.type, f.configdata,
                        c.name as categoryname, c.component, c.area, c.itemid, d.*
                   FROM {customfield_category} c
                   JOIN {customfield_field} f
@@ -62,13 +62,13 @@ class api {
 
         $formfields = [];
         foreach ($fieldsdata as $data) {
-            $fieldobj    = (object) ['id'         => $data->field_id, 'shortname' => $data->shortname, 'type' => $data->type,
-                                     'configdata' => $data->configdata, 'categoryid' => $data->categoryid];
+            $fieldobj    = (object) ['id'   => $data->field_id, 'name' => $data->name, 'shortname' => $data->shortname,
+                                     'type' => $data->type, 'configdata' => $data->configdata, 'categoryid' => $data->categoryid];
             $field       = new field(0, $fieldobj);
             $categoryobj = (object) ['id' => $data->categoryid, 'name' => $data->categoryname,
                                      'component' => $data->component, 'area' => $data->area, 'itemid' => $data->itemid];
             $field->set_category(new category($categoryobj->id, $categoryobj));
-            unset($data->field_id, $data->shortname, $data->type, $data->categoryid, $data->configdata, $data->categoryname,
+            unset($data->field_id, $data->name, $data->shortname, $data->type, $data->categoryid, $data->configdata, $data->categoryname,
                   $data->component, $data->area, $data->itemid);
             if (empty($data->id)) {
                 $data->fieldid   = $field->get('id');
@@ -78,11 +78,29 @@ class api {
                 $data->value = '';
                 $data->valueformat = FORMAT_MOODLE;
             }
-            $dataobj = new data(0, $data, $field->get('type'));
-            $dataojb->set_field($field);
+            $dataobj = self::data_controller_constructor(0, $data, $field->get('type'));
+            $dataobj->set_field($field);
             $formfields[] = $dataobj;
         }
+
         return $formfields;
+    }
+
+    /**
+     * data_controller constructor.
+     *
+     * @param int $id
+     * @param \stdClass|null $record
+     * @return mixed
+     * @throws \coding_exception
+     * @throws \moodle_exception
+     */
+    public static function data_controller_constructor(int $id = 0, \stdClass $record = null, $fieldtype = null) {
+        $customdatatype = "\\customfield_{$fieldtype}\\data";
+        if ($fieldtype && class_exists($customdatatype) && is_subclass_of($customdatatype, data_controller::class)) {
+            return new $customdatatype($id, $record);
+        }
+        throw new \moodle_exception(get_string('errordatatypenotfound', 'core_customfield', s($fieldtype)));
     }
 
     /**

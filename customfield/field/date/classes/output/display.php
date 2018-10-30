@@ -47,7 +47,7 @@ class display implements renderable, templatable {
      *
      * @param \core_customfield\handler $handler
      */
-    public function __construct(\core_customfield\data $data) {
+    public function __construct(\core_customfield\data_controller $data) {
         $this->data = $data;
     }
 
@@ -76,7 +76,7 @@ class display implements renderable, templatable {
         } else {
             $data->fieldname = format_string($this->data->get_field()->get('name'));
         }
-        $data->formvalue = userdate(api::datafield($this->data->get_field()), $format);
+        $data->formvalue = userdate($this->data->get(api::datafield($this->data->get_field())), $format);
 
         return $data;
     }

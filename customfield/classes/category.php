@@ -138,15 +138,4 @@ class category extends persistent {
         handler::get_handler_for_category($this)->clear_fields_definitions_cache();
     }
 
-    /**
-     * Bulk fields delete
-     *
-     * @throws \coding_exception
-     * @throws \dml_exception
-     */
-    public function delete_fields() {
-        global $DB;
-        $DB->delete_records('customfield_field', ['categoryid' => $this->get('id')]);
-    }
-
 }

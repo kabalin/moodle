@@ -436,6 +436,7 @@ abstract class handler {
                     // TODO move into the api::edit_field_add - not all fields support "required" rule so easily (f.e. textarea does not).
                     $mform->addRule(api::field_inputname($formfield->get_field()), get_string('fieldrequired', 'core_customfield'), 'required', null, 'client');
                 }
+
                 $record = $formfield->get_field()->to_record();
                 if (strlen($record->description)) {
                     // Add field description.
