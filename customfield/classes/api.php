@@ -96,7 +96,7 @@ class api {
      * @throws \moodle_exception
      */
     public static function data_controller_constructor(int $id = 0, \stdClass $record = null, $fieldtype = null) {
-        $customdatatype = "\\customfield_{$fieldtype}\\data";
+        $customdatatype = "\\customfield_{$fieldtype}\\data_controller";
         if ($fieldtype && class_exists($customdatatype) && is_subclass_of($customdatatype, data_controller::class)) {
             return new $customdatatype($id, $record);
         }

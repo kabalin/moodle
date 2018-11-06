@@ -32,7 +32,7 @@ defined('MOODLE_INTERNAL') || die;
  *
  * @package customfield_select
  */
-class data extends \core_customfield\data_controller {
+class data_controller extends \core_customfield\data_controller {
     /**
      * Add fields for editing a textarea field.
      *

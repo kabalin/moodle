@@ -31,7 +31,7 @@ use core_customfield\api;
  *
  * @package customfield_text
  */
-class data extends \core_customfield\data_controller {
+class data_controller extends \core_customfield\data_controller {
 
     /**
      * Add fields for editing a text profile field.
