@@ -1171,9 +1171,9 @@ EOD;
      * Create a new course custom field category with the given name.
      *
      * @param   array $data Array with data['name'] of category
-     * @return  \core_customfield\category   The created category
+     * @return  \core_customfield\category_controller   The created category
      */
-    public function create_course_custom_field_category($data): \core_customfield\category {
+    public function create_course_custom_field_category($data): \core_customfield\category_controller {
         $component = 'core_course';
         $area = 'course';
         $itemid = 0;

@@ -230,9 +230,9 @@ abstract class handler {
     }
 
     /**
-     * @return category
+     * @return category_controller
      */
-    public function new_category() : category {
+    public function new_category() : category_controller {
         $categorydata = new stdClass();
         $categorydata->component = $this->get_component();
         $categorydata->area = $this->get_area();
