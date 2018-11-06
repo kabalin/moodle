@@ -124,7 +124,7 @@ class field_config_form extends \moodleform {
             if ($DB->record_exists('customfield_field', array('shortname' => $data['shortname']))) {
                 $errors['shortname'] = get_string('formfieldcheckshortname', 'core_customfield');
             }
-            $category = new \core_customfield\category($data['categoryid']);
+            $category = new \core_customfield\category_controller($data['categoryid']);
             $handler = \core_customfield\handler::get_handler_for_category($category);
             $field = $handler->new_field($category, $data['type']);
         } else {

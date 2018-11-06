@@ -26,6 +26,7 @@
 namespace core_customfield;
 
 use advanced_testcase;
+use core\event\course_category_viewed;
 use stdClass;
 
 defined('MOODLE_INTERNAL') || die();
@@ -54,7 +55,7 @@ class core_customfield_category_testcase extends advanced_testcase {
         $categorydata->itemid    = 0;
         $categorydata->contextid = 1;
 
-        $category0 = new category(0, $categorydata);
+        $category0 = new category_controller(0, $categorydata);
         $category0->save();
 
         // Initially confirm that base data was inserted correctly.
@@ -70,7 +71,7 @@ class core_customfield_category_testcase extends advanced_testcase {
         // Creating 2nd category and check if sortorder is correct.
         $categorydata->name = 'bbbb';
 
-        $category1 = new category(0, $categorydata);
+        $category1 = new category_controller(0, $categorydata);
         $category1->save();
 
         // Initially confirm that base data was inserted correctly.
@@ -87,8 +88,8 @@ class core_customfield_category_testcase extends advanced_testcase {
         $id1 = $category1->get('id');
 
         // Check order after re-fetch.
-        $category0 = new category($id0);
-        $category1 = new category($id1);
+        $category0 = new category_controller($id0);
+        $category1 = new category_controller($id1);
 
         $this->assertSame((int) $category0->get('sortorder'), 0);
         $this->assertSame((int) $category1->get('sortorder'), 1);
@@ -96,7 +97,7 @@ class core_customfield_category_testcase extends advanced_testcase {
         // Creating 3rd category and check if sortorder is correct.
         $categorydata->name = 'cccc';
 
-        $category2 = new category(0, $categorydata);
+        $category2 = new category_controller(0, $categorydata);
         $category2->save();
 
         // Initially confirm that base data was inserted correctly.
@@ -112,9 +113,9 @@ class core_customfield_category_testcase extends advanced_testcase {
         $id2 = $category2->get('id');
 
         // Check order after re-fetch.
-        $category0 = new category($id0);
-        $category1 = new category($id1);
-        $category2 = new category($id2);
+        $category0 = new category_controller($id0);
+        $category1 = new category_controller($id1);
+        $category2 = new category_controller($id2);
 
         $this->assertSame((int) $category0->get('sortorder'), 0);
         $this->assertSame((int) $category1->get('sortorder'), 1);
@@ -123,7 +124,7 @@ class core_customfield_category_testcase extends advanced_testcase {
         // Creating 4th category and check if sortorder is correct.
         $categorydata->name = 'dddd';
 
-        $category3 = new category(0, $categorydata);
+        $category3 = new category_controller(0, $categorydata);
         $category3->save();
 
         // Initially confirm that base data was inserted correctly.
@@ -139,10 +140,10 @@ class core_customfield_category_testcase extends advanced_testcase {
         $id3 = $category3->get('id');
 
         // Check order after re-fetch.
-        $category0 = new category($id0);
-        $category1 = new category($id1);
-        $category2 = new category($id2);
-        $category3 = new category($id3);
+        $category0 = new category_controller($id0);
+        $category1 = new category_controller($id1);
+        $category2 = new category_controller($id2);
+        $category3 = new category_controller($id3);
 
         $this->assertSame((int) $category0->get('sortorder'), 0);
         $this->assertSame((int) $category1->get('sortorder'), 1);
@@ -162,7 +163,7 @@ class core_customfield_category_testcase extends advanced_testcase {
         $categorydata->itemid    = 0;
         $categorydata->contextid = 1;
 
-        $category0 = new category(0, $categorydata);
+        $category0 = new category_controller(0, $categorydata);
         $category0->save();
 
         // Initially confirm that base data was inserted correctly.
@@ -184,7 +185,7 @@ class core_customfield_category_testcase extends advanced_testcase {
         $category0->save();
         $id = $category0->get('id');
 
-        $category0 = new category($id);
+        $category0 = new category_controller($id);
         $this->assertSame($category0->get('name'), $newname);
     }
 
@@ -200,17 +201,17 @@ class core_customfield_category_testcase extends advanced_testcase {
         $categorydata->itemid    = 0;
         $categorydata->contextid = 1;
 
-        $category0 = new category(0, $categorydata);
+        $category0 = new category_controller(0, $categorydata);
         $category0->save();
         $id0 = $category0->get('id');
 
         $categorydata->name = 'bbbb';
-        $category1          = new category(0, $categorydata);
+        $category1          = new category_controller(0, $categorydata);
         $category1->save();
         $id1 = $category1->get('id');
 
         $categorydata->name = 'cccc';
-        $category2          = new category(0, $categorydata);
+        $category2          = new category_controller(0, $categorydata);
         $category2->save();
         $id2 = $category2->get('id');
 
@@ -223,8 +224,8 @@ class core_customfield_category_testcase extends advanced_testcase {
 
         // Confirm correct order after delete.
         // Check order after re-fetch.
-        $category1 = new category($id1);
-        $category2 = new category($id2);
+        $category1 = new category_controller($id1);
+        $category2 = new category_controller($id2);
 
         $this->assertSame((int) $category1->get('sortorder'), 1);
         $this->assertSame((int) $category2->get('sortorder'), 2);
@@ -243,42 +244,42 @@ class core_customfield_category_testcase extends advanced_testcase {
         $categorydata->area      = 'course';
         $categorydata->itemid    = 0;
         $categorydata->contextid = 1;
-        $category0               = new category(0, $categorydata);
+        $category0               = new category_controller(0, $categorydata);
         $category0->save();
         $id0 = $category0->get('id');
 
         $categorydata->name = 'bbbb';
-        $category1          = new category(0, $categorydata);
+        $category1          = new category_controller(0, $categorydata);
         $category1->save();
         $id1 = $category1->get('id');
 
         $categorydata->name = 'cccc';
-        $category2          = new category(0, $categorydata);
+        $category2          = new category_controller(0, $categorydata);
         $category2->save();
         $id2 = $category2->get('id');
 
         $categorydata->name = 'dddd';
-        $category3          = new category(0, $categorydata);
+        $category3          = new category_controller(0, $categorydata);
         $category3->save();
         $id3 = $category3->get('id');
 
         $categorydata->name = 'eeee';
-        $category4          = new category(0, $categorydata);
+        $category4          = new category_controller(0, $categorydata);
         $category4->save();
         $id4 = $category4->get('id');
 
         $categorydata->name = 'ffff';
-        $category5          = new category(0, $categorydata);
+        $category5          = new category_controller(0, $categorydata);
         $category5->save();
         $id5 = $category5->get('id');
 
         // Check order after re-fetch.
-        $category0 = new category($id0);
-        $category1 = new category($id1);
-        $category2 = new category($id2);
-        $category3 = new category($id3);
-        $category4 = new category($id4);
-        $category5 = new category($id5);
+        $category0 = new category_controller($id0);
+        $category1 = new category_controller($id1);
+        $category2 = new category_controller($id2);
+        $category3 = new category_controller($id3);
+        $category4 = new category_controller($id4);
+        $category5 = new category_controller($id5);
 
         $this->assertSame((int) $category0->get('sortorder'), 0);
         $this->assertSame((int) $category1->get('sortorder'), 1);
@@ -288,13 +289,13 @@ class core_customfield_category_testcase extends advanced_testcase {
         $this->assertSame((int) $category5->get('sortorder'), 5);
 
         // Move up 1 position.
-        api::move_category(new category($id3), $id2);
-        $category0 = new category($id0);
-        $category1 = new category($id1);
-        $category2 = new category($id2);
-        $category3 = new category($id3);
-        $category4 = new category($id4);
-        $category5 = new category($id5);
+        api::move_category(new category_controller($id3), $id2);
+        $category0 = new category_controller($id0);
+        $category1 = new category_controller($id1);
+        $category2 = new category_controller($id2);
+        $category3 = new category_controller($id3);
+        $category4 = new category_controller($id4);
+        $category5 = new category_controller($id5);
         $this->assertSame((int) $category0->get('sortorder'), 0);
         $this->assertSame((int) $category1->get('sortorder'), 1);
         $this->assertSame((int) $category2->get('sortorder'), 3);
@@ -303,13 +304,13 @@ class core_customfield_category_testcase extends advanced_testcase {
         $this->assertSame((int) $category5->get('sortorder'), 5);
 
         // Move down 1 position.
-        api::move_category(new category($id2), $id3);
-        $category0 = new category($id0);
-        $category1 = new category($id1);
-        $category2 = new category($id2);
-        $category3 = new category($id3);
-        $category4 = new category($id4);
-        $category5 = new category($id5);
+        api::move_category(new category_controller($id2), $id3);
+        $category0 = new category_controller($id0);
+        $category1 = new category_controller($id1);
+        $category2 = new category_controller($id2);
+        $category3 = new category_controller($id3);
+        $category4 = new category_controller($id4);
+        $category5 = new category_controller($id5);
         $this->assertSame((int) $category0->get('sortorder'), 0);
         $this->assertSame((int) $category1->get('sortorder'), 1);
         $this->assertSame((int) $category2->get('sortorder'), 2);
@@ -318,13 +319,13 @@ class core_customfield_category_testcase extends advanced_testcase {
         $this->assertSame((int) $category5->get('sortorder'), 5);
 
         // Move up 2 positions.
-        api::move_category(new category($id4), $id2);
-        $category0 = new category($id0);
-        $category1 = new category($id1);
-        $category2 = new category($id2);
-        $category3 = new category($id3);
-        $category4 = new category($id4);
-        $category5 = new category($id5);
+        api::move_category(new category_controller($id4), $id2);
+        $category0 = new category_controller($id0);
+        $category1 = new category_controller($id1);
+        $category2 = new category_controller($id2);
+        $category3 = new category_controller($id3);
+        $category4 = new category_controller($id4);
+        $category5 = new category_controller($id5);
         $this->assertSame((int) $category0->get('sortorder'), 0);
         $this->assertSame((int) $category1->get('sortorder'), 1);
         $this->assertSame((int) $category2->get('sortorder'), 3);
@@ -333,13 +334,13 @@ class core_customfield_category_testcase extends advanced_testcase {
         $this->assertSame((int) $category5->get('sortorder'), 5);
 
         // Move down 2 positions.
-        api::move_category(new category($id4), $id5);
-        $category0 = new category($id0);
-        $category1 = new category($id1);
-        $category2 = new category($id2);
-        $category3 = new category($id3);
-        $category4 = new category($id4);
-        $category5 = new category($id5);
+        api::move_category(new category_controller($id4), $id5);
+        $category0 = new category_controller($id0);
+        $category1 = new category_controller($id1);
+        $category2 = new category_controller($id2);
+        $category3 = new category_controller($id3);
+        $category4 = new category_controller($id4);
+        $category5 = new category_controller($id5);
         $this->assertSame((int) $category0->get('sortorder'), 0);
         $this->assertSame((int) $category1->get('sortorder'), 1);
         $this->assertSame((int) $category2->get('sortorder'), 2);
@@ -348,13 +349,13 @@ class core_customfield_category_testcase extends advanced_testcase {
         $this->assertSame((int) $category5->get('sortorder'), 5);
 
         // Move up 3 positions.
-        api::move_category(new category($id4), $id1);
-        $category0 = new category($id0);
-        $category1 = new category($id1);
-        $category2 = new category($id2);
-        $category3 = new category($id3);
-        $category4 = new category($id4);
-        $category5 = new category($id5);
+        api::move_category(new category_controller($id4), $id1);
+        $category0 = new category_controller($id0);
+        $category1 = new category_controller($id1);
+        $category2 = new category_controller($id2);
+        $category3 = new category_controller($id3);
+        $category4 = new category_controller($id4);
+        $category5 = new category_controller($id5);
         $this->assertSame((int) $category0->get('sortorder'), 0);
         $this->assertSame((int) $category1->get('sortorder'), 2);
         $this->assertSame((int) $category2->get('sortorder'), 3);
@@ -363,13 +364,13 @@ class core_customfield_category_testcase extends advanced_testcase {
         $this->assertSame((int) $category5->get('sortorder'), 5);
 
         // Move down 3 positions.
-        api::move_category(new category($id4), $id5);
-        $category0 = new category($id0);
-        $category1 = new category($id1);
-        $category2 = new category($id2);
-        $category3 = new category($id3);
-        $category4 = new category($id4);
-        $category5 = new category($id5);
+        api::move_category(new category_controller($id4), $id5);
+        $category0 = new category_controller($id0);
+        $category1 = new category_controller($id1);
+        $category2 = new category_controller($id2);
+        $category3 = new category_controller($id3);
+        $category4 = new category_controller($id4);
+        $category5 = new category_controller($id5);
         $this->assertSame((int) $category0->get('sortorder'), 0);
         $this->assertSame((int) $category1->get('sortorder'), 1);
         $this->assertSame((int) $category2->get('sortorder'), 2);
@@ -378,13 +379,13 @@ class core_customfield_category_testcase extends advanced_testcase {
         $this->assertSame((int) $category5->get('sortorder'), 5);
 
         //Move to the end of the list.
-        api::move_category(new category($id2), 0);
-        $category0 = new category($id0);
-        $category1 = new category($id1);
-        $category2 = new category($id2);
-        $category3 = new category($id3);
-        $category4 = new category($id4);
-        $category5 = new category($id5);
+        api::move_category(new category_controller($id2), 0);
+        $category0 = new category_controller($id0);
+        $category1 = new category_controller($id1);
+        $category2 = new category_controller($id2);
+        $category3 = new category_controller($id3);
+        $category4 = new category_controller($id4);
+        $category5 = new category_controller($id5);
         $this->assertSame((int) $category0->get('sortorder'), 0);
         $this->assertSame((int) $category1->get('sortorder'), 1);
         $this->assertSame((int) $category2->get('sortorder'), 5);
@@ -406,42 +407,42 @@ class core_customfield_category_testcase extends advanced_testcase {
         $categorydata->area      = 'course';
         $categorydata->itemid    = 0;
         $categorydata->contextid = 1;
-        $category0               = new category(0, $categorydata);
+        $category0               = new category_controller(0, $categorydata);
         $category0->save();
         $id0 = $category0->get('id');
 
         $categorydata->name = 'bbbb';
-        $category1          = new category(0, $categorydata);
+        $category1          = new category_controller(0, $categorydata);
         $category1->save();
         $id1 = $category1->get('id');
 
         $categorydata->name = 'cccc';
-        $category2          = new category(0, $categorydata);
+        $category2          = new category_controller(0, $categorydata);
         $category2->save();
         $id2 = $category2->get('id');
 
         $categorydata->name = 'dddd';
-        $category3          = new category(0, $categorydata);
+        $category3          = new category_controller(0, $categorydata);
         $category3->save();
         $id3 = $category3->get('id');
 
         $categorydata->name = 'eeee';
-        $category4          = new category(0, $categorydata);
+        $category4          = new category_controller(0, $categorydata);
         $category4->save();
         $id4 = $category4->get('id');
 
         $categorydata->name = 'ffff';
-        $category5          = new category(0, $categorydata);
+        $category5          = new category_controller(0, $categorydata);
         $category5->save();
         $id5 = $category5->get('id');
 
         // Check order after re-fetch.
-        $category0 = new category($id0);
-        $category1 = new category($id1);
-        $category2 = new category($id2);
-        $category3 = new category($id3);
-        $category4 = new category($id4);
-        $category5 = new category($id5);
+        $category0 = new category_controller($id0);
+        $category1 = new category_controller($id1);
+        $category2 = new category_controller($id2);
+        $category3 = new category_controller($id3);
+        $category4 = new category_controller($id4);
+        $category5 = new category_controller($id5);
 
         $this->assertSame((int) $category0->get('sortorder'), 0);
         $this->assertSame((int) $category1->get('sortorder'), 1);
@@ -465,12 +466,12 @@ class core_customfield_category_testcase extends advanced_testcase {
         $category5->save();
 
         // Check order after re-fetch.
-        $category0 = new category($id0);
-        $category1 = new category($id1);
-        $category2 = new category($id2);
-        $category3 = new category($id3);
-        $category4 = new category($id4);
-        $category5 = new category($id5);
+        $category0 = new category_controller($id0);
+        $category1 = new category_controller($id1);
+        $category2 = new category_controller($id2);
+        $category3 = new category_controller($id3);
+        $category4 = new category_controller($id4);
+        $category5 = new category_controller($id5);
 
         $this->assertSame((int) $category0->get('sortorder'), 101);
         $this->assertSame((int) $category1->get('sortorder'), 42);
@@ -483,12 +484,12 @@ class core_customfield_category_testcase extends advanced_testcase {
         //api::reorder_categories($categorydata->component, $categorydata->area, $categorydata->itemid);
         api::move_category($category0, 0);
 
-        $category0 = new category($id0);
-        $category1 = new category($id1);
-        $category2 = new category($id2);
-        $category3 = new category($id3);
-        $category4 = new category($id4);
-        $category5 = new category($id5);
+        $category0 = new category_controller($id0);
+        $category1 = new category_controller($id1);
+        $category2 = new category_controller($id2);
+        $category3 = new category_controller($id3);
+        $category4 = new category_controller($id4);
+        $category5 = new category_controller($id5);
 
         $this->assertSame((int) $category2->get('sortorder'), 0);
         $this->assertSame((int) $category3->get('sortorder'), 1);
@@ -511,7 +512,7 @@ class core_customfield_category_testcase extends advanced_testcase {
         $categorydata->area      = 'course';
         $categorydata->itemid    = 0;
         $categorydata->contextid = 1;
-        $category0               = new category(0, $categorydata);
+        $category0               = new category_controller(0, $categorydata);
         $category0->save();
 
         // Add fields to this category.
@@ -614,27 +615,27 @@ class core_customfield_category_testcase extends advanced_testcase {
         $categorydata->area      = $options['area'];
         $categorydata->itemid    = $options['itemid'];
         $categorydata->contextid = $options['contextid'];
-        $category0               = new category(0, $categorydata);
+        $category0               = new category_controller(0, $categorydata);
         $category0->save();
 
         $categorydata->name = 'bbbb';
-        $category1          = new category(0, $categorydata);
+        $category1          = new category_controller(0, $categorydata);
         $category1->save();
 
         $categorydata->name = 'cccc';
-        $category2          = new category(0, $categorydata);
+        $category2          = new category_controller(0, $categorydata);
         $category2->save();
 
         $categorydata->name = 'dddd';
-        $category3          = new category(0, $categorydata);
+        $category3          = new category_controller(0, $categorydata);
         $category3->save();
 
         $categorydata->name = 'eeee';
-        $category4          = new category(0, $categorydata);
+        $category4          = new category_controller(0, $categorydata);
         $category4->save();
 
         $categorydata->name = 'ffff';
-        $category5          = new category(0, $categorydata);
+        $category5          = new category_controller(0, $categorydata);
         $category5->save();
 
         // Let's test counts.

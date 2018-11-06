@@ -82,15 +82,6 @@ class category extends persistent {
     }
 
     /**
-     * @return field[]
-     * @throws \moodle_exception
-     * @throws \dml_exception
-     */
-    public function fields() {
-        return field::get_fields_from_category_array($this->get('id'));
-    }
-
-    /**
      * Hook to execute after an update.
      *
      * @param bool $result Whether or not the update was successful.
@@ -98,7 +89,8 @@ class category extends persistent {
      * @throws \moodle_exception
      */
     protected function after_update($result) {
-        handler::get_handler_for_category($this)->clear_fields_definitions_cache();
+        // TODO: move this line to controller save.
+        handler::get_handler_for_category(new category_controller($this->get('id')))->clear_fields_definitions_cache();
     }
 
     /**
@@ -109,33 +101,10 @@ class category extends persistent {
      * @throws \moodle_exception
      */
     protected function after_create() {
-        handler::get_handler_for_category($this)->clear_fields_definitions_cache();
+        // TODO: move this line to controller save.
+        handler::get_handler_for_category(new category_controller($this->get('id')))->clear_fields_definitions_cache();
         api::move_category($this, 0);
     }
 
-    /**
-     * Delete fields before delete category
-     *
-     * @return bool
-     * @throws \moodle_exception
-     * @throws \dml_exception
-     */
-    protected function before_delete() {
-        foreach ($this->fields() as $field) {
-            $field->delete();
-        }
-    }
-
-    /**
-     * Update sort order after delete
-     *
-     * @param bool $result
-     * @return void
-     * @throws \moodle_exception
-     * @throws \dml_exception
-     */
-    protected function after_delete($result) {
-        handler::get_handler_for_category($this)->clear_fields_definitions_cache();
-    }
 
 }

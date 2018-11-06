@@ -134,7 +134,7 @@ abstract class handler {
      * @return handler
      * @throws \moodle_exception
      */
-    public static function get_handler_for_category(category $category) : handler {
+    public static function get_handler_for_category(category_controller $category) : handler {
         return self::get_handler($category->get('component'), $category->get('area'), $category->get('itemid'));
     }
 
@@ -214,7 +214,7 @@ abstract class handler {
      * @return field
      * @throws \coding_exception
      */
-    public function new_field(category $category, string $type) : field {
+    public function new_field(category_controller $category, string $type) : field {
         $record = new \stdClass();
         $record->type = $type;
         $record->categoryid = $category->get('id');
@@ -239,7 +239,7 @@ abstract class handler {
         $categorydata->itemid = $this->get_itemid();
         $categorydata->contextid = $this->get_configuration_context()->id;
 
-        $category = new category(0, $categorydata);
+        $category = new category_controller(0, $categorydata);
 
         $suffix = 0;
         while (true) {

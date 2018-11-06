@@ -26,7 +26,7 @@ defined('MOODLE_INTERNAL') || die;
 
 function core_customfield_inplace_editable($itemtype, $itemid, $newvalue) {
     if ($itemtype === 'category') {
-        $category = new \core_customfield\category($itemid);
+        $category = new \core_customfield\category_controller($itemid);
         $handler = \core_customfield\handler::get_handler_for_category($category);
         \external_api::validate_context($handler->get_configuration_context());
         if (!$handler->can_configure()) {

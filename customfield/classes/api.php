@@ -67,7 +67,7 @@ class api {
             $field       = new field(0, $fieldobj);
             $categoryobj = (object) ['id' => $data->categoryid, 'name' => $data->categoryname,
                                      'component' => $data->component, 'area' => $data->area, 'itemid' => $data->itemid];
-            $field->set_category(new category($categoryobj->id, $categoryobj));
+            $field->set_category(new category_controller($categoryobj->id, $categoryobj));
             unset($data->field_id, $data->name, $data->shortname, $data->type, $data->categoryid, $data->configdata, $data->categoryname,
                   $data->component, $data->area, $data->itemid);
             if (empty($data->id)) {
@@ -337,7 +337,7 @@ class api {
      * @return inplace_editable
      * @throws \coding_exception
      */
-    public static function get_category_inplace_editable(category $category, bool $editable = true) : inplace_editable {
+    public static function get_category_inplace_editable(category_controller $category, bool $editable = true) : inplace_editable {
         return new inplace_editable('core_customfield',
                                     'category',
                                     $category->get('id'),
@@ -407,7 +407,7 @@ class api {
         }
 
         foreach ($DB->get_records(category::TABLE, $options, 'sortorder') as $categorydata) {
-            $categories[] = new category(0, $categorydata);
+            $categories[] = new category_controller(0, $categorydata);
         }
 
         return $categories;

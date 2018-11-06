@@ -174,21 +174,21 @@ class field extends persistent {
     /**
      * Set the category associated with this field
      *
-     * @param category $category
+     * @param category_controller $category
      */
-    public function set_category(category $category) {
+    public function set_category(category_controller $category) {
         $this->category = $category;
     }
 
     /**
      * Get the category associated with this field
      *
-     * @return category
+     * @return category_controller
      * @throws \moodle_exception
      */
-    public function get_category(): category {
+    public function get_category(): category_controller {
         if (!$this->category) {
-            $this->category = new category($this->raw_get('categoryid'));
+            $this->category = new category_controller($this->raw_get('categoryid'));
         }
         return $this->category;
     }

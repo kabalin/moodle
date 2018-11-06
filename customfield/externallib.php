@@ -151,7 +151,7 @@ class core_customfield_external extends external_api {
      * @throws moodle_exception
      */
     public static function delete_category($id) {
-        $category = new \core_customfield\category($id);
+        $category = new \core_customfield\category_controller($id);
         $handler = \core_customfield\handler::get_handler_for_category($category);
         self::validate_context($handler->get_configuration_context());
         if (!$handler->can_configure()) {

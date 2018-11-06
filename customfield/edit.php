@@ -35,7 +35,7 @@ if ($id) {
     $typestr = get_string('pluginname', 'customfield_'.$record->get('type'));
     $title   = get_string('editingfield', 'core_customfield', $typestr);
 } else {
-    $category = new \core_customfield\category($categoryid);
+    $category = new \core_customfield\category_controller($categoryid);
     $handler  = \core_customfield\handler::get_handler_for_category($category);
     $record   = $handler->new_field($category, $type);
     $typestr  = get_string('pluginname', 'customfield_'.$type);
