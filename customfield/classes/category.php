@@ -82,6 +82,15 @@ class category extends persistent {
     }
 
     /**
+     * @return field[]
+     * @throws \moodle_exception
+     * @throws \dml_exception
+     */
+    public function fields() {
+        return field_controller::get_fields_from_category_array($this->get('id'));
+    }
+
+    /**
      * Hook to execute after an update.
      *
      * @param bool $result Whether or not the update was successful.

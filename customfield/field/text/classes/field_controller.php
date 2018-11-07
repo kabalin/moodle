@@ -20,20 +20,15 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace customfield_textarea;
+namespace customfield_text;
 
 defined('MOODLE_INTERNAL') || die;
 
 /**
  * Class field
  *
- * @package customfield_textarea
+ * @package customfield_text
  */
-class field extends \core_customfield\field {
-    const TYPE = 'textarea';
-
-    public function before_delete() {
-        parent::before_delete();
-        // TODO delete all files associated with configdata[defaultvalue]
-    }
+class field_controller extends \core_customfield\field {
+    const TYPE = 'text';
 }

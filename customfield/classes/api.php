@@ -173,12 +173,12 @@ class api {
     /**
      * Updates or creates a field with data that came from a form
      *
-     * @param field $field
+     * @param field_controller $field
      * @param \stdClass $formdata
      * @throws \moodle_exception
      * @throws \dml_exception
      */
-    public static function save_field(field $field, \stdClass $formdata) {
+    public static function save_field(field_controller $field, \stdClass $formdata) {
         foreach ($formdata as $key => $value) {
             if ($key === 'configdata' && is_array($formdata->configdata)) {
                 $field->set($key, json_encode($value));
@@ -510,6 +510,8 @@ class api {
      *
      */
     public static function cleanup() {
+        global $DB;
+
         $sql = "SELECT DISTINCT cd.contextid
                   FROM {customfield_data} cd
              LEFT JOIN {context} ctx
@@ -518,5 +520,12 @@ class api {
         $data = $DB->get_records_sql($sql);
         list($sql, $params) = $DB->get_in_or_equal(array_keys($contexts));
         $DB->delete_records_select('customfield_data', "contextid $sql", $params);
+    }
+
+    public static function field_factory($id) {
+        $fieldrecord = new field($id);
+
+        $customfieldtype = "\\customfield_{$fieldrecord->get('type')}\\field_controller";
+        return new $customfieldtype($id);
     }
 }

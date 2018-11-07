@@ -29,7 +29,7 @@ defined('MOODLE_INTERNAL') || die;
  *
  * @package customfield_date
  */
-class field extends \core_customfield\field {
+class field_controller extends \core_customfield\field {
     const TYPE = 'date';
 
     /**

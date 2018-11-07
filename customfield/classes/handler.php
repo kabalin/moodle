@@ -119,11 +119,11 @@ abstract class handler {
     /**
      * Return handler for a given field
      *
-     * @param field $field
+     * @param \customfield_date\field_controller $field
      * @return handler
      * @throws \moodle_exception
      */
-    public static function get_handler_for_field(field $field) : handler {
+    public static function get_handler_for_field(\customfield_date\field_controller $field) : handler {
         return self::get_handler_for_category($field->get_category());
     }
 
