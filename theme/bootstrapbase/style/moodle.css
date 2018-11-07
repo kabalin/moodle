@@ -7004,6 +7004,16 @@ span.editinstructions {
   opacity: 0.5;
   filter: alpha(opacity=50);
 }
+.course-header-image-wrapper {
+  width: 100px;
+  height: 100px;
+}
+.course-header-image-wrapper .course-header-image {
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+}
 /**
  * Display sizes:
  * Large displays                   1200        +
@@ -16536,28 +16546,23 @@ body {
   height: 35px;
   width: 35px;
 }
-.block_myoverview *,
-.block_myoverview *::before,
-.block_myoverview *::after {
-  box-sizing: border-box;
-}
+.block_starredcourses .empty-placeholder-image-lg,
+.block_recentlyaccesseditems .empty-placeholder-image-lg,
+.block_recentlyaccessedcourses .empty-placeholder-image-lg,
 .block_myoverview .empty-placeholder-image-lg {
   height: 125px;
 }
-.block_myoverview .course-card {
-  -webkit-border-radius: 4px;
-  -moz-border-radius: 4px;
-  border-radius: 4px;
-  margin-bottom: 0.5rem;
-  flex-grow: 0;
-  flex-shrink: 0;
-  flex-basis: calc(50% - 0.6rem);
-}
+.block_starredcourses .course-info-container,
+.block_recentlyaccesseditems .course-info-container,
+.block_recentlyaccessedcourses .course-info-container,
 .block_myoverview .course-info-container {
   flex: 1 1 auto;
   padding: 0.8rem;
 }
-.block_myoverview .course-card-footer {
+.block_starredcourses .dashboard-card-footer,
+.block_recentlyaccesseditems .dashboard-card-footer,
+.block_recentlyaccessedcourses .dashboard-card-footer,
+.block_myoverview .dashboard-card-footer {
   padding: 0.8rem;
   background-color: #f5f5f5;
   border-top: 1px solid #e3e3e3;
@@ -16568,24 +16573,22 @@ body {
   -moz-border-radius-bottomleft: 4px;
   border-bottom-left-radius: 4px;
 }
+.block_starredcourses .progress,
+.block_recentlyaccesseditems .progress,
+.block_recentlyaccessedcourses .progress,
 .block_myoverview .progress {
   height: 0.5rem;
   margin-bottom: 0;
 }
-.block_myoverview .myoverviewimg {
-  height: 7rem;
-  background-position: center;
-  background-size: cover;
-  -webkit-border-top-right-radius: 4px;
-  -moz-border-radius-topright: 4px;
-  border-top-right-radius: 4px;
-  -webkit-border-top-left-radius: 4px;
-  -moz-border-radius-topleft: 4px;
-  border-top-left-radius: 4px;
-}
+.block_starredcourses .list-group,
+.block_recentlyaccesseditems .list-group,
+.block_recentlyaccessedcourses .list-group,
 .block_myoverview .list-group {
   margin: 0;
 }
+.block_starredcourses .course-listitem,
+.block_recentlyaccesseditems .course-listitem,
+.block_recentlyaccessedcourses .course-listitem,
 .block_myoverview .course-listitem {
   display: block;
   padding: 0.75rem 1.25rem;
@@ -16596,6 +16599,9 @@ body {
   -moz-border-radius: 4px;
   border-radius: 4px;
 }
+.block_starredcourses .course-summaryitem,
+.block_recentlyaccesseditems .course-summaryitem,
+.block_recentlyaccessedcourses .course-summaryitem,
 .block_myoverview .course-summaryitem {
   padding: 0.5rem;
   background-color: #fff;
@@ -16604,32 +16610,116 @@ body {
   -moz-border-radius: 4px;
   border-radius: 4px;
 }
+.block_starredcourses .summary img,
+.block_recentlyaccesseditems .summary img,
+.block_recentlyaccessedcourses .summary img,
 .block_myoverview .summary img {
   max-width: 100%;
 }
 @media (max-width: 576px) {
+  .block_starredcourses .summaryimage,
+  .block_recentlyaccesseditems .summaryimage,
+  .block_recentlyaccessedcourses .summaryimage,
   .block_myoverview .summaryimage {
     max-height: 7rem;
   }
 }
+.block_starredcourses .dashboard-card-deck,
+.block_recentlyaccesseditems .dashboard-card-deck,
+.block_recentlyaccessedcourses .dashboard-card-deck {
+  flex-flow: nowrap;
+  overflow-y: scroll;
+}
+.block_recentlyaccesseditems .icon-size-4 .icon {
+  height: auto;
+  width: auto;
+  background-image: unset;
+  box-sizing: unset;
+}
+.block_recentlyaccesseditems .icon-size-4 {
+  background-image: unset;
+  height: unset;
+  width: unset;
+}
+.block_recentlyaccesseditems .ml-1 {
+  margin-left: 10px;
+}
+.block_recentlyaccesseditems h6 {
+  font-size: .9375rem;
+  margin-bottom: 0;
+}
+.block_recentlyaccesseditems a,
+.block_recentlyaccesseditems a:hover {
+  text-decoration: none;
+  color: unset;
+}
+.dashboard-card-deck {
+  box-sizing: border-box;
+  display: flex;
+  flex-flow: row wrap;
+  margin-right: -0.25rem;
+  margin-left: -0.25rem;
+}
+.dashboard-card-deck *,
+.dashboard-card-deck *::before,
+.dashboard-card-deck *::after {
+  box-sizing: border-box;
+}
+.dashboard-card-deck .dashboard-card {
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+  margin-bottom: 0.5rem;
+  flex-grow: 0;
+  flex-shrink: 0;
+  min-width: 0;
+  flex-basis: 100%;
+}
 @media (min-width: 576px) {
-  .block_myoverview .card-deck {
-    display: flex;
-    flex-flow: row wrap;
-    margin-right: -0.25rem;
-    margin-left: -0.25rem;
-  }
-  .block_myoverview .course-card {
+  .dashboard-card-deck .dashboard-card {
     display: flex;
     flex-direction: column;
     margin-right: 0.25rem;
     margin-left: 0.25rem;
+    flex-basis: calc(50% - 0.6rem);
   }
 }
 @media (min-width: 1200px) {
-  .block_myoverview .course-card {
-    flex-basis: calc(33% - 0.5rem);
+  .dashboard-card-deck .dashboard-card {
+    flex-basis: calc(33.333% - 0.5rem);
   }
+}
+@media (min-width: 768px) {
+  #block-region-side-post .dashboard-card-deck,
+  #block-region-side-pre .dashboard-card-deck {
+    margin: 0;
+    height: unset;
+  }
+  #block-region-side-post .dashboard-card-deck .dashboard-card,
+  #block-region-side-pre .dashboard-card-deck .dashboard-card {
+    flex-basis: 100%;
+    margin-left: 0;
+    margin-right: 0;
+  }
+}
+.dashboard-card-img {
+  height: 7rem;
+  background-position: center;
+  background-size: cover;
+  -webkit-border-top-right-radius: 4px;
+  -moz-border-radius-topright: 4px;
+  border-top-right-radius: 4px;
+  -webkit-border-top-left-radius: 4px;
+  -moz-border-radius-topleft: 4px;
+  border-top-left-radius: 4px;
+}
+.summaryimage {
+  height: 7rem;
+  background-position: center;
+  background-size: cover;
+}
+.position-absolute {
+  position: absolute;
 }
 /**
  * Moodle forms HTML isn't changeable via renderers (yet?) so this
@@ -22180,8 +22270,17 @@ ul.indented-list {
 .align-self-stretch {
   align-self: stretch;
 }
+.align-items-start {
+  align-items: flex-start !important;
+}
+.align-items-center {
+  align-items: center !important;
+}
 .ml-auto {
   margin-left: auto;
+}
+.mr-auto {
+  margin-right: auto;
 }
 .mt-auto {
   margin-top: auto;

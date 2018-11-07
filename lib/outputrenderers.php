@@ -1951,12 +1951,23 @@ class core_renderer extends renderer_base {
             throw new coding_exception('The cancel param to $OUTPUT->confirm() must be either a URL (string/moodle_url) or a single_button instance.');
         }
 
-        $output = $this->box_start('generalbox modal modal-dialog modal-in-page show', 'notice');
+        $attributes = [
+            'role'=>'alertdialog',
+            'aria-labelledby'=>'modal-header',
+            'aria-describedby'=>'modal-body',
+            'aria-modal'=>'true'
+        ];
+
+        $output = $this->box_start('generalbox modal modal-dialog modal-in-page show', 'notice', $attributes);
         $output .= $this->box_start('modal-content', 'modal-content');
         $output .= $this->box_start('modal-header p-x-1', 'modal-header');
         $output .= html_writer::tag('h4', get_string('confirm'));
         $output .= $this->box_end();
-        $output .= $this->box_start('modal-body', 'modal-body');
+        $attributes = [
+            'role'=>'alert',
+            'data-aria-autofocus'=>'true'
+        ];
+        $output .= $this->box_start('modal-body', 'modal-body', $attributes);
         $output .= html_writer::tag('p', $message);
         $output .= $this->box_end();
         $output .= $this->box_start('modal-footer', 'modal-footer');
@@ -3405,6 +3416,7 @@ EOD;
         $am->set_menu_trigger(
             $returnstr
         );
+        $am->set_action_label(get_string('usermenu'));
         $am->set_alignment(action_menu::TR, action_menu::BR);
         $am->set_nowrap_on_items();
         if ($withlinks) {
@@ -4141,7 +4153,7 @@ EOD;
     }
 
     public function context_header($headerinfo = null, $headinglevel = 1) {
-        global $DB, $USER, $CFG;
+        global $DB, $USER, $CFG, $COURSE;
         require_once($CFG->dirroot . '/user/lib.php');
         $context = $this->page->context;
         $heading = null;
@@ -4152,6 +4164,14 @@ EOD;
         if (isset($headerinfo['heading'])) {
             $heading = $headerinfo['heading'];
         }
+
+        // Show a course image if enabled.
+        if ($context->contextlevel == CONTEXT_COURSE && get_config('moodlecourse', 'showcourseimages')) {
+            $exporter = new core_course\external\course_summary_exporter($COURSE, ['context' => $context]);
+            $courseinfo = $exporter->export($this);
+            $imagedata = $this->render_from_template('core/course_header_image', $courseinfo);
+        }
+
         // The user context currently has images and buttons. Other contexts may follow.
         if (isset($headerinfo['user']) || $context->contextlevel == CONTEXT_USER) {
             if (isset($headerinfo['user'])) {
@@ -4244,6 +4264,11 @@ EOD;
       * @return string HTML for the header bar.
       */
     protected function render_context_header(context_header $contextheader) {
+
+        $showheader = empty($this->page->layout_options['nocontextheader']);
+        if (!$showheader) {
+            return '';
+        }
 
         // All the html stuff goes here.
         $html = html_writer::start_div('page-context-header');

@@ -29,6 +29,12 @@ information provided here is intended especially for developers.
 * The following methods have been deprecated and should not be used any more:
   - \core_message\api::is_user_blocked()
   - \core_message\api::delete_conversation()
+  - \core_message\api::is_user_non_contact_blocked()
+  - \core_message\api::create_conversation_between_users()
+  - \core_message\api::get_messages()
+  - \core_message\api::get_most_recent_message()
+  - \core_message\helper::get_messages()
+  - \core_message\helper::create_messages()
 * The method \core_message\api::can_delete_conversation() now expects a 'conversationid' to be passed
   as the second parameter.
 * The following web services have been deprecated. Please do not call these any more.
@@ -36,6 +42,10 @@ information provided here is intended especially for developers.
   - core_message_external::unblock_contacts(), please use core_message_external::unblock_user() instead.
   - core_message_external::create_contacts(), please use core_message_external::create_contact_request() instead.
   - core_message_external::delete_conversation(), please use core_message_external::delete_conversations_by_id() instead.
+  - core_message_external::core_message_mark_all_messages_as_read(), please use
+    core_message_external::core_message_mark_all_conversation_messages_as_read() instead.
+  - core_message_external::data_for_messagearea_conversations(), please use core_message_external::get_conversations()
+    instead
 * The following function has been added for getting the privacy messaging preference:
   - get_user_privacy_messaging_preference()
 
