@@ -15,24 +15,23 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package   customfield_select
+ * @package   customfield_date
  * @copyright 2018 Daniel Neis Araujo <daniel@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace customfield_select;
+namespace customfield_checkbox;
 
 use core\persistent;
-use core_customfield\api;
 
 defined('MOODLE_INTERNAL') || die;
 
 /**
  * Class data
  *
- * @package customfield_select
+ * @package customfield_checkbox
  */
-class data extends \core_customfield\data_controller {
+class data_controller extends \core_customfield\data_controller {
 
     /**
      * Add fields for editing a textarea field.
@@ -44,23 +43,4 @@ class data extends \core_customfield\data_controller {
 
     }
 
-    /**
-     * Validates data for this field.
-     *
-     * @param \stdClass $data
-     * @param array $files
-     * @return array
-     */
-    public function validate_data(\stdClass $data, array $files): array {
-        $options = plugin::get_options_array($this->get_field());
-        $errors = parent::validate_data($data, $files);
-        if (isset($data->{api::field_inputname($this->get_field())})) {
-            if (!isset($options[$data->{api::field_inputname($this->get_field())}])) {
-                $errors[api::field_inputname($this->get_field())] = get_string('invalidoption', 'customfield_select');
-            }
-        } else {
-            $errors[api::field_inputname($this->get_field())] = get_string('invalidoption', 'customfield_select');
-        }
-        return $errors;
-    }
 }

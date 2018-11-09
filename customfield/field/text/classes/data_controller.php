@@ -15,26 +15,26 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package   customfield_date
+ * @package   core_customfield
  * @copyright 2018 Daniel Neis Araujo <daniel@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace customfield_checkbox;
-
-use core\persistent;
+namespace customfield_text;
 
 defined('MOODLE_INTERNAL') || die;
+
+use core_customfield\api;
 
 /**
  * Class data
  *
- * @package customfield_checkbox
+ * @package customfield_text
  */
-class data extends \core_customfield\data_controller {
+class data_controller extends \core_customfield\data_controller {
 
     /**
-     * Add fields for editing a textarea field.
+     * Add fields for editing a text profile field.
      *
      * @param \MoodleQuickForm $mform
      * @throws \coding_exception
@@ -43,4 +43,23 @@ class data extends \core_customfield\data_controller {
 
     }
 
+    /**
+     * Validates data for this field.
+     *
+     * @param \stdClass $data
+     * @param array $files
+     * @return array
+     * @throws \coding_exception
+     * @throws \dml_exception
+     * @throws \moodle_exception
+     */
+    public function validate_data(\stdClass $data, array $files): array {
+
+        $errors = parent::validate_data($data, $files);
+        $maxlength = $this->get_field()->get_configdata_property('maxlength');
+        if (($maxlength > 0) && ($maxlength < \core_text::strlen($data->{api::field_inputname($this->get_field())}))) {
+            $errors[api::field_inputname($this->get_field())] = get_string('errormaxlength', 'customfield_text', $maxlength);
+        }
+        return $errors;
+    }
 }

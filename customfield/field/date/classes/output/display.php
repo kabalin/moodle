@@ -71,7 +71,7 @@ class display implements renderable, templatable {
         }
 
         // Check if a date has been specified.
-        if (empty(api::datafield($this->data->get_field()))) {
+        if (empty($this->data->get(api::datafield($this->data->get_field())))) {
             $data->fieldname = '';
         } else {
             $data->fieldname = format_string($this->data->get_field()->get('name'));

@@ -15,26 +15,27 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package   core_customfield
+ * @package   customfield_select
  * @copyright 2018 Daniel Neis Araujo <daniel@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace customfield_text;
+namespace customfield_select;
+
+use core\persistent;
+use core_customfield\api;
 
 defined('MOODLE_INTERNAL') || die;
-
-use core_customfield\api;
 
 /**
  * Class data
  *
- * @package customfield_text
+ * @package customfield_select
  */
-class data extends \core_customfield\data_controller {
+class data_controller extends \core_customfield\data_controller {
 
     /**
-     * Add fields for editing a text profile field.
+     * Add fields for editing a textarea field.
      *
      * @param \MoodleQuickForm $mform
      * @throws \coding_exception
@@ -49,16 +50,16 @@ class data extends \core_customfield\data_controller {
      * @param \stdClass $data
      * @param array $files
      * @return array
-     * @throws \coding_exception
-     * @throws \dml_exception
-     * @throws \moodle_exception
      */
     public function validate_data(\stdClass $data, array $files): array {
-
+        $options = plugin::get_options_array($this->get_field());
         $errors = parent::validate_data($data, $files);
-        $maxlength = $this->get_field()->get_configdata_property('maxlength');
-        if (($maxlength > 0) && ($maxlength < \core_text::strlen($data->{api::field_inputname($this->get_field())}))) {
-            $errors[api::field_inputname($this->get_field())] = get_string('errormaxlength', 'customfield_text', $maxlength);
+        if (isset($data->{api::field_inputname($this->get_field())})) {
+            if (!isset($options[$data->{api::field_inputname($this->get_field())}])) {
+                $errors[api::field_inputname($this->get_field())] = get_string('invalidoption', 'customfield_select');
+            }
+        } else {
+            $errors[api::field_inputname($this->get_field())] = get_string('invalidoption', 'customfield_select');
         }
         return $errors;
     }
