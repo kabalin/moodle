@@ -426,8 +426,8 @@ EOD;
             $record['numsections'] = get_config('moodlecourse', 'numsections');
         }
 
-        if (!empty($options['customfields'])) {
-            foreach($options['customfields'] as $field) {
+        if (!empty($record['customfields'])) {
+            foreach($record['customfields'] as $field) {
                 $record['customfield_'.$field['shortname']] = $field['value'];
             }
         }
