@@ -2769,7 +2769,7 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2018110500.01);
     }
 
-    if ($oldversion < 2018101900.03) {
+    if ($oldversion < 2018110700.00) {
         // Define table customfield_field to be created.
         $table = new xmldb_table('customfield_field');
 
@@ -2869,7 +2869,7 @@ function xmldb_main_upgrade($oldversion) {
         }
 
         // Text savepoint reached.
-        upgrade_main_savepoint(true, 2018101900.03);
+        upgrade_main_savepoint(true, 2018110700.00);
     }
 
 

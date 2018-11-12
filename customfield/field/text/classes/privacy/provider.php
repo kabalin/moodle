@@ -42,7 +42,7 @@ class provider  extends \core_customfield\privacy\provider implements \core_priv
      * @return  string
      */
     public static function get_reason() : string {
-        return 'privacy:metadata';
+        return 'privacy:metadata:customfield_data';
     }
 
     /**

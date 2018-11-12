@@ -590,7 +590,7 @@ abstract class handler {
     public function delete_data_on_instance(int $instanceid) {
         $fields = $this->get_editable_fields($instanceid);
         $fielddata = $this->get_fields_with_data($fields, $instanceid);
-        foreach ($fieldata as $data) {
+        foreach ($fielddata as $data) {
             $data->delete();
         }
     }
