@@ -74,7 +74,7 @@ abstract class plugin_base {
      * @param field $field
      * @return \stdClass
      */
-    public static function prepare_field_for_form(field $field) : \stdClass {
+    public static function prepare_field_for_form(field_controller $field) : \stdClass {
         $fieldrecord = $field->to_record();
         $fieldrecord->configdata = $field->get('configdata');
 

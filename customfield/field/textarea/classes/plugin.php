@@ -95,7 +95,7 @@ class plugin extends plugin_base {
      * @param field $field
      * @return \stdClass
      */
-    public static function prepare_field_for_form(\core_customfield\field $field) : \stdClass {
+    public static function prepare_field_for_form(\core_customfield\field_controller $field) : \stdClass {
         $fieldrecord = parent::prepare_field_for_form($field);
 
         if (!empty($fieldrecord->configdata['defaultvalue'])) {

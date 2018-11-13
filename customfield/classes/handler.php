@@ -202,7 +202,7 @@ abstract class handler {
      * @return field_config_form
      * @throws \moodle_exception
      */
-    public function get_field_config_form(field $field): field_config_form {
+    public function get_field_config_form(field_controller $field): field_config_form {
          $form = new field_config_form(null, ['handler' => $this, 'field' => $field]);
          $form->set_data(api::prepare_field_for_form($field));
          return $form;
@@ -211,14 +211,14 @@ abstract class handler {
     /**
      * @param category $category
      * @param string $type
-     * @return field
+     * @return field_controller
      * @throws \coding_exception
      */
-    public function new_field(category_controller $category, string $type) : field {
+    public function new_field(category_controller $category, string $type) : field_controller {
         $record = new \stdClass();
         $record->type = $type;
         $record->categoryid = $category->get('id');
-        return new field(0, $record);
+        return api::field_factory(0, $record);
     }
 
     /**

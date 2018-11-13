@@ -46,14 +46,14 @@ function customfield_textarea_pluginfile($course, $cm, $context, $filearea, $arg
     if ($filearea === 'value') {
         // Value of the data, itemid = id in data table.
         $data = new \core_customfield\data($itemid);
-        $field = new \core_customfield\field($data->get('fieldid'));
+        $field = \core_customfield\api::field_factory($data->get('fieldid'));
         $handler = \core_customfield\handler::get_handler_for_field($field);
         if (!$handler->can_view($field) || $field->get('type') !== 'textarea' || $data->get_context()->id != $context->id) {
             return false;
         }
     } else if ($filearea === 'defaultvalue') {
         // Default value of the field, itemid = id in the field table.
-        $field = new \core_customfield\field($itemid);
+        $field = \core_customfield\api::field_factory($itemid);
         $handler = \core_customfield\handler::get_handler_for_field($field);
         if ($field->get('type') !== 'textarea' || $handler->get_configuration_context()->id != $context->id) {
             return false;

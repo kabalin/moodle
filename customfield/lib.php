@@ -62,7 +62,7 @@ function core_customfield_pluginfile($course, $cm, $context, $filearea, $args, $
     $itemid = array_shift($args);
     $filename = array_pop($args); // The last item in the $args array.
 
-    $field = new \core_customfield\field($itemid);
+    $field = \core_customfield\api::field_factory($itemid);
     $handler = \core_customfield\handler::get_handler_for_field($field);
     if ($handler->get_configuration_context()->id != $context->id) {
         return false;

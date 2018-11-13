@@ -491,7 +491,7 @@ class api {
      * @param field $field
      * @throws \coding_exception
      */
-    public static function prepare_field_for_form(field $field) : \stdClass {
+    public static function prepare_field_for_form(field_controller $field) : \stdClass {
         return self::plugin_callback($field, 'prepare_field_for_form', [$field]);
     }
 
@@ -522,10 +522,13 @@ class api {
         $DB->delete_records_select('customfield_data', "contextid $sql", $params);
     }
 
-    public static function field_factory($id) {
-        $fieldrecord = new field($id);
-
-        $customfieldtype = "\\customfield_{$fieldrecord->get('type')}\\field_controller";
-        return new $customfieldtype($id);
+    public static function field_factory($id, \stdClass $data = null) {
+        if (empty($data)) {
+            $fieldrecord = new field($id);
+            $customfieldtype = "\\customfield_{$fieldrecord->get('type')}\\field_controller";
+            return new $customfieldtype($id);
+        }
+        $customfieldtype = "\\customfield_{$data->type}\\field_controller";
+        return new $customfieldtype($id, $data);
     }
 }

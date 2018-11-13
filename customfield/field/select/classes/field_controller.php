@@ -29,6 +29,6 @@ defined('MOODLE_INTERNAL') || die;
  *
  * @package customfield_select
  */
-class field_controller extends \core_customfield\field {
+class field_controller extends \core_customfield\field_controller {
     const TYPE = 'select';
 }

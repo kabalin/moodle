@@ -144,7 +144,7 @@ abstract class data_controller {
      *
      * @param field $field
      */
-    public function set_field(field $field) {
+    public function set_field(field_controller $field) {
         $this->field = $field;
     }
 
