@@ -2488,11 +2488,12 @@ function create_course($data, $editoroptions = NULL) {
     }
 
     // Save custom fields.
-    $handler  = core_course\customfield\course_handler::instance();
-    $data->id = $course->id;
-    $data->contextid = $context->id;
-    $handler->save_customfield_data($data);
-
+    if (isset($data->customfields)) {
+        $handler = core_course\customfield\course_handler::instance();
+        $data->id = $course->id;
+        $data->contextid = $context->id;
+        $handler->save_customfield_data($data);
+    }
     return $course;
 }
 
@@ -2577,9 +2578,11 @@ function update_course($data, $editoroptions = NULL) {
         }
     }
 
-    $data->contextid = $context->id;
-    $handler = core_course\customfield\course_handler::instance();
-    $handler->save_customfield_data($data);
+    if (isset($data->customfields)) {
+        $handler = core_course\customfield\course_handler::instance();
+        $data->contextid = $context->id;
+        $handler->save_customfield_data($data);
+    }
 
     // Update with the new data
     $DB->update_record('course', $data);

@@ -97,7 +97,9 @@ class field extends persistent {
                         'null'     => NULL_ALLOWED
                 ],
                 'descriptionformat' => [
-                        'type'     => PARAM_INT,
+                        'type' => PARAM_INT,
+                        'default' => FORMAT_MOODLE,
+                        'optional' => true
                 ],
                 'sortorder'         => [
                         'type'    => PARAM_INT,
