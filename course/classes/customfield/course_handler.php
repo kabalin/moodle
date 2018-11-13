@@ -142,6 +142,7 @@ class course_handler extends \core_customfield\handler {
             $content .= $output->render($data->display());
         }
         $content .= \html_writer::end_tag('div');
+
         return $content;
     }
 

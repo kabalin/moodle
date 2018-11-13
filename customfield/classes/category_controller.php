@@ -43,7 +43,6 @@ class category_controller {
      * @param \stdClass|null $record
      */
     public function __construct(int $id = 0, \stdClass $record = null) {
-
         $this->category = new category($id, $record);
     }
 
