@@ -55,7 +55,6 @@ abstract class field_controller {
                 throw new \coding_exception(get_string('errorfieldtypenotfound', 'core_customfield', s($record->type)));
             }
         }
-        return parent::__construct($id, $record);
     }
 
     /**
