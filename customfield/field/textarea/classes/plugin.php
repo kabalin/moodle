@@ -73,12 +73,12 @@ class plugin extends plugin_base {
      * @param \moodleform $mform
      * @throws \coding_exception
      */
-    public static function edit_field_add(\core_customfield\field $field, \MoodleQuickForm $mform) {
+    public static function edit_field_add(\core_customfield\field_controller $field, \MoodleQuickForm $mform) {
         $desceditoroptions = self::value_editor_options($field);
         $mform->addElement('editor', api::field_inputname($field).'_editor', format_string($field->get('name')), null, $desceditoroptions);
     }
 
-    public static function value_editor_options(\core_customfield\field $field, data_controller $data = null) {
+    public static function value_editor_options(\core_customfield\field_controller $field, data_controller $data = null) {
         global $CFG;
         require_once($CFG->libdir.'/formslib.php');
         if ($data) {

@@ -92,7 +92,7 @@ class plugin extends plugin_base {
      * @param \MoodleQuickForm $mform
      * @throws \coding_exception
      */
-    public static function edit_field_add(\core_customfield\field $field, \MoodleQuickForm $mform) {
+    public static function edit_field_add(\core_customfield\field_controller $field, \MoodleQuickForm $mform) {
         $config = $field->get('configdata');
         $type = ($config['ispassword'] == 1) ? 'password' : 'text';
         $mform->addElement($type, api::field_inputname($field), format_string($field->get('name')));

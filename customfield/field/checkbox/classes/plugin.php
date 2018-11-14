@@ -65,7 +65,7 @@ class plugin extends plugin_base {
      * @param \core_customfield\field $field
      * @param \MoodleQuickForm $mform
      */
-    public static function edit_field_add(\core_customfield\field $field, \MoodleQuickForm $mform) {
+    public static function edit_field_add(\core_customfield\field_controller $field, \MoodleQuickForm $mform) {
         $config = $field->get('configdata');
         $checkbox = $mform->addElement('advcheckbox', api::field_inputname($field), format_string($field->get('name')));
         if ((api::datafield($field) == '1') || $config['checkbydefault'] == 1) {

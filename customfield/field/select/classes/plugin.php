@@ -69,7 +69,7 @@ class plugin extends plugin_base {
      * @param \MoodleQuickForm $mform
      * @throws \coding_exception
      */
-    public static function edit_field_add(\core_customfield\field $field, \MoodleQuickForm $mform) {
+    public static function edit_field_add(\core_customfield\field_controller $field, \MoodleQuickForm $mform) {
         $config = $field->get('configdata');
         $options = self::get_options_array($field);
         $formattedoptions = array();
@@ -94,7 +94,7 @@ class plugin extends plugin_base {
      *
      * @return array
      */
-    public static function get_options_array(\core_customfield\field $field): array {
+    public static function get_options_array(\core_customfield\field_controller $field): array {
         if ($field->get_configdata_property('options')) {
             $options = explode("\r\n", $field->get_configdata_property('options'));
         } else {

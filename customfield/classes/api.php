@@ -522,7 +522,15 @@ class api {
         $DB->delete_records_select('customfield_data', "contextid $sql", $params);
     }
 
-    public static function field_factory($id, \stdClass $data = null) {
+    /**
+     * Instantiate correct type field_controller class.
+     *
+     * @param int $id
+     * @param \stdClass|null $data
+     * @return mixed
+     * @throws \coding_exception
+     */
+    public static function field_factory(int $id, \stdClass $data = null) {
         if (empty($data)) {
             $fieldrecord = new field($id);
             $customfieldtype = "\\customfield_{$fieldrecord->get('type')}\\field_controller";

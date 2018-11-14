@@ -122,6 +122,6 @@ class category_controller {
      * @throws \dml_exception
      */
     public function fields() {
-        return field::get_fields_from_category_array($this->get('id'));
+        return field_controller::get_fields_from_category_array($this->get('id'));
     }
 }
