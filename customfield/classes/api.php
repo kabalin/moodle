@@ -541,4 +541,15 @@ class api {
         $customfieldtype = "\\customfield_{$data->type}\\field_controller";
         return new $customfieldtype($id, $data);
     }
+
+    /**
+     * @param int $itemid
+     * @return mixed
+     * @throws \dml_exception
+     */
+    public static function get_data_fieldid_from_itemid(int $itemid) {
+        global $DB;
+
+        return $DB->get_field(data::TABLE, 'fieldid', ['itemid' => $itemid])[0];
+    }
 }
