@@ -74,11 +74,11 @@ abstract class field_controller {
     /**
      * Persistent getter parser.
      *
-     * @param $property
+     * @param string $property
      * @return mixed
      * @throws \coding_exception
      */
-    final public function get($property) {
+    final public function get(string $property) {
         return $this->field->get($property);
     }
 

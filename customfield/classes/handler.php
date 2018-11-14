@@ -209,7 +209,7 @@ abstract class handler {
     }
 
     /**
-     * @param category $category
+     * @param category_controller $category
      * @param string $type
      * @return field_controller
      * @throws \coding_exception

@@ -455,7 +455,7 @@ class api {
     /**
      * Return plugin data type.
      *
-     * @param field $field
+     * @param field_controller $field
      * @return string
      * @throws \coding_exception
      */
@@ -477,18 +477,19 @@ class api {
     /**
      * Add fields for editing a textarea field.
      *
-     * @param field $field
+     * @param data_controller $data
      * @param \MoodleQuickForm $mform
      * @throws \coding_exception
      */
-    public static function display(data $data) {
+    public static function display(data_controller $data) {
         self::plugin_callback($data->get_field(), 'display', [$data]);
     }
 
     /**
      * Prepare the field data to set in the configuration form
      *
-     * @param field $field
+     * @param field_controller $field
+     * @return \stdClass
      * @throws \coding_exception
      */
     public static function prepare_field_for_form(field_controller $field) : \stdClass {
@@ -498,6 +499,7 @@ class api {
     /**
      * Returns the name of the field to be used on HTML forms.
      *
+     * @param field_controller $field
      * @return string
      * @throws \moodle_exception
      */
