@@ -64,7 +64,7 @@ class api {
         foreach ($fieldsdata as $data) {
             $fieldobj    = (object) ['id'   => $data->field_id, 'name' => $data->name, 'shortname' => $data->shortname,
                                      'type' => $data->type, 'configdata' => $data->configdata, 'categoryid' => $data->categoryid];
-            $field       = new field(0, $fieldobj);
+            $field       = api::field_factory(0, $fieldobj);
             $categoryobj = (object) ['id' => $data->categoryid, 'name' => $data->categoryname,
                                      'component' => $data->component, 'area' => $data->area, 'itemid' => $data->itemid];
             $field->set_category(new category_controller($categoryobj->id, $categoryobj));
@@ -270,7 +270,7 @@ class api {
                                   'configdata' => $data->configdata, 'categoryid' => $data->categoryid];
             $field    = new field(0, $fieldobj);
             $categoryobj = (object) ['id' => $data->categoryid, 'name' => $data->categoryname];
-            $field->set_category(new category($categoryob->id, $categoryobj));
+            $field->set_category(new category($categoryobj->id, $categoryobj));
             unset($data->field_id, $data->shortname, $data->type, $data->categoryid, $data->configdata, $data->categoryname);
             if (empty($data->id)) {
                 $data->id        = 0;
@@ -426,7 +426,7 @@ class api {
      * @return  mixed       The return value.
      * @throws \coding_exception
      */
-    protected static function plugin_callback(field $field, string $methodname, array $params, $default = null) {
+    protected static function plugin_callback(field_controller $field, string $methodname, array $params, $default = null) {
         $classname = '\\customfield_' . $field->get('type') . '\\plugin';
         if (!class_exists($classname)) {
             // There could be data in the database that belongs to the type that was deleted.
@@ -444,11 +444,11 @@ class api {
     /**
      * Allows to add elements to the field configuration form
      *
-     * @param field $field
+     * @param field_controller $field
      * @param \MoodleQuickForm $mform
      * @throws \coding_exception
      */
-    public static function add_field_to_config_form(field $field, \MoodleQuickForm $mform) {
+    public static function add_field_to_config_form($field, \MoodleQuickForm $mform) {
         self::plugin_callback($field, 'add_field_to_config_form', [$field, $mform]);
     }
 
@@ -459,18 +459,18 @@ class api {
      * @return string
      * @throws \coding_exception
      */
-    public static function datafield(field $field): string {
+    public static function datafield(field_controller $field): string {
         return self::plugin_callback($field, 'datafield', array());
     }
 
     /**
      * Add fields for editing a textarea field.
      *
-     * @param field $field
+     * @param field_controller $field
      * @param \MoodleQuickForm $mform
      * @throws \coding_exception
      */
-    public static function edit_field_add(field $field, \MoodleQuickForm $mform) {
+    public static function edit_field_add(field_controller $field, \MoodleQuickForm $mform) {
         self::plugin_callback($field, 'edit_field_add', [$field, $mform]);
     }
 
@@ -501,7 +501,7 @@ class api {
      * @return string
      * @throws \moodle_exception
      */
-    public static function field_inputname(field $field): string {
+    public static function field_inputname(field_controller $field): string {
         return 'customfield_' . $field->get('shortname');
     }
 

@@ -48,7 +48,7 @@ class plugin extends plugin_base {
      * @param \MoodleQuickForm $mform
      * @throws \coding_exception
      */
-    public static function add_field_to_config_form(\core_customfield\field $field, \MoodleQuickForm $mform) {
+    public static function add_field_to_config_form(\core_customfield\field_controller $field, \MoodleQuickForm $mform) {
         global $PAGE;
         $mform->addElement('header', 'header_specificsettings', get_string('specificsettings', 'customfield_textarea'));
         $mform->setExpanded('header_specificsettings', true);

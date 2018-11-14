@@ -123,7 +123,7 @@ abstract class handler {
      * @return handler
      * @throws \moodle_exception
      */
-    public static function get_handler_for_field(\customfield_date\field_controller $field) : handler {
+    public static function get_handler_for_field(field_controller $field) : handler {
         return self::get_handler_for_category($field->get_category());
     }
 
@@ -267,7 +267,7 @@ abstract class handler {
      * @param null $instanceid
      * @return bool
      */
-    abstract public function can_edit(field $field, $instanceid = null): bool;
+    abstract public function can_edit(field_controller $field, $instanceid = null): bool;
 
     /**
      * The current user can view the value of the custom field on the given record on this component.
@@ -276,7 +276,7 @@ abstract class handler {
      * @param null $instanceid
      * @return bool
      */
-    abstract public function can_view(field $field, $instanceid = null): bool;
+    abstract public function can_view(field_controller $field, $instanceid = null): bool;
 
     /**
      * Display field on course listing, search, etc.
@@ -482,7 +482,7 @@ abstract class handler {
      * @param stdClass $data data from the form
      * @throws \moodle_exception
      */
-    public function save_field(field $field, stdClass $data) {
+    public function save_field(field_controller $field, stdClass $data) {
         try {
             api::save_field($field, $data);
             $this->fieldsdefinitions = null;
@@ -534,7 +534,7 @@ abstract class handler {
      * @param field $field
      * @return string
      */
-    public function get_field_formatted_name(field $field): string {
+    public function get_field_formatted_name(field_controller $field): string {
         return format_string($field->get('name'), true, ['context' => $this->get_configuration_context()]);
     }
 

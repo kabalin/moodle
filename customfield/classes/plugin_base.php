@@ -41,7 +41,7 @@ abstract class plugin_base {
      * @param \MoodleQuickForm $mform
      * @throws \coding_exception
      */
-    public static function add_field_to_config_form(field $field, \MoodleQuickForm $mform) {
+    public static function add_field_to_config_form(field_controller $field, \MoodleQuickForm $mform) {
 
     }
 

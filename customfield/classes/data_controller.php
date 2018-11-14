@@ -151,9 +151,9 @@ abstract class data_controller {
     /**
      * Field associated with this data
      *
-     * @return field
+     * @return field_controller
      */
-    public function get_field(): field {
+    public function get_field(): field_controller {
         return $this->field;
     }
 

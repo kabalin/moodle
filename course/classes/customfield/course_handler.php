@@ -23,6 +23,7 @@
 namespace core_course\customfield;
 
 use core_customfield\field;
+use core_customfield\field_controller;
 
 defined('MOODLE_INTERNAL') || die;
 
@@ -72,10 +73,13 @@ class course_handler extends \core_customfield\handler {
     /**
      * The current user can edit custom fields on the given course.
      *
+     * @param field_controller $field
      * @param int $instanceid id of the course to test edit permission
      * @return bool true if the current can edit custom fields, false otherwise
+     * @throws \coding_exception
+     * @throws \moodle_exception
      */
-    public function can_edit(field $field, $instanceid = null) : bool {
+    public function can_edit(field_controller $field, $instanceid = null) : bool {
         if ($instanceid) {
             $context = $this->get_data_context($instanceid);
             return has_capability('moodle/course:update', $context) &&
@@ -89,7 +93,7 @@ class course_handler extends \core_customfield\handler {
         }
     }
 
-    public function can_view(field $field, $instanceid = null): bool {
+    public function can_view(field_controller $field, $instanceid = null): bool {
         $visibility = $field->get_configdata_property('visibility');
         if ($visibility == self::NOTVISIBLE) {
             return false;

@@ -45,6 +45,7 @@ abstract class field_controller {
      *
      * @param int $id
      * @param \stdClass|null $record
+     * @throws \coding_exception
      */
     public function __construct(int $id = 0, \stdClass $record = null) {
         $this->field = new field($id, $record);
@@ -103,7 +104,7 @@ abstract class field_controller {
     final public function delete() {
         $this->delete_data();
         $response = $this->field->delete();
-        $this->clear_cache();
+        //$this->clear_cache();
         return $response;
     }
 
@@ -113,7 +114,7 @@ abstract class field_controller {
      * @return void
      */
     final public function save() {
-        $this->clear_cache();
+        //$this->clear_cache();
         $this->field->save();
     }
 
@@ -125,6 +126,15 @@ abstract class field_controller {
      */
     public static function record_exists(int $id) {
         return field::record_exists($id);
+    }
+
+    /**
+     * Persistent to_record parser.
+     *
+     * @return \stdClass
+     */
+    final public function to_record() {
+        return $this->field->to_record();
     }
 
     /**
@@ -158,7 +168,7 @@ abstract class field_controller {
      */
     public function get_category(): category {
         if (!$this->category) {
-            $this->category = new category($this->raw_get('categoryid'));
+            $this->category = new category($this->field->get('categoryid'));
         }
         return $this->category;
     }
@@ -169,7 +179,7 @@ abstract class field_controller {
      * @return array
      */
     protected function get_configdata(): array {
-        return json_decode($this->raw_get('configdata'), true) ?? array();
+        return json_decode($this->field->get('configdata'), true) ?? array();
     }
 
     /**
@@ -210,7 +220,7 @@ abstract class field_controller {
               ORDER BY sortorder";
         $records = $DB->get_records_sql($sql, $params + ['categoryid' => $categoryid]);
         foreach ($records as $fielddata) {
-            $fields[] = new field($fielddata->id, $fielddata);
+            $fields[] = api::field_factory($fielddata->id, $fielddata);
         }
 
         return $fields;

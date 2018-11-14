@@ -43,7 +43,7 @@ class plugin extends plugin_base {
      * @param \MoodleQuickForm $mform
      * @throws \coding_exception
      */
-    public static function add_field_to_config_form(\core_customfield\field $field, \MoodleQuickForm $mform) {
+    public static function add_field_to_config_form(\core_customfield\field_controller $field, \MoodleQuickForm $mform) {
         // Get the current calendar in use - see MDL-18375.
         $calendartype = \core_calendar\type_factory::get_calendar_instance();
 

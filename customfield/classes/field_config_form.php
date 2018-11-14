@@ -46,7 +46,7 @@ class field_config_form extends \moodleform {
             throw new \coding_exception('Handler must be passed in customdata');
         }
         $field = $this->_customdata['field'];
-        if (!$field || !$field instanceof field) {
+        if (!$field || !$field instanceof field_controller) {
             throw new \coding_exception('Field must be passed in customdata');
         }
 
