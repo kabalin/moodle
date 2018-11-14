@@ -2488,7 +2488,8 @@ function create_course($data, $editoroptions = NULL) {
     }
 
     // Save custom fields.
-    if (isset($data->customfields)) {
+    // This check if $data contains customfield_*.
+    if (strpos(implode('', array_keys(get_object_vars($data))), 'customfield')) {
         $handler = core_course\customfield\course_handler::instance();
         $data->id = $course->id;
         $data->contextid = $context->id;
