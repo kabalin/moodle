@@ -116,7 +116,7 @@ abstract class data_controller {
 
     /**
      * @param int $fieldid
-     * @return data_controller
+     * @return self
      */
     protected static function fieldload(int $fieldid): self {
         global $DB;
@@ -133,7 +133,7 @@ abstract class data_controller {
     /**
      * Set the field associated with this data
      *
-     * @param field $field
+     * @param field_controller $field
      */
     public function set_field(field_controller $field) {
         $this->field = $field;

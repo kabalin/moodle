@@ -40,7 +40,7 @@ class plugin extends plugin_base {
     /**
      * Add fields for editing a text field.
      *
-     * @param \core_customfield\field $field
+     * @param \core_customfield\field_controller $field
      * @param \MoodleQuickForm $mform
      */
     public static function add_field_to_config_form(\core_customfield\field_controller $field, \MoodleQuickForm $mform) {

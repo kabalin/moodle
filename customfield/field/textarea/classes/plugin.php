@@ -44,7 +44,7 @@ class plugin extends plugin_base {
     /**
      * Add fields for editing a textarea field.
      *
-     * @param \core_customfield\field $field
+     * @param \core_customfield\field_controller $field
      * @param \MoodleQuickForm $mform
      */
     public static function add_field_to_config_form(\core_customfield\field_controller $field, \MoodleQuickForm $mform) {
@@ -91,7 +91,7 @@ class plugin extends plugin_base {
     /**
      * Prepare the field data to set in the configuration form
      *
-     * @param field $field
+     * @param field_controller $field
      * @return \stdClass
      */
     public static function prepare_field_for_form(\core_customfield\field_controller $field) : \stdClass {

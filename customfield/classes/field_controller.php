@@ -30,9 +30,7 @@ defined('MOODLE_INTERNAL') || die;
  * @package core_customfield
  */
 abstract class field_controller {
-    /**
-     * Field persistent
-     */
+
     protected $field;
 
     /**
@@ -141,9 +139,6 @@ abstract class field_controller {
         $DB->delete_records('customfield_data', ['fieldid' => $this->get('id')]);
     }
 
-    // TODO: Review from here.
-
-
     /**
      * Set the category associated with this field
      *
@@ -180,7 +175,7 @@ abstract class field_controller {
      */
     public function get_configdata_property(string $property) {
         $configdata = $this->get('configdata');
-        if ( !isset($configdata[$property]) ) {
+        if (!isset($configdata[$property])) {
             return null;
         }
         return $configdata[$property];

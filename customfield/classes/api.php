@@ -376,7 +376,7 @@ class api {
      * @param     $area
      * @param     $itemid
      * @param int $sortorder
-     * @return array
+     * @return category_controller[]
      */
     public static function list_categories($component, $area, $itemid, $sortorder = 0): array {
         global $DB;
@@ -406,7 +406,7 @@ class api {
      * If the callback returns null, then the default value is returned instead.
      * If the class does not exist, then the default value is returned.
      *
-     * @param   field $field
+     * @param   field_controller $field
      * @param   string $methodname The name of the staticically defined method on the class.
      * @param   array $params The arguments to pass into the method.
      * @param   mixed $default The default value.
@@ -430,7 +430,7 @@ class api {
     /**
      * Allows to add elements to the field configuration form
      *
-     * @param field_controller $field
+     * @param $field
      * @param \MoodleQuickForm $mform
      */
     public static function add_field_to_config_form($field, \MoodleQuickForm $mform) {

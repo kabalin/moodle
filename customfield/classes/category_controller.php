@@ -109,7 +109,7 @@ class category_controller {
     // TODO: review from here
 
     /**
-     * @return array
+     * @return field_controller[]
      */
     public function fields() {
         return field_controller::get_fields_from_category_array($this->get('id'));

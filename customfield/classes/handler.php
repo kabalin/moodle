@@ -91,7 +91,7 @@ abstract class handler {
      * Some areas may choose to use singleton/caching here
      *
      * @param int $itemid
-     * @return handler
+     * @return object
      */
     public static function instance(int $itemid = 0) : handler {
         return new static($itemid);
@@ -103,7 +103,7 @@ abstract class handler {
      * @param string $component
      * @param string $area
      * @param int $itemid
-     * @return handler
+     * @return object
      */
     public static function get_handler(string $component, string $area, int $itemid = 0) : handler {
         $classname = $component . '\\customfield\\' . $area . '_handler';
@@ -117,8 +117,8 @@ abstract class handler {
     /**
      * Return handler for a given field
      *
-     * @param \customfield_date\field_controller $field
-     * @return handler
+     * @param field_controller $field
+     * @return mixed
      */
     public static function get_handler_for_field(field_controller $field) : handler {
         return self::get_handler_for_category($field->get_category());
@@ -128,7 +128,7 @@ abstract class handler {
      * Return the handler for a given category
      *
      * @param category $category
-     * @return handler
+     * @return object
      */
     public static function get_handler_for_category(category_controller $category) : handler {
         return self::get_handler($category->get('component'), $category->get('area'), $category->get('itemid'));
@@ -194,7 +194,7 @@ abstract class handler {
     /**
      * The form to create or edit a field
      *
-     * @param field $field
+     * @param field_controller $field
      * @return field_config_form
      */
     public function get_field_config_form(field_controller $field): field_config_form {
@@ -257,7 +257,7 @@ abstract class handler {
     /**
      * The current user can edit custom fields on the given record on this component.
      *
-     * @param field $field
+     * @param field_controller $field
      * @param null $instanceid
      * @return bool
      */
@@ -266,7 +266,7 @@ abstract class handler {
     /**
      * The current user can view the value of the custom field on the given record on this component.
      *
-     * @param field $field
+     * @param field_controller $field
      * @param null $instanceid
      * @return bool
      */
@@ -282,10 +282,10 @@ abstract class handler {
     /**
      * The given field is supported on by this handler
      *
-     * @param field $field
+     * @param field_controller $field
      * @return bool
      */
-    public function is_field_supported(\core_customfield\field $field): bool {
+    public function is_field_supported(field_controller $field): bool {
         // TODO: Placeholder for now to allow in the future components to decide that they don't want to support some field types.
         return true;
     }
@@ -464,7 +464,7 @@ abstract class handler {
     /**
      * Save the field configuration with the data from the form
      *
-     * @param field $field
+     * @param field_controller $field
      * @param stdClass $data data from the form
      */
     public function save_field(field_controller $field, stdClass $data) {
@@ -480,10 +480,10 @@ abstract class handler {
     /**
      * Prepare category data to set in the configuration form
      *
-     * @param category $category
+     * @param category_controller $category
      * @return stdClass
      */
-    protected function prepare_category_for_form(category $category) : stdClass {
+    protected function prepare_category_for_form(category_controller $category) : stdClass {
         return $category->to_record();
     }
 
@@ -516,7 +516,7 @@ abstract class handler {
     /**
      * Returns the field name formatted according to configuration context.
      *
-     * @param field $field
+     * @param field_controller $field
      * @return string
      */
     public function get_field_formatted_name(field_controller $field): string {

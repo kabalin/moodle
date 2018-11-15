@@ -39,7 +39,7 @@ class plugin extends plugin_base {
     /**
      * Add fields for editing a date field.
      *
-     * @param field $field
+     * @param field_controller $field
      * @param \MoodleQuickForm $mform
      */
     public static function add_field_to_config_form(\core_customfield\field_controller $field, \MoodleQuickForm $mform) {
