@@ -42,7 +42,6 @@ class plugin extends plugin_base {
      *
      * @param \core_customfield\field $field
      * @param \MoodleQuickForm $mform
-     * @throws \coding_exception
      */
     public static function add_field_to_config_form(\core_customfield\field_controller $field, \MoodleQuickForm $mform) {
 
@@ -90,7 +89,6 @@ class plugin extends plugin_base {
      * Add fields for editing a text profile field.
      *
      * @param \MoodleQuickForm $mform
-     * @throws \coding_exception
      */
     public static function edit_field_add(\core_customfield\field_controller $field, \MoodleQuickForm $mform) {
         $config = $field->get('configdata');

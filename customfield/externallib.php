@@ -40,9 +40,6 @@ class core_customfield_external extends external_api {
 
     /**
      * @param $id
-     * @throws coding_exception
-     * @throws dml_exception
-     * @throws moodle_exception
      */
     public static function delete_entry($id) {
         $params = self::validate_parameters(self::delete_entry_parameters(), ['id' => $id]);
@@ -79,10 +76,6 @@ class core_customfield_external extends external_api {
      * @param string $area
      * @param int $itemid
      * @return array|object|stdClass
-     * @throws coding_exception
-     * @throws dml_exception
-     * @throws moodle_exception
-     * @throws require_login_exception
      */
     public static function reload_template($component, $area, $itemid) {
         global $PAGE;
@@ -147,8 +140,6 @@ class core_customfield_external extends external_api {
 
     /**
      * @param $id
-     * @throws coding_exception
-     * @throws moodle_exception
      */
     public static function delete_category($id) {
         $category = new \core_customfield\category_controller($id);

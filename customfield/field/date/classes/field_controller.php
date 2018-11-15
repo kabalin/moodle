@@ -38,7 +38,6 @@ class field_controller extends \core_customfield\field_controller {
      * @param array $data
      * @param array $files
      * @return array associative array of error messages
-     * @throws \coding_exception
      */
     public function validate_config_form(array $data, $files = array()) : array {
         $errors = array();

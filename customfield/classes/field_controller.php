@@ -45,7 +45,6 @@ abstract class field_controller {
      *
      * @param int $id
      * @param \stdClass|null $record
-     * @throws \coding_exception
      */
     public function __construct(int $id = 0, \stdClass $record = null) {
         $this->field = new field($id, $record);
@@ -76,7 +75,6 @@ abstract class field_controller {
      *
      * @param string $property
      * @return mixed
-     * @throws \coding_exception
      */
     final public function get(string $property) {
         return $this->field->get($property);
@@ -88,7 +86,6 @@ abstract class field_controller {
      * @param $property
      * @param $value
      * @return field
-     * @throws \coding_exception
      */
     final public function set($property, $value) {
         return $this->field->set($property, $value);
@@ -98,8 +95,6 @@ abstract class field_controller {
      * Persistent delete parser.
      *
      * @return bool
-     * @throws \coding_exception
-     * @throws \dml_exception
      */
     final public function delete() {
         $this->delete_data();
@@ -140,8 +135,6 @@ abstract class field_controller {
     /**
      * Bulk data delete
      *
-     * @throws \coding_exception
-     * @throws \dml_exception
      */
     public function delete_data() {
         global $DB;
@@ -164,7 +157,6 @@ abstract class field_controller {
      * Get the category associated with this field
      *
      * @return category_controller
-     * @throws \moodle_exception
      */
     public function get_category(): category_controller {
         if (!$this->category) {
@@ -185,7 +177,6 @@ abstract class field_controller {
     /**
      * @param string $property
      * @return mixed
-     * @throws \moodle_exception
      */
     public function get_configdata_property(string $property) {
         $configdata = $this->get('configdata');
@@ -198,8 +189,6 @@ abstract class field_controller {
     /**
      * @param int $categoryid
      * @return array
-     * @throws \coding_exception
-     * @throws \dml_exception
      */
     public static function get_fields_from_category_array(int $categoryid): array {
         global $DB;

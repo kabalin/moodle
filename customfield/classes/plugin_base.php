@@ -39,7 +39,6 @@ abstract class plugin_base {
      *
      * @param field $field
      * @param \MoodleQuickForm $mform
-     * @throws \coding_exception
      */
     public static function add_field_to_config_form(field_controller $field, \MoodleQuickForm $mform) {
 

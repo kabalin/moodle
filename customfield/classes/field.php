@@ -86,8 +86,6 @@ class field extends persistent {
      *
      * @param int $value The value.
      * @return bool
-     * @throws \moodle_exception
-     * @throws \dml_write_exception
      */
     protected function validate_shortname($value) {
         if (strpos($value, ' ') !== false) {
@@ -102,7 +100,6 @@ class field extends persistent {
      *
      * @param string $value
      * @return bool
-     * @throws \moodle_exception
      */
     protected function validate_configdata($value) {
         $fields = $this->get('configdata');
@@ -118,8 +115,6 @@ class field extends persistent {
      * Delete associated data before delete field
      *
      * @return void
-     * @throws \coding_exception
-     * @throws \dml_exception
      */
     protected function before_delete() {
         global $DB;
@@ -148,7 +143,6 @@ class field extends persistent {
      * Get the category associated with this field
      *
      * @return category_controller
-     * @throws \moodle_exception
      */
     public function get_category(): category_controller {
         if (!$this->category) {

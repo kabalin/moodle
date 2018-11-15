@@ -51,7 +51,6 @@ class category_controller {
      *
      * @param $property
      * @return mixed
-     * @throws \coding_exception
      */
     final public function get($property) {
         return $this->category->get($property);
@@ -63,7 +62,6 @@ class category_controller {
      * @param $property
      * @param $value
      * @return category_model
-     * @throws \coding_exception
      */
     final public function set($property, $value) {
         return $this->category->set($property, $value);
@@ -73,8 +71,6 @@ class category_controller {
      * Persistent delete parser.
      *
      * @return bool
-     * @throws \coding_exception
-     * @throws \dml_exception
      */
     final public function delete() {
         $this->delete_fields();
@@ -101,10 +97,6 @@ class category_controller {
 
     /**
      * Bulk fields delete
-     *
-     * @throws \coding_exception
-     * @throws \dml_exception
-     * @throws \moodle_exception
      */
     public function delete_fields() {
         global $DB;
@@ -117,9 +109,7 @@ class category_controller {
     // TODO: review from here
 
     /**
-     * @return field[]
-     * @throws \moodle_exception
-     * @throws \dml_exception
+     * @return array
      */
     public function fields() {
         return field_controller::get_fields_from_category_array($this->get('id'));

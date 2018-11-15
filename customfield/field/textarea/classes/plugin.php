@@ -46,7 +46,6 @@ class plugin extends plugin_base {
      *
      * @param \core_customfield\field $field
      * @param \MoodleQuickForm $mform
-     * @throws \coding_exception
      */
     public static function add_field_to_config_form(\core_customfield\field_controller $field, \MoodleQuickForm $mform) {
         global $PAGE;
@@ -70,8 +69,8 @@ class plugin extends plugin_base {
     /**
      * Add fields for editing a textarea field.
      *
-     * @param \moodleform $mform
-     * @throws \coding_exception
+     * @param \core_customfield\field_controller $field
+     * @param \MoodleQuickForm                   $mform
      */
     public static function edit_field_add(\core_customfield\field_controller $field, \MoodleQuickForm $mform) {
         $desceditoroptions = self::value_editor_options($field);

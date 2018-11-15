@@ -50,9 +50,6 @@ function core_customfield_inplace_editable($itemtype, $itemid, $newvalue) {
  * @param bool $forcedownload whether or not force download
  * @param array $options additional options affecting the file serving
  * @return bool false if the file not found, just send the file otherwise and do not return
- * @throws coding_exception
- * @throws moodle_exception
- * @throws require_login_exception
  */
 function core_customfield_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options=array()) {
     if ($filearea !== 'description') {

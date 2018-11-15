@@ -43,7 +43,7 @@ class core_customfield_category_testcase extends advanced_testcase {
     }
 
     /**
-     * @throws \coding_exception
+     *
      */
     public function test_create_category_and_correctlly_reorder() {
 
@@ -152,7 +152,7 @@ class core_customfield_category_testcase extends advanced_testcase {
     }
 
     /**
-     * @throws \coding_exception
+     *
      */
     public function test_create_category_and_rename() {
         // Create the category.
@@ -190,7 +190,7 @@ class core_customfield_category_testcase extends advanced_testcase {
     }
 
     /**
-     * @throws \coding_exception
+     *
      */
     public function test_create_category_and_delete() {
         // Create the category.
@@ -232,9 +232,7 @@ class core_customfield_category_testcase extends advanced_testcase {
     }
 
     /**
-     * @throws \coding_exception
-     * @throws \dml_exception
-     * @throws \moodle_exception
+     *
      */
     public function test_create_categories_and_move_it_as_drag_and_drop() {
         // Create the categories.
@@ -395,9 +393,7 @@ class core_customfield_category_testcase extends advanced_testcase {
     }
 
     /**
-     * @throws \coding_exception
-     * @throws \dml_exception
-     * @throws \moodle_exception
+     *
      */
     public function test_categories_list_reorder() {
         // Create the categories.
@@ -500,9 +496,7 @@ class core_customfield_category_testcase extends advanced_testcase {
     }
 
     /**
-     * @throws \coding_exception
-     * @throws \dml_exception
-     * @throws \moodle_exception
+     *
      */
     public function test_categories_before_delete() {
         // Create the category.

@@ -37,7 +37,6 @@ class data_controller extends \core_customfield\data_controller {
      * Add fields for editing data of a textarea field on a context.
      *
      * @param \moodleform $mform
-     * @throws \coding_exception
      */
     public function edit_field_add(\MoodleQuickForm $mform) {
 
@@ -48,7 +47,6 @@ class data_controller extends \core_customfield\data_controller {
      *
      * @param string|array $data
      * @return mixed
-     * @throws \coding_exception
      */
     protected function preprocess($data) {
         if (!$data) {
@@ -79,8 +77,6 @@ class data_controller extends \core_customfield\data_controller {
      *
      * @param \stdClass $datanew data coming from the form
      * @return mixed returns data id if success of db insert/update, false on fail, 0 if not permitted
-     * @throws \moodle_exception
-     * @throws \dml_exception
      */
     public function edit_save_data(\stdClass $datanew) {
         $value = $this->preprocess($datanew->{api::field_inputname($this->get_field())});

@@ -75,7 +75,6 @@ abstract class handler {
      * - get_handler_for_category
      *
      * @param int $itemid
-     * @throws \coding_exception
      */
     protected final function __construct(int $itemid = 0) {
         if (!preg_match('|^(\w+_[\w_]+)\\\\customfield\\\\([\w_]+)_handler$|', static::class, $matches)) {
@@ -105,7 +104,6 @@ abstract class handler {
      * @param string $area
      * @param int $itemid
      * @return handler
-     * @throws \moodle_exception
      */
     public static function get_handler(string $component, string $area, int $itemid = 0) : handler {
         $classname = $component . '\\customfield\\' . $area . '_handler';
@@ -121,7 +119,6 @@ abstract class handler {
      *
      * @param \customfield_date\field_controller $field
      * @return handler
-     * @throws \moodle_exception
      */
     public static function get_handler_for_field(field_controller $field) : handler {
         return self::get_handler_for_category($field->get_category());
@@ -132,7 +129,6 @@ abstract class handler {
      *
      * @param category $category
      * @return handler
-     * @throws \moodle_exception
      */
     public static function get_handler_for_category(category_controller $category) : handler {
         return self::get_handler($category->get('component'), $category->get('area'), $category->get('itemid'));
@@ -200,7 +196,6 @@ abstract class handler {
      *
      * @param field $field
      * @return field_config_form
-     * @throws \moodle_exception
      */
     public function get_field_config_form(field_controller $field): field_config_form {
          $form = new field_config_form(null, ['handler' => $this, 'field' => $field]);
@@ -212,7 +207,6 @@ abstract class handler {
      * @param category_controller $category
      * @param string $type
      * @return field_controller
-     * @throws \coding_exception
      */
     public function new_field(category_controller $category, string $type) : field_controller {
         $record = new \stdClass();
@@ -340,7 +334,6 @@ abstract class handler {
      *
      * @param \MoodleQuickForm $mform
      * @param int $instanceid
-     * @throws \moodle_exception
      */
     public function definition_after_data(\MoodleQuickForm $mform, int $instanceid) {
         $editablefields = $this->get_editable_fields($instanceid);
@@ -358,7 +351,6 @@ abstract class handler {
      *
      * @param stdClass $record
      * @param bool $foredit only return editable fields
-     * @throws \moodle_exception
      */
     public function add_customfield_data_to_object(stdClass $record, bool $foredit = false) {
         if (!isset($record->id)) {
@@ -376,8 +368,6 @@ abstract class handler {
      * Saves the given data for custom fields
      *
      * @param stdClass $data
-     * @throws \dml_exception
-     * @throws \moodle_exception
      */
     public function save_customfield_data(stdClass $data) {
         $editablefields = $this->get_editable_fields($data->id);
@@ -392,8 +382,6 @@ abstract class handler {
      *
      * @param stdClass $data
      * @param array $files
-     * @throws \dml_exception
-     * @throws \moodle_exception
      */
     public function validate_customfield_data(stdClass $data, array $files) {
         $editablefields = $this->get_editable_fields($data->id);
@@ -410,8 +398,6 @@ abstract class handler {
      *
      * @param \MoodleQuickForm $mform
      * @param $record
-     * @throws \coding_exception
-     * @throws \dml_exception
      */
     public function add_custom_fields(\MoodleQuickForm $mform, $record) {
 
@@ -480,7 +466,6 @@ abstract class handler {
      *
      * @param field $field
      * @param stdClass $data data from the form
-     * @throws \moodle_exception
      */
     public function save_field(field_controller $field, stdClass $data) {
         try {

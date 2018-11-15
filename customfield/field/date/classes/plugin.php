@@ -41,7 +41,6 @@ class plugin extends plugin_base {
      *
      * @param field $field
      * @param \MoodleQuickForm $mform
-     * @throws \coding_exception
      */
     public static function add_field_to_config_form(\core_customfield\field_controller $field, \MoodleQuickForm $mform) {
         // Get the current calendar in use - see MDL-18375.
@@ -100,7 +99,6 @@ class plugin extends plugin_base {
      * Add fields for editing data of a textarea field on a context.
      *
      * @param \moodleform $mform
-     * @throws \coding_exception
      */
     public static function edit_field_add(\core_customfield\field_controller $field, \MoodleQuickForm $mform) {
         // Get the current calendar in use - see MDL-18375.
