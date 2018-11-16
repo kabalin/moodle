@@ -77,6 +77,11 @@ class plugin extends plugin_base {
         $mform->addElement('editor', api::field_inputname($field).'_editor', format_string($field->get('name')), null, $desceditoroptions);
     }
 
+    /**
+     * @param \core_customfield\field_controller $field
+     * @param data_controller|null               $data
+     * @return array
+     */
     public static function value_editor_options(\core_customfield\field_controller $field, data_controller $data = null) {
         global $CFG;
         require_once($CFG->libdir.'/formslib.php');

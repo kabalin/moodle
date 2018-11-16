@@ -31,9 +31,16 @@ defined('MOODLE_INTERNAL') || die;
  */
 abstract class field_controller {
 
+    /**
+     * Field persistent class,
+     *
+     * @var field
+     */
     protected $field;
 
     /**
+     * Category of the field.
+     *
      * @var category
      */
     protected $category;

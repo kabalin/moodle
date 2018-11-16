@@ -98,6 +98,7 @@ class plugin extends plugin_base {
     /**
      * Add fields for editing data of a textarea field on a context.
      *
+     * @param \core_customfield\field_controller $field
      * @param \moodleform $mform
      */
     public static function edit_field_add(\core_customfield\field_controller $field, \MoodleQuickForm $mform) {

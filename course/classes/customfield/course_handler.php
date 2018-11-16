@@ -76,8 +76,6 @@ class course_handler extends \core_customfield\handler {
      * @param field_controller $field
      * @param int $instanceid id of the course to test edit permission
      * @return bool true if the current can edit custom fields, false otherwise
-     * @throws \coding_exception
-     * @throws \moodle_exception
      */
     public function can_edit(field_controller $field, $instanceid = null) : bool {
         if ($instanceid) {
@@ -99,8 +97,6 @@ class course_handler extends \core_customfield\handler {
      * @param field_controller $field
      * @param int $instanceid id of the course to test edit permission
      * @return bool true if the current can edit custom fields, false otherwise
-     * @throws \coding_exception
-     * @throws \moodle_exception
      */
     public function can_view(field_controller $field, $instanceid = null): bool {
         $visibility = $field->get_configdata_property('visibility');

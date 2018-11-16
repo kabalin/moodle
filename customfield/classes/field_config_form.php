@@ -34,9 +34,6 @@ require_once($CFG->libdir . '/formslib.php');
  */
 class field_config_form extends \moodleform {
 
-    /**
-     *
-     */
     public function definition() {
         global $PAGE;
         $mform = $this->_form;

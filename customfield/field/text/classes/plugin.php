@@ -88,6 +88,7 @@ class plugin extends plugin_base {
     /**
      * Add fields for editing a text profile field.
      *
+     * @param \core_customfield\field_controller $field
      * @param \MoodleQuickForm $mform
      */
     public static function edit_field_add(\core_customfield\field_controller $field, \MoodleQuickForm $mform) {

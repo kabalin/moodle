@@ -86,10 +86,10 @@ class plugin extends plugin_base {
         $mform->setDefault(api::field_inputname($field), $defaultkey);
     }
 
-
     /**
      * Returns the options available as an array.
      *
+     * @param \core_customfield\field_controller $field
      * @return array
      */
     public static function get_options_array(\core_customfield\field_controller $field): array {

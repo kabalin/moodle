@@ -372,9 +372,9 @@ class api {
     /**
      * Returns a list of categories with their related fields.
      *
-     * @param     $component
-     * @param     $area
-     * @param     $itemid
+     * @param string $component
+     * @param string $area
+     * @param int $itemid
      * @param int $sortorder
      * @return category_controller[]
      */
@@ -430,10 +430,10 @@ class api {
     /**
      * Allows to add elements to the field configuration form
      *
-     * @param $field
+     * @param field_controller $field
      * @param \MoodleQuickForm $mform
      */
-    public static function add_field_to_config_form($field, \MoodleQuickForm $mform) {
+    public static function add_field_to_config_form(field_controller $field, \MoodleQuickForm $mform) {
         self::plugin_callback($field, 'add_field_to_config_form', [$field, $mform]);
     }
 

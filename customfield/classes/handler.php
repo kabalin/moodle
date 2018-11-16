@@ -91,7 +91,7 @@ abstract class handler {
      * Some areas may choose to use singleton/caching here
      *
      * @param int $itemid
-     * @return object
+     * @return stdClass
      */
     public static function instance(int $itemid = 0) : handler {
         return new static($itemid);
@@ -103,7 +103,7 @@ abstract class handler {
      * @param string $component
      * @param string $area
      * @param int $itemid
-     * @return object
+     * @return stdClass
      */
     public static function get_handler(string $component, string $area, int $itemid = 0) : handler {
         $classname = $component . '\\customfield\\' . $area . '_handler';
@@ -127,8 +127,8 @@ abstract class handler {
     /**
      * Return the handler for a given category
      *
-     * @param category $category
-     * @return object
+     * @param category_controller $category
+     * @return stdClass
      */
     public static function get_handler_for_category(category_controller $category) : handler {
         return self::get_handler($category->get('component'), $category->get('area'), $category->get('itemid'));
@@ -258,7 +258,7 @@ abstract class handler {
      * The current user can edit custom fields on the given record on this component.
      *
      * @param field_controller $field
-     * @param null $instanceid
+     * @param int $instanceid
      * @return bool
      */
     abstract public function can_edit(field_controller $field, $instanceid = null): bool;
@@ -267,7 +267,7 @@ abstract class handler {
      * The current user can view the value of the custom field on the given record on this component.
      *
      * @param field_controller $field
-     * @param null $instanceid
+     * @param int $instanceid
      * @return bool
      */
     abstract public function can_view(field_controller $field, $instanceid = null): bool;
