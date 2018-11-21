@@ -82,9 +82,7 @@ class category extends persistent {
     }
 
     /**
-     * @return field[]
-     * @throws \moodle_exception
-     * @throws \dml_exception
+     * @return array
      */
     public function fields() {
         return field_controller::get_fields_from_category_array($this->get('id'));
@@ -95,7 +93,6 @@ class category extends persistent {
      *
      * @param bool $result Whether or not the update was successful.
      * @return void
-     * @throws \moodle_exception
      */
     protected function after_update($result) {
         // TODO: move this line to controller save.
@@ -106,8 +103,6 @@ class category extends persistent {
      * Updates sort order after create
      *
      * @return void
-     * @throws \dml_exception
-     * @throws \moodle_exception
      */
     protected function after_create() {
         // TODO: move this line to controller save.

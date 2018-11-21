@@ -39,9 +39,8 @@ class plugin extends plugin_base {
     /**
      * Add fields for editing a select field.
      *
-     * @param field $field
+     * @param field_controller $field
      * @param \MoodleQuickForm $mform
-     * @throws \coding_exception
      */
     public static function add_field_to_config_form(\core_customfield\field_controller $field, \MoodleQuickForm $mform) {
         $mform->addElement('header', 'header_specificsettings', get_string('specificsettings', 'customfield_select'));
@@ -67,7 +66,6 @@ class plugin extends plugin_base {
      * Add fields for editing a textarea field.
      *
      * @param \MoodleQuickForm $mform
-     * @throws \coding_exception
      */
     public static function edit_field_add(\core_customfield\field_controller $field, \MoodleQuickForm $mform) {
         $config = $field->get('configdata');
@@ -88,10 +86,10 @@ class plugin extends plugin_base {
         $mform->setDefault(api::field_inputname($field), $defaultkey);
     }
 
-
     /**
      * Returns the options available as an array.
      *
+     * @param \core_customfield\field_controller $field
      * @return array
      */
     public static function get_options_array(\core_customfield\field_controller $field): array {

@@ -58,8 +58,6 @@ class management implements renderable, templatable {
     /**
      * @param renderer_base $output
      * @return array|object|\stdClass
-     * @throws \coding_exception
-     * @throws \moodle_exception
      */
     public function export_for_template(renderer_base $output) {
         $data = new \stdClass();

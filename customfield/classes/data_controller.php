@@ -49,8 +49,6 @@ abstract class data_controller {
      *
      * @param int $id
      * @param \stdClass|null $record
-     * @throws \coding_exception
-     * @throws \moodle_exception
      */
     public function __construct(int $id = 0, \stdClass $record) {
         $this->data = new data($id, $record);
@@ -61,7 +59,6 @@ abstract class data_controller {
      *
      * @param $property
      * @return mixed
-     * @throws \coding_exception
      */
     final public function get($property) {
         $method = "get_{$property}";
@@ -77,7 +74,6 @@ abstract class data_controller {
      * @param $property
      * @param $value
      * @return data
-     * @throws \coding_exception
      */
     final public function set($property, $value) {
         $method = "get_{$property}";
@@ -91,8 +87,6 @@ abstract class data_controller {
      * Persistent delete parser.
      *
      * @return bool
-     * @throws \coding_exception
-     * @throws \moodle_exception
      */
     final public function delete() {
         return $this->data->delete();
@@ -122,10 +116,7 @@ abstract class data_controller {
 
     /**
      * @param int $fieldid
-     * @return data_controller
-     * @throws \coding_exception
-     * @throws \dml_exception
-     * @throws \moodle_exception
+     * @return self
      */
     protected static function fieldload(int $fieldid): self {
         global $DB;
@@ -142,7 +133,7 @@ abstract class data_controller {
     /**
      * Set the field associated with this data
      *
-     * @param field $field
+     * @param field_controller $field
      */
     public function set_field(field_controller $field) {
         $this->field = $field;
@@ -161,7 +152,6 @@ abstract class data_controller {
      * Save the value to be used/submitted on form
      *
      * @param $value
-     * @throws \moodle_exception
      */
     public function set_formvalue($value) {
         $this->set(api::datafield($this->get_field()), $value->{api::datafield($this->get_field())});
@@ -171,7 +161,6 @@ abstract class data_controller {
      * Save the value from backup
      *
      * @param $value
-     * @throws \moodle_exception
      */
     public function set_rawvalue($value) {
         $this->set(api::datafield($this->get_field()), $value);
@@ -181,8 +170,6 @@ abstract class data_controller {
      * Return the default value if the field has not been set.
      *
      * @return mixed
-     * @throws \coding_exception
-     * @throws \moodle_exception
      */
     protected function get_charvalue() {
         if ($this->data->get('id') == 0) {
@@ -196,8 +183,6 @@ abstract class data_controller {
      * Work with checkbox field and select field.
      *
      * @return mixed
-     * @throws \coding_exception
-     * @throws \moodle_exception
      */
     protected function get_intvalue() {
         $type = $this->field->get('type');
@@ -217,8 +202,6 @@ abstract class data_controller {
      * Return the default value if the field has not been set.
      *
      * @return mixed
-     * @throws \coding_exception
-     * @throws \moodle_exception
      */
     protected function get_value() {
         $type = $this->field->get('type');
@@ -234,8 +217,6 @@ abstract class data_controller {
      *
      * @param \stdClass $datanew data coming from the form
      * @return mixed returns data id if success of db insert/update, false on fail, 0 if not permitted
-     * @throws \moodle_exception
-     * @throws \dml_exception
      */
     public function edit_save_data(\stdClass $datanew) {
         $value = $datanew->{api::field_inputname($this->get_field())};
@@ -249,7 +230,6 @@ abstract class data_controller {
      * Adds data in a given object on api::field_inputname() attribute.
      *
      * @param \stdClass $data
-     * @throws \moodle_exception
      */
     public function add_customfield_data_to_object(\stdClass $data) {
         $data->{api::field_inputname($this->get_field())} = $this->get(api::datafield($this->get_field()));
@@ -261,9 +241,6 @@ abstract class data_controller {
      * @param \stdClass $data
      * @param array $files
      * @return array
-     * @throws \coding_exception
-     * @throws \dml_exception
-     * @throws \moodle_exception
      */
     public function validate_data(\stdClass $data, array $files): array {
         global $DB;
@@ -290,7 +267,6 @@ abstract class data_controller {
      *
      * @param \MoodleQuickForm $mform
      * @return bool
-     * @throws \moodle_exception
      */
     public function edit_after_data(\MoodleQuickForm $mform): bool {
         return true;
@@ -309,8 +285,7 @@ abstract class data_controller {
     /**
      * Return the context of the field
      *
-     * @throws \coding_exception
-     * @throws \dml_exception
+     * @return \context
      */
     public function get_context() : \context {
         return \context::instance_by_id($this->get('contextid'));

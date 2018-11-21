@@ -75,7 +75,6 @@ abstract class handler {
      * - get_handler_for_category
      *
      * @param int $itemid
-     * @throws \coding_exception
      */
     protected final function __construct(int $itemid = 0) {
         if (!preg_match('|^(\w+_[\w_]+)\\\\customfield\\\\([\w_]+)_handler$|', static::class, $matches)) {
@@ -92,7 +91,7 @@ abstract class handler {
      * Some areas may choose to use singleton/caching here
      *
      * @param int $itemid
-     * @return handler
+     * @return stdClass
      */
     public static function instance(int $itemid = 0) : handler {
         return new static($itemid);
@@ -104,8 +103,7 @@ abstract class handler {
      * @param string $component
      * @param string $area
      * @param int $itemid
-     * @return handler
-     * @throws \moodle_exception
+     * @return stdClass
      */
     public static function get_handler(string $component, string $area, int $itemid = 0) : handler {
         $classname = $component . '\\customfield\\' . $area . '_handler';
@@ -119,9 +117,8 @@ abstract class handler {
     /**
      * Return handler for a given field
      *
-     * @param \customfield_date\field_controller $field
-     * @return handler
-     * @throws \moodle_exception
+     * @param field_controller $field
+     * @return mixed
      */
     public static function get_handler_for_field(field_controller $field) : handler {
         return self::get_handler_for_category($field->get_category());
@@ -130,9 +127,8 @@ abstract class handler {
     /**
      * Return the handler for a given category
      *
-     * @param category $category
-     * @return handler
-     * @throws \moodle_exception
+     * @param category_controller $category
+     * @return stdClass
      */
     public static function get_handler_for_category(category_controller $category) : handler {
         return self::get_handler($category->get('component'), $category->get('area'), $category->get('itemid'));
@@ -198,9 +194,8 @@ abstract class handler {
     /**
      * The form to create or edit a field
      *
-     * @param field $field
+     * @param field_controller $field
      * @return field_config_form
-     * @throws \moodle_exception
      */
     public function get_field_config_form(field_controller $field): field_config_form {
          $form = new field_config_form(null, ['handler' => $this, 'field' => $field]);
@@ -212,7 +207,6 @@ abstract class handler {
      * @param category_controller $category
      * @param string $type
      * @return field_controller
-     * @throws \coding_exception
      */
     public function new_field(category_controller $category, string $type) : field_controller {
         $record = new \stdClass();
@@ -263,8 +257,8 @@ abstract class handler {
     /**
      * The current user can edit custom fields on the given record on this component.
      *
-     * @param field $field
-     * @param null $instanceid
+     * @param field_controller $field
+     * @param int $instanceid
      * @return bool
      */
     abstract public function can_edit(field_controller $field, $instanceid = null): bool;
@@ -272,8 +266,8 @@ abstract class handler {
     /**
      * The current user can view the value of the custom field on the given record on this component.
      *
-     * @param field $field
-     * @param null $instanceid
+     * @param field_controller $field
+     * @param int $instanceid
      * @return bool
      */
     abstract public function can_view(field_controller $field, $instanceid = null): bool;
@@ -288,10 +282,10 @@ abstract class handler {
     /**
      * The given field is supported on by this handler
      *
-     * @param field $field
+     * @param field_controller $field
      * @return bool
      */
-    public function is_field_supported(\core_customfield\field $field): bool {
+    public function is_field_supported(field_controller $field): bool {
         // TODO: Placeholder for now to allow in the future components to decide that they don't want to support some field types.
         return true;
     }
@@ -343,8 +337,7 @@ abstract class handler {
      * mform with some data coming directly from the field plugin data controller.
      *
      * @param \MoodleQuickForm $mform
-     * @param int|null $instanceid
-     * @throws \moodle_exception
+     * @param int $instanceid
      */
     public function definition_after_data(\MoodleQuickForm $mform, $instanceid) {
         if ($instanceid === null) {
@@ -366,7 +359,6 @@ abstract class handler {
      *
      * @param stdClass $record
      * @param bool $foredit only return editable fields
-     * @throws \moodle_exception
      */
     public function add_customfield_data_to_object(stdClass $record, bool $foredit = false) {
         if (!isset($record->id)) {
@@ -384,8 +376,6 @@ abstract class handler {
      * Saves the given data for custom fields
      *
      * @param stdClass $data
-     * @throws \dml_exception
-     * @throws \moodle_exception
      */
     public function save_customfield_data(stdClass $data) {
         $editablefields = $this->get_editable_fields($data->id);
@@ -400,8 +390,6 @@ abstract class handler {
      *
      * @param stdClass $data
      * @param array $files
-     * @throws \dml_exception
-     * @throws \moodle_exception
      */
     public function validate_customfield_data(stdClass $data, array $files) {
         $editablefields = $this->get_editable_fields($data->id);
@@ -418,8 +406,6 @@ abstract class handler {
      *
      * @param \MoodleQuickForm $mform
      * @param $record
-     * @throws \coding_exception
-     * @throws \dml_exception
      */
     public function add_custom_fields(\MoodleQuickForm $mform, $record) {
 
@@ -486,9 +472,8 @@ abstract class handler {
     /**
      * Save the field configuration with the data from the form
      *
-     * @param field $field
+     * @param field_controller $field
      * @param stdClass $data data from the form
-     * @throws \moodle_exception
      */
     public function save_field(field_controller $field, stdClass $data) {
         try {
@@ -503,10 +488,10 @@ abstract class handler {
     /**
      * Prepare category data to set in the configuration form
      *
-     * @param category $category
+     * @param category_controller $category
      * @return stdClass
      */
-    protected function prepare_category_for_form(category $category) : stdClass {
+    protected function prepare_category_for_form(category_controller $category) : stdClass {
         return $category->to_record();
     }
 
@@ -539,7 +524,7 @@ abstract class handler {
     /**
      * Returns the field name formatted according to configuration context.
      *
-     * @param field $field
+     * @param field_controller $field
      * @return string
      */
     public function get_field_formatted_name(field_controller $field): string {

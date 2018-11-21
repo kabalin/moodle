@@ -35,9 +35,6 @@ defined('MOODLE_INTERNAL') || die;
  * @param bool $forcedownload whether or not force download
  * @param array $options additional options affecting the file serving
  * @return bool false if the file not found, just send the file otherwise and do not return
- * @throws coding_exception
- * @throws moodle_exception
- * @throws require_login_exception
  */
 function customfield_textarea_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options=array()) {
     global $DB;

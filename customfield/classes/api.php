@@ -36,9 +36,6 @@ class api {
      * @param \context $datacontext context to use for data that does not yet exist
      * @param int $instanceid
      * @return array
-     * @throws \coding_exception
-     * @throws \dml_exception
-     * @throws \moodle_exception
      */
     public static function get_fields_with_data(array $fields, \context $datacontext, int $instanceid): array {
         global $DB;
@@ -92,8 +89,6 @@ class api {
      * @param int $id
      * @param \stdClass|null $record
      * @return mixed
-     * @throws \coding_exception
-     * @throws \moodle_exception
      */
     public static function data_controller_constructor(int $id = 0, \stdClass $record = null, $fieldtype = null) {
         $customdatatype = "\\customfield_{$fieldtype}\\data_controller";
@@ -110,9 +105,6 @@ class api {
      * @param \context $datacontext context to use for data that does not yet exist
      * @param int $instanceid
      * @return array
-     * @throws \coding_exception
-     * @throws \dml_exception
-     * @throws \moodle_exception
      */
     public static function get_fields_with_data_for_backup(array $fields, \context $datacontext, int $instanceid): array {
         global $DB;
@@ -156,7 +148,6 @@ class api {
      * Retrieve a list of all available custom field types
      *
      * @return   array   a list of the fieldtypes suitable to use in a select statement
-     * @throws \coding_exception
      */
     public static function field_types() {
         $fieldtypes = array();
@@ -175,8 +166,6 @@ class api {
      *
      * @param field_controller $field
      * @param \stdClass $formdata
-     * @throws \moodle_exception
-     * @throws \dml_exception
      */
     public static function save_field(field_controller $field, \stdClass $formdata) {
         foreach ($formdata as $key => $value) {
@@ -245,9 +234,6 @@ class api {
      * @param $contextid
      *
      * @return array
-     * @throws \coding_exception
-     * @throws \dml_exception
-     * @throws \moodle_exception
      */
     public static function get_fields_with_data_fromcontext($contextid): array {
         global $DB;
@@ -335,7 +321,6 @@ class api {
      *
      * @param bool $editable
      * @return inplace_editable
-     * @throws \coding_exception
      */
     public static function get_category_inplace_editable(category_controller $category, bool $editable = true) : inplace_editable {
         return new inplace_editable('core_customfield',
@@ -387,9 +372,11 @@ class api {
     /**
      * Returns a list of categories with their related fields.
      *
-     * @return category[]
-     * @throws \dml_exception
-     * @throws \moodle_exception
+     * @param string $component
+     * @param string $area
+     * @param int $itemid
+     * @param int $sortorder
+     * @return category_controller[]
      */
     public static function list_categories($component, $area, $itemid, $sortorder = 0): array {
         global $DB;
@@ -419,12 +406,11 @@ class api {
      * If the callback returns null, then the default value is returned instead.
      * If the class does not exist, then the default value is returned.
      *
-     * @param   field $field
+     * @param   field_controller $field
      * @param   string $methodname The name of the staticically defined method on the class.
      * @param   array $params The arguments to pass into the method.
      * @param   mixed $default The default value.
      * @return  mixed       The return value.
-     * @throws \coding_exception
      */
     protected static function plugin_callback(field_controller $field, string $methodname, array $params, $default = null) {
         $classname = '\\customfield_' . $field->get('type') . '\\plugin';
@@ -446,9 +432,8 @@ class api {
      *
      * @param field_controller $field
      * @param \MoodleQuickForm $mform
-     * @throws \coding_exception
      */
-    public static function add_field_to_config_form($field, \MoodleQuickForm $mform) {
+    public static function add_field_to_config_form(field_controller $field, \MoodleQuickForm $mform) {
         self::plugin_callback($field, 'add_field_to_config_form', [$field, $mform]);
     }
 
@@ -457,7 +442,6 @@ class api {
      *
      * @param field_controller $field
      * @return string
-     * @throws \coding_exception
      */
     public static function datafield(field_controller $field): string {
         return self::plugin_callback($field, 'datafield', array());
@@ -468,7 +452,6 @@ class api {
      *
      * @param field_controller $field
      * @param \MoodleQuickForm $mform
-     * @throws \coding_exception
      */
     public static function edit_field_add(field_controller $field, \MoodleQuickForm $mform) {
         self::plugin_callback($field, 'edit_field_add', [$field, $mform]);
@@ -479,7 +462,6 @@ class api {
      *
      * @param data_controller $data
      * @param \MoodleQuickForm $mform
-     * @throws \coding_exception
      */
     public static function display(data_controller $data) {
         self::plugin_callback($data->get_field(), 'display', [$data]);
@@ -490,7 +472,6 @@ class api {
      *
      * @param field_controller $field
      * @return \stdClass
-     * @throws \coding_exception
      */
     public static function prepare_field_for_form(field_controller $field) : \stdClass {
         return self::plugin_callback($field, 'prepare_field_for_form', [$field]);
@@ -501,7 +482,6 @@ class api {
      *
      * @param field_controller $field
      * @return string
-     * @throws \moodle_exception
      */
     public static function field_inputname(field_controller $field): string {
         return 'customfield_' . $field->get('shortname');
@@ -530,7 +510,6 @@ class api {
      * @param int $id
      * @param \stdClass|null $data
      * @return mixed
-     * @throws \coding_exception
      */
     public static function field_factory(int $id, \stdClass $data = null) {
         if (empty($data)) {
@@ -545,7 +524,6 @@ class api {
     /**
      * @param int $itemid
      * @return mixed
-     * @throws \dml_exception
      */
     public static function get_data_fieldid_from_itemid(int $itemid) {
         global $DB;

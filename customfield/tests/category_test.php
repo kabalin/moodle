@@ -42,9 +42,6 @@ class core_customfield_category_testcase extends advanced_testcase {
         $this->resetAfterTest();
     }
 
-    /**
-     * @throws \coding_exception
-     */
     public function test_create_category_and_correctlly_reorder() {
 
         // Create the category.
@@ -151,9 +148,6 @@ class core_customfield_category_testcase extends advanced_testcase {
         $this->assertSame((int) $category3->get('sortorder'), 3);
     }
 
-    /**
-     * @throws \coding_exception
-     */
     public function test_create_category_and_rename() {
         // Create the category.
         $categorydata            = new stdClass();
@@ -189,9 +183,6 @@ class core_customfield_category_testcase extends advanced_testcase {
         $this->assertSame($category0->get('name'), $newname);
     }
 
-    /**
-     * @throws \coding_exception
-     */
     public function test_create_category_and_delete() {
         // Create the category.
         $categorydata            = new stdClass();
@@ -231,11 +222,6 @@ class core_customfield_category_testcase extends advanced_testcase {
         $this->assertSame((int) $category2->get('sortorder'), 2);
     }
 
-    /**
-     * @throws \coding_exception
-     * @throws \dml_exception
-     * @throws \moodle_exception
-     */
     public function test_create_categories_and_move_it_as_drag_and_drop() {
         // Create the categories.
         $categorydata            = new stdClass();
@@ -394,11 +380,6 @@ class core_customfield_category_testcase extends advanced_testcase {
         $this->assertSame((int) $category5->get('sortorder'), 4);
     }
 
-    /**
-     * @throws \coding_exception
-     * @throws \dml_exception
-     * @throws \moodle_exception
-     */
     public function test_categories_list_reorder() {
         // Create the categories.
         $categorydata            = new stdClass();
@@ -499,11 +480,6 @@ class core_customfield_category_testcase extends advanced_testcase {
         $this->assertSame((int) $category0->get('sortorder'), 5);
     }
 
-    /**
-     * @throws \coding_exception
-     * @throws \dml_exception
-     * @throws \moodle_exception
-     */
     public function test_categories_before_delete() {
         // Create the category.
         $categorydata            = new stdClass();

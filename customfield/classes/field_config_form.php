@@ -34,9 +34,6 @@ require_once($CFG->libdir . '/formslib.php');
  */
 class field_config_form extends \moodleform {
 
-    /**
-     * @throws \coding_exception
-     */
     public function definition() {
         global $PAGE;
         $mform = $this->_form;
@@ -46,7 +43,7 @@ class field_config_form extends \moodleform {
             throw new \coding_exception('Handler must be passed in customdata');
         }
         $field = $this->_customdata['field'];
-        if (!$field || !$field instanceof field_controller) {
+        if (!($field && $field instanceof field_controller)) {
             throw new \coding_exception('Field must be passed in customdata');
         }
 
@@ -97,9 +94,6 @@ class field_config_form extends \moodleform {
      * @param array $data
      * @param array $files
      * @return array
-     * @throws \coding_exception
-     * @throws \dml_exception
-     * @throws \moodle_exception
      */
     public function validation($data, $files = array()) {
         global $DB;

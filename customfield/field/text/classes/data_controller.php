@@ -37,7 +37,6 @@ class data_controller extends \core_customfield\data_controller {
      * Add fields for editing a text profile field.
      *
      * @param \MoodleQuickForm $mform
-     * @throws \coding_exception
      */
     public function edit_field_add(\MoodleQuickForm $mform) {
 
@@ -49,9 +48,6 @@ class data_controller extends \core_customfield\data_controller {
      * @param \stdClass $data
      * @param array $files
      * @return array
-     * @throws \coding_exception
-     * @throws \dml_exception
-     * @throws \moodle_exception
      */
     public function validate_data(\stdClass $data, array $files): array {
 
