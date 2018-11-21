@@ -39,42 +39,6 @@ class field extends persistent {
     const TABLE = 'customfield_field';
 
     /**
-     * @var category
-     */
-    protected $category;
-
-    /**
-     * Returns a correct class field.
-     *
-     * @param int $id
-     * @param \stdClass|null $field
-     * @return field
-     * @throws \coding_exception
-     * @throws \dml_exception
-     */
-    public function __construct($id = 0, \stdClass $record = null) {
-        if ($record) {
-            $customfieldtype = "\\customfield_{$record->type}\\field";
-            if (!class_exists($customfieldtype) || !is_subclass_of($customfieldtype, field::class)) {
-                throw new \coding_exception(get_string('errorfieldtypenotfound', 'core_customfield', s($record->type)));
-            }
-        }
-        return parent::__construct($id, $record);
-    }
-
-    /**
-     * Validate the data from the config form.
-     * Sub classes must reimplement it.
-     *
-     * @param array $data from the add/edit profile field form
-     * @param array $files
-     * @return array associative array of error messages
-     */
-    public function validate_config_form(array $data, $files = array()): array {
-        return array();
-    }
-
-    /**
      * Return the definition of the properties of this model.
      *
      * @return array
@@ -122,8 +86,6 @@ class field extends persistent {
      *
      * @param int $value The value.
      * @return bool
-     * @throws \moodle_exception
-     * @throws \dml_write_exception
      */
     protected function validate_shortname($value) {
         if (strpos($value, ' ') !== false) {
@@ -138,7 +100,6 @@ class field extends persistent {
      *
      * @param string $value
      * @return bool
-     * @throws \moodle_exception
      */
     protected function validate_configdata($value) {
         $fields = $this->get('configdata');
@@ -154,8 +115,6 @@ class field extends persistent {
      * Delete associated data before delete field
      *
      * @return void
-     * @throws \coding_exception
-     * @throws \dml_exception
      */
     protected function before_delete() {
         global $DB;
@@ -184,7 +143,6 @@ class field extends persistent {
      * Get the category associated with this field
      *
      * @return category_controller
-     * @throws \moodle_exception
      */
     public function get_category(): category_controller {
         if (!$this->category) {
@@ -201,49 +159,4 @@ class field extends persistent {
     protected function get_configdata(): array {
         return json_decode($this->raw_get('configdata'), true) ?? array();
     }
-
-    /**
-     * @param string $property
-     * @return mixed
-     * @throws \moodle_exception
-     */
-    public function get_configdata_property(string $property) {
-        $configdata = $this->get('configdata');
-        if ( !isset($configdata[$property]) ) {
-            return null;
-        }
-        return $configdata[$property];
-    }
-
-    /**
-     * @param int $categoryid
-     * @return array
-     * @throws \coding_exception
-     * @throws \dml_exception
-     */
-    public static function get_fields_from_category_array(int $categoryid): array {
-        global $DB;
-
-        $fields  = array();
-
-        $plugins = \core\plugininfo\customfield::get_enabled_plugins();
-        // No plugins enabled.
-        if (empty($plugins)) {
-            return $plugins;
-        }
-
-        list($sqlfields, $params) = $DB->get_in_or_equal(array_keys($plugins), SQL_PARAMS_NAMED);
-        $sql = "SELECT *
-                  FROM {customfield_field}
-                 WHERE categoryid = :categoryid
-                   AND type {$sqlfields}
-              ORDER BY sortorder";
-        $records = $DB->get_records_sql($sql, $params + ['categoryid' => $categoryid]);
-        foreach ($records as $fielddata) {
-            $fields[] = new field($fielddata->id, $fielddata);
-        }
-
-        return $fields;
-    }
-
 }

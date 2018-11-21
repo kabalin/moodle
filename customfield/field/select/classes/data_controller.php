@@ -38,7 +38,6 @@ class data_controller extends \core_customfield\data_controller {
      * Add fields for editing a textarea field.
      *
      * @param \MoodleQuickForm $mform
-     * @throws \coding_exception
      */
     public function edit_field_add(\MoodleQuickForm $mform) {
 

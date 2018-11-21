@@ -39,11 +39,10 @@ class plugin extends plugin_base {
     /**
      * Add fields for editing a date field.
      *
-     * @param field $field
+     * @param field_controller $field
      * @param \MoodleQuickForm $mform
-     * @throws \coding_exception
      */
-    public static function add_field_to_config_form(\core_customfield\field $field, \MoodleQuickForm $mform) {
+    public static function add_field_to_config_form(\core_customfield\field_controller $field, \MoodleQuickForm $mform) {
         // Get the current calendar in use - see MDL-18375.
         $calendartype = \core_calendar\type_factory::get_calendar_instance();
 
@@ -99,10 +98,10 @@ class plugin extends plugin_base {
     /**
      * Add fields for editing data of a textarea field on a context.
      *
+     * @param \core_customfield\field_controller $field
      * @param \moodleform $mform
-     * @throws \coding_exception
      */
-    public static function edit_field_add(\core_customfield\field $field, \MoodleQuickForm $mform) {
+    public static function edit_field_add(\core_customfield\field_controller $field, \MoodleQuickForm $mform) {
         // Get the current calendar in use - see MDL-18375.
         $calendartype = \core_calendar\type_factory::get_calendar_instance();
 

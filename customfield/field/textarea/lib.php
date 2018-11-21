@@ -35,9 +35,6 @@ defined('MOODLE_INTERNAL') || die;
  * @param bool $forcedownload whether or not force download
  * @param array $options additional options affecting the file serving
  * @return bool false if the file not found, just send the file otherwise and do not return
- * @throws coding_exception
- * @throws moodle_exception
- * @throws require_login_exception
  */
 function customfield_textarea_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options=array()) {
     global $DB;
@@ -45,15 +42,14 @@ function customfield_textarea_pluginfile($course, $cm, $context, $filearea, $arg
     $itemid = array_shift($args);
     if ($filearea === 'value') {
         // Value of the data, itemid = id in data table.
-        $data = new \core_customfield\data($itemid);
-        $field = new \core_customfield\field($data->get('fieldid'));
+        $field = \core_customfield\api::field_factory(api::get_data_fieldid_from_itemid($itemid));
         $handler = \core_customfield\handler::get_handler_for_field($field);
         if (!$handler->can_view($field) || $field->get('type') !== 'textarea' || $data->get_context()->id != $context->id) {
             return false;
         }
     } else if ($filearea === 'defaultvalue') {
         // Default value of the field, itemid = id in the field table.
-        $field = new \core_customfield\field($itemid);
+        $field = \core_customfield\api::field_factory($itemid);
         $handler = \core_customfield\handler::get_handler_for_field($field);
         if ($field->get('type') !== 'textarea' || $handler->get_configuration_context()->id != $context->id) {
             return false;

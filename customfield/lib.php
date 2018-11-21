@@ -50,9 +50,6 @@ function core_customfield_inplace_editable($itemtype, $itemid, $newvalue) {
  * @param bool $forcedownload whether or not force download
  * @param array $options additional options affecting the file serving
  * @return bool false if the file not found, just send the file otherwise and do not return
- * @throws coding_exception
- * @throws moodle_exception
- * @throws require_login_exception
  */
 function core_customfield_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options=array()) {
     if ($filearea !== 'description') {
@@ -62,7 +59,7 @@ function core_customfield_pluginfile($course, $cm, $context, $filearea, $args, $
     $itemid = array_shift($args);
     $filename = array_pop($args); // The last item in the $args array.
 
-    $field = new \core_customfield\field($itemid);
+    $field = \core_customfield\api::field_factory($itemid);
     $handler = \core_customfield\handler::get_handler_for_field($field);
     if ($handler->get_configuration_context()->id != $context->id) {
         return false;

@@ -40,11 +40,10 @@ class plugin extends plugin_base {
     /**
      * Add fields for editing a text field.
      *
-     * @param \core_customfield\field $field
+     * @param \core_customfield\field_controller $field
      * @param \MoodleQuickForm $mform
-     * @throws \coding_exception
      */
-    public static function add_field_to_config_form(\core_customfield\field $field, \MoodleQuickForm $mform) {
+    public static function add_field_to_config_form(\core_customfield\field_controller $field, \MoodleQuickForm $mform) {
 
         $mform->addElement('header', 'header_specificsettings', get_string('specificsettings', 'customfield_text'));
         $mform->setExpanded('header_specificsettings', true);
@@ -89,10 +88,10 @@ class plugin extends plugin_base {
     /**
      * Add fields for editing a text profile field.
      *
+     * @param \core_customfield\field_controller $field
      * @param \MoodleQuickForm $mform
-     * @throws \coding_exception
      */
-    public static function edit_field_add(\core_customfield\field $field, \MoodleQuickForm $mform) {
+    public static function edit_field_add(\core_customfield\field_controller $field, \MoodleQuickForm $mform) {
         $config = $field->get('configdata');
         $type = ($config['ispassword'] == 1) ? 'password' : 'text';
         $mform->addElement($type, api::field_inputname($field), format_string($field->get('name')));
