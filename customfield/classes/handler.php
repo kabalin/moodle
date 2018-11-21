@@ -309,6 +309,7 @@ abstract class handler {
     /**
      * List of fields with their data
      *
+     * @param array $fields
      * @param int $instanceid
      * @return data[]
      */
@@ -330,12 +331,19 @@ abstract class handler {
     }
 
     /**
-     * Custom fields definition after data was submitted on data form
+     * Form data definition callback.
+     *
+     * This method is called from moodleform::definition_after_data and allows to tweak
+     * mform with some data coming directly from the field plugin data controller.
      *
      * @param \MoodleQuickForm $mform
      * @param int $instanceid
      */
-    public function definition_after_data(\MoodleQuickForm $mform, int $instanceid) {
+    public function definition_after_data(\MoodleQuickForm $mform, $instanceid) {
+        if ($instanceid === null) {
+            // Course does not exist yet.
+            $instanceid = 0;
+        }
         $editablefields = $this->get_editable_fields($instanceid);
         $fields = $this->get_fields_with_data($editablefields, $instanceid);
 

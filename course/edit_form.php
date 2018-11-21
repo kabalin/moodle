@@ -388,7 +388,7 @@ class course_edit_form extends moodleform {
             }
         }
 
-        // Add the custom fields.
+        // Tweak the form with values provided by custom fields in use.
         $handler  = core_course\customfield\course_handler::instance();
         $handler->definition_after_data($mform, $courseid);
     }
