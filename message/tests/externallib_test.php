@@ -552,6 +552,8 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
      * Test getting contact requests.
      */
     public function test_get_contact_requests() {
+        global $PAGE;
+
         $this->resetAfterTest();
 
         $user1 = self::getDataGenerator()->create_user();
@@ -572,16 +574,54 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
         $this->assertCount(1, $requests);
 
         $request = reset($requests);
+        $userpicture = new \user_picture($user2);
+        $profileimageurl = $userpicture->get_url($PAGE)->out(false);
 
         $this->assertEquals($user2->id, $request['id']);
-        $this->assertEquals($user2->picture, $request['picture']);
-        $this->assertEquals($user2->firstname, $request['firstname']);
-        $this->assertEquals($user2->lastname, $request['lastname']);
-        $this->assertEquals($user2->firstnamephonetic, $request['firstnamephonetic']);
-        $this->assertEquals($user2->lastnamephonetic, $request['lastnamephonetic']);
-        $this->assertEquals($user2->middlename, $request['middlename']);
-        $this->assertEquals($user2->alternatename, $request['alternatename']);
-        $this->assertEquals($user2->email, $request['email']);
+        $this->assertEquals(fullname($user2), $request['fullname']);
+        $this->assertArrayHasKey('profileimageurl', $request);
+        $this->assertArrayHasKey('profileimageurlsmall', $request);
+        $this->assertArrayHasKey('isonline', $request);
+        $this->assertArrayHasKey('showonlinestatus', $request);
+        $this->assertArrayHasKey('isblocked', $request);
+        $this->assertArrayHasKey('iscontact', $request);
+    }
+
+    /**
+     * Test getting contact requests when there are none.
+     */
+    public function test_get_contact_requests_no_requests() {
+        $this->resetAfterTest();
+
+        $user1 = self::getDataGenerator()->create_user();
+
+        $this->setUser($user1);
+
+        $requests = core_message_external::get_contact_requests($user1->id);
+        $requests = external_api::clean_returnvalue(core_message_external::get_contact_requests_returns(), $requests);
+
+        $this->assertEmpty($requests);
+    }
+
+    /**
+     * Test getting contact requests with limits.
+     */
+    public function test_get_contact_requests_with_limits() {
+        $this->resetAfterTest();
+
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+        $user3 = self::getDataGenerator()->create_user();
+
+        $this->setUser($user1);
+
+        \core_message\api::create_contact_request($user2->id, $user1->id);
+        \core_message\api::create_contact_request($user3->id, $user1->id);
+
+        $requests = core_message_external::get_contact_requests($user1->id, 0, 1);
+        $requests = external_api::clean_returnvalue(core_message_external::get_contact_requests_returns(), $requests);
+
+        $this->assertCount(1, $requests);
     }
 
     /**
@@ -641,7 +681,7 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
 
         $return = core_message_external::create_contact_request($user1->id, $user2->id);
         $return = external_api::clean_returnvalue(core_message_external::create_contact_request_returns(), $return);
-        $this->assertEquals(array(), $return);
+        $this->assertEquals([], $return['warnings']);
 
         $request = $DB->get_records('message_contact_requests');
 
@@ -649,8 +689,10 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
 
         $request = reset($request);
 
-        $this->assertEquals($user1->id, $request->userid);
-        $this->assertEquals($user2->id, $request->requesteduserid);
+        $this->assertEquals($request->id, $return['request']['id']);
+        $this->assertEquals($request->userid, $return['request']['userid']);
+        $this->assertEquals($request->requesteduserid, $return['request']['requesteduserid']);
+        $this->assertEquals($request->timecreated, $return['request']['timecreated']);
     }
 
     /**
@@ -671,7 +713,7 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
         $return = core_message_external::create_contact_request($user1->id, $user2->id);
         $return = external_api::clean_returnvalue(core_message_external::create_contact_request_returns(), $return);
 
-        $warning = reset($return);
+        $warning = reset($return['warnings']);
 
         $this->assertEquals('user', $warning['item']);
         $this->assertEquals($user2->id, $warning['itemid']);
@@ -1821,7 +1863,7 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
     /**
      * Tests searching users in a course.
      */
-    public function test_messagearea_search_users_in_course() {
+    public function test_data_for_messagearea_search_users_in_course() {
         $this->resetAfterTest(true);
 
         // Create some users.
@@ -1885,7 +1927,7 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
     /**
      * Tests searching users in course as another user.
      */
-    public function test_messagearea_search_users_in_course_as_other_user() {
+    public function test_data_for_messagearea_search_users_in_course_as_other_user() {
         $this->resetAfterTest(true);
 
         // The person doing the search for another user.
@@ -1944,7 +1986,7 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
     /**
      * Tests searching users in course as another user without the proper capabilities.
      */
-    public function test_messagearea_search_users_in_course_as_other_user_without_cap() {
+    public function test_data_for_messagearea_search_users_in_course_as_other_user_without_cap() {
         $this->resetAfterTest(true);
 
         // Create some users.
@@ -1960,12 +2002,13 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
         // Ensure an exception is thrown.
         $this->expectException('moodle_exception');
         core_message_external::data_for_messagearea_search_users_in_course($user2->id, $course->id, 'User');
+        $this->assertDebuggingCalled();
     }
 
     /**
      * Tests searching users in course with messaging disabled.
      */
-    public function test_messagearea_search_users_in_course_messaging_disabled() {
+    public function test_data_for_messagearea_search_users_in_course_messaging_disabled() {
         global $CFG;
 
         $this->resetAfterTest(true);
@@ -1983,12 +2026,13 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
         // Ensure an exception is thrown.
         $this->expectException('moodle_exception');
         core_message_external::data_for_messagearea_search_users_in_course($user->id, $course->id, 'User');
+        $this->assertDebuggingCalled();
     }
 
     /**
      * Tests searching users.
      */
-    public function test_messagearea_search_users() {
+    public function test_data_for_messagearea_search_users() {
         $this->resetAfterTest(true);
 
         // Create some users.
@@ -2055,7 +2099,8 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
         \core_message\api::add_contact($user1->id, $user3->id);
         \core_message\api::add_contact($user1->id, $user4->id);
 
-        // Perform a search.
+        // Perform a search $CFG->messagingallusers setting enabled.
+        set_config('messagingallusers', 1);
         $result = core_message_external::data_for_messagearea_search_users($user1->id, 'search');
 
         // We need to execute the return values cleaning process to simulate the web service server.
@@ -2085,7 +2130,7 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
     /**
      * Tests searching users as another user.
      */
-    public function test_messagearea_search_users_as_other_user() {
+    public function test_data_for_messagearea_search_users_as_other_user() {
         $this->resetAfterTest(true);
 
         // The person doing the search.
@@ -2143,7 +2188,8 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
         \core_message\api::add_contact($user1->id, $user3->id);
         \core_message\api::add_contact($user1->id, $user4->id);
 
-        // Perform a search.
+        // Perform a search $CFG->messagingallusers setting enabled.
+        set_config('messagingallusers', 1);
         $result = core_message_external::data_for_messagearea_search_users($user1->id, 'search');
 
         // We need to execute the return values cleaning process to simulate the web service server.
@@ -2171,7 +2217,7 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
     /**
      * Tests searching users as another user without the proper capabilities.
      */
-    public function test_messagearea_search_users_as_other_user_without_cap() {
+    public function test_data_for_messagearea_search_users_as_other_user_without_cap() {
         $this->resetAfterTest(true);
 
         // Create some users.
@@ -2184,12 +2230,13 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
         // Ensure an exception is thrown.
         $this->expectException('moodle_exception');
         core_message_external::data_for_messagearea_search_users($user2->id, 'User');
+        $this->assertDebuggingCalled();
     }
 
     /**
      * Tests searching users with messaging disabled.
      */
-    public function test_messagearea_search_users_messaging_disabled() {
+    public function test_data_for_messagearea_search_users_messaging_disabled() {
         global $CFG;
 
         $this->resetAfterTest(true);
@@ -2206,6 +2253,385 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
         // Ensure an exception is thrown.
         $this->expectException('moodle_exception');
         core_message_external::data_for_messagearea_search_users($user->id, 'User');
+        $this->assertDebuggingCalled();
+    }
+
+    /**
+     * Tests searching for users when site-wide messaging is disabled.
+     *
+     * This test verifies that any contacts are returned, as well as any non-contacts whose profile we can view.
+     * If checks this by placing some users in the same course, where default caps would permit a user to view another user's
+     * profile.
+     */
+    public function test_message_search_users_messagingallusers_disabled() {
+        $this->resetAfterTest();
+
+        // Create some users.
+        $users = [];
+        foreach (range(1, 7) as $i) {
+            $user = new stdClass();
+            $user->firstname = ($i == 4) ? 'User' : 'User search'; // Ensure the fourth user won't match the search term.
+            $user->lastname = $i;
+            $user = $this->getDataGenerator()->create_user($user);
+            $users[$i] = $user;
+        }
+
+        // Enrol a few users in the same course, but leave them as non-contacts.
+        $course1 = $this->getDataGenerator()->create_course();
+        $this->setAdminUser();
+        $this->getDataGenerator()->enrol_user($users[1]->id, $course1->id);
+        $this->getDataGenerator()->enrol_user($users[6]->id, $course1->id);
+        $this->getDataGenerator()->enrol_user($users[7]->id, $course1->id);
+
+        // Add some other users as contacts.
+        \core_message\api::add_contact($users[1]->id, $users[2]->id);
+        \core_message\api::add_contact($users[3]->id, $users[1]->id);
+        \core_message\api::add_contact($users[1]->id, $users[4]->id);
+
+        // Create individual conversations between some users, one contact and one non-contact.
+        \core_message\api::create_conversation(\core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL,
+            [$users[1]->id, $users[2]->id]);
+        \core_message\api::create_conversation(\core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL,
+            [$users[6]->id, $users[1]->id]);
+
+        // Create a group conversation between 4 users, including a contact and a non-contact.
+        \core_message\api::create_conversation(\core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP,
+            [$users[1]->id, $users[2]->id, $users[4]->id, $users[7]->id], 'Project chat');
+
+        // Set as the user performing the search.
+        $this->setUser($users[1]);
+
+        // Perform a search with $CFG->messagingallusers disabled.
+        set_config('messagingallusers', 0);
+        $result = core_message_external::message_search_users($users[1]->id, 'search');
+        $result = external_api::clean_returnvalue(core_message_external::message_search_users_returns(), $result);
+
+        // Confirm that we returns contacts and non-contacts.
+        $this->assertArrayHasKey('contacts', $result);
+        $this->assertArrayHasKey('noncontacts', $result);
+        $contacts = $result['contacts'];
+        $noncontacts = $result['noncontacts'];
+
+        // Check that we retrieved the correct contacts.
+        $this->assertCount(2, $contacts);
+        $this->assertEquals($users[2]->id, $contacts[0]['id']);
+        $this->assertEquals($users[3]->id, $contacts[1]['id']);
+
+        // Verify the correct conversations were returned for the contacts.
+        $this->assertCount(2, $contacts[0]['conversations']);
+        // We can't rely on the ordering of conversations within the results, so sort by id first.
+        usort($contacts[0]['conversations'], function($a, $b) {
+            return $a['id'] < $b['id'];
+        });
+        $this->assertEquals(\core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP, $contacts[0]['conversations'][0]['type']);
+        $this->assertEquals(\core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL, $contacts[0]['conversations'][1]['type']);
+
+        $this->assertCount(0, $contacts[1]['conversations']);
+
+        // Check that we retrieved the correct non-contacts.
+        // When site wide messaging is disabled, we expect to see only those users whose profiles we can view.
+        $this->assertCount(2, $noncontacts);
+        $this->assertEquals($users[6]->id, $noncontacts[0]['id']);
+        $this->assertEquals($users[7]->id, $noncontacts[1]['id']);
+
+        // Verify the correct conversations were returned for the non-contacts.
+        $this->assertCount(1, $noncontacts[0]['conversations']);
+        $this->assertEquals(\core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL, $noncontacts[0]['conversations'][0]['type']);
+
+        $this->assertCount(1, $noncontacts[1]['conversations']);
+        $this->assertEquals(\core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP, $noncontacts[1]['conversations'][0]['type']);
+    }
+
+    /**
+     * Tests searching for users when site-wide messaging is enabled.
+     *
+     * This test verifies that any contacts are returned, as well as any non-contacts, regardless of whether the searching user
+     * can view their respective profile.
+     */
+    public function test_message_search_users_messagingallusers_enabled() {
+        $this->resetAfterTest();
+
+        // Create some users.
+        $users = [];
+        foreach (range(1, 8) as $i) {
+            $user = new stdClass();
+            $user->firstname = ($i == 4) ? 'User' : 'User search'; // Ensure the fourth user won't match the search term.
+            $user->lastname = $i;
+            $user = $this->getDataGenerator()->create_user($user);
+            $users[$i] = $user;
+        }
+
+        // Enrol a few users in the same course, but leave them as non-contacts.
+        $course1 = $this->getDataGenerator()->create_course();
+        $this->setAdminUser();
+        $this->getDataGenerator()->enrol_user($users[1]->id, $course1->id);
+        $this->getDataGenerator()->enrol_user($users[6]->id, $course1->id);
+        $this->getDataGenerator()->enrol_user($users[7]->id, $course1->id);
+
+        // Add some other users as contacts.
+        \core_message\api::add_contact($users[1]->id, $users[2]->id);
+        \core_message\api::add_contact($users[3]->id, $users[1]->id);
+        \core_message\api::add_contact($users[1]->id, $users[4]->id);
+
+        // Create individual conversations between some users, one contact and one non-contact.
+        \core_message\api::create_conversation(\core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL,
+            [$users[1]->id, $users[2]->id]);
+        \core_message\api::create_conversation(\core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL,
+            [$users[6]->id, $users[1]->id]);
+
+        // Create a group conversation between 5 users, including a contact and a non-contact, and a user NOT in a shared course.
+        \core_message\api::create_conversation(\core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP,
+            [$users[1]->id, $users[2]->id, $users[4]->id, $users[7]->id, $users[8]->id], 'Project chat');
+
+        // Set as the user performing the search.
+        $this->setUser($users[1]);
+
+        // Perform a search with $CFG->messagingallusers enabled.
+        set_config('messagingallusers', 1);
+        $result = core_message_external::message_search_users($users[1]->id, 'search');
+        $result = external_api::clean_returnvalue(core_message_external::message_search_users_returns(), $result);
+
+        // Confirm that we returns contacts and non-contacts.
+        $this->assertArrayHasKey('contacts', $result);
+        $this->assertArrayHasKey('noncontacts', $result);
+        $contacts = $result['contacts'];
+        $noncontacts = $result['noncontacts'];
+
+        // Check that we retrieved the correct contacts.
+        $this->assertCount(2, $contacts);
+        $this->assertEquals($users[2]->id, $contacts[0]['id']);
+        $this->assertEquals($users[3]->id, $contacts[1]['id']);
+
+        // Verify the correct conversations were returned for the contacts.
+        $this->assertCount(2, $contacts[0]['conversations']);
+        // We can't rely on the ordering of conversations within the results, so sort by id first.
+        usort($contacts[0]['conversations'], function($a, $b) {
+            return $a['id'] < $b['id'];
+        });
+        $this->assertEquals(\core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP, $contacts[0]['conversations'][0]['type']);
+        $this->assertEquals(\core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL, $contacts[0]['conversations'][1]['type']);
+
+        $this->assertCount(0, $contacts[1]['conversations']);
+
+        // Check that we retrieved the correct non-contacts.
+        // If site wide messaging is enabled, we expect to be able to search for any users.
+        $this->assertCount(4, $noncontacts);
+        $this->assertEquals($users[5]->id, $noncontacts[0]['id']);
+        $this->assertEquals($users[6]->id, $noncontacts[1]['id']);
+        $this->assertEquals($users[7]->id, $noncontacts[2]['id']);
+        $this->assertEquals($users[8]->id, $noncontacts[3]['id']);
+
+        // Verify the correct conversations were returned for the non-contacts.
+        $this->assertCount(0, $noncontacts[0]['conversations']);
+
+        $this->assertCount(1, $noncontacts[1]['conversations']);
+        $this->assertEquals(\core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL, $noncontacts[1]['conversations'][0]['type']);
+
+        $this->assertCount(1, $noncontacts[2]['conversations']);
+        $this->assertEquals(\core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP, $noncontacts[2]['conversations'][0]['type']);
+
+        $this->assertCount(1, $noncontacts[3]['conversations']);
+        $this->assertEquals(\core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP, $noncontacts[3]['conversations'][0]['type']);
+    }
+
+    /**
+     * Verify searching for users works even if no matching users from either contacts, or non-contacts can be found.
+     */
+    public function test_message_search_users_with_empty_result() {
+        $this->resetAfterTest();
+
+        // Create some users, but make sure neither will match the search term.
+        $user1 = new stdClass();
+        $user1->firstname = 'User';
+        $user1->lastname = 'One';
+        $user1 = $this->getDataGenerator()->create_user($user1);
+        $user2 = new stdClass();
+        $user2->firstname = 'User';
+        $user2->lastname = 'Two';
+        $user2 = $this->getDataGenerator()->create_user($user2);
+
+        // Perform a search as user1.
+        $this->setUser($user1);
+        $result = core_message_external::message_search_users($user1->id, 'search');
+        $result = external_api::clean_returnvalue(core_message_external::message_search_users_returns(), $result);
+
+        // Check results are empty.
+        $this->assertCount(0, $result['contacts']);
+        $this->assertCount(0, $result['noncontacts']);
+    }
+
+    /**
+     * Test verifying that limits and offsets work for both the contacts and non-contacts return data.
+     */
+    public function test_message_search_users_limit_offset() {
+        $this->resetAfterTest();
+
+        // Create 20 users.
+        $users = [];
+        foreach (range(1, 20) as $i) {
+            $user = new stdClass();
+            $user->firstname = "User search";
+            $user->lastname = $i;
+            $user = $this->getDataGenerator()->create_user($user);
+            $users[$i] = $user;
+        }
+
+        // Enrol the first 9 users in the same course, but leave them as non-contacts.
+        $this->setAdminUser();
+        $course1 = $this->getDataGenerator()->create_course();
+        foreach (range(1, 9) as $i) {
+            $this->getDataGenerator()->enrol_user($users[$i]->id, $course1->id);
+        }
+
+        // Add 5 users, starting at the 11th user, as contacts for user1.
+        foreach (range(11, 15) as $i) {
+            \core_message\api::add_contact($users[1]->id, $users[$i]->id);
+        }
+
+        // Set as the user performing the search.
+        $this->setUser($users[1]);
+
+        // Search using a limit of 3.
+        // This tests the case where we have more results than the limit for both contacts and non-contacts.
+        $result = core_message_external::message_search_users($users[1]->id, 'search', 0, 3);
+        $result = external_api::clean_returnvalue(core_message_external::message_search_users_returns(), $result);
+        $contacts = $result['contacts'];
+        $noncontacts = $result['noncontacts'];
+
+        // Check that we retrieved the correct contacts.
+        $this->assertCount(3, $contacts);
+        $this->assertEquals($users[11]->id, $contacts[0]['id']);
+        $this->assertEquals($users[12]->id, $contacts[1]['id']);
+        $this->assertEquals($users[13]->id, $contacts[2]['id']);
+
+        // Check that we retrieved the correct non-contacts.
+        $this->assertCount(3, $noncontacts);
+        $this->assertEquals($users[2]->id, $noncontacts[0]['id']);
+        $this->assertEquals($users[3]->id, $noncontacts[1]['id']);
+        $this->assertEquals($users[4]->id, $noncontacts[2]['id']);
+
+        // Now, offset to get the next batch of results.
+        // We expect to see 2 contacts, and 3 non-contacts.
+        $result = core_message_external::message_search_users($users[1]->id, 'search', 3, 3);
+        $result = external_api::clean_returnvalue(core_message_external::message_search_users_returns(), $result);
+        $contacts = $result['contacts'];
+        $noncontacts = $result['noncontacts'];
+        $this->assertCount(2, $contacts);
+        $this->assertEquals($users[14]->id, $contacts[0]['id']);
+        $this->assertEquals($users[15]->id, $contacts[1]['id']);
+
+        $this->assertCount(3, $noncontacts);
+        $this->assertEquals($users[5]->id, $noncontacts[0]['id']);
+        $this->assertEquals($users[6]->id, $noncontacts[1]['id']);
+        $this->assertEquals($users[7]->id, $noncontacts[2]['id']);
+
+        // Now, offset to get the next batch of results.
+        // We expect to see 0 contacts, and 2 non-contacts.
+        $result = core_message_external::message_search_users($users[1]->id, 'search', 6, 3);
+        $result = external_api::clean_returnvalue(core_message_external::message_search_users_returns(), $result);
+        $contacts = $result['contacts'];
+        $noncontacts = $result['noncontacts'];
+        $this->assertCount(0, $contacts);
+
+        $this->assertCount(2, $noncontacts);
+        $this->assertEquals($users[8]->id, $noncontacts[0]['id']);
+        $this->assertEquals($users[9]->id, $noncontacts[1]['id']);
+    }
+
+    /**
+     * Tests searching users as another user having the 'moodle/user:viewdetails' capability.
+     */
+    public function test_message_search_users_with_cap() {
+        $this->resetAfterTest();
+        global $DB;
+
+        // Create some users.
+        $users = [];
+        foreach (range(1, 8) as $i) {
+            $user = new stdClass();
+            $user->firstname = ($i == 4) ? 'User' : 'User search'; // Ensure the fourth user won't match the search term.
+            $user->lastname = $i;
+            $user = $this->getDataGenerator()->create_user($user);
+            $users[$i] = $user;
+        }
+
+        // Enrol a few users in the same course, but leave them as non-contacts.
+        $course1 = $this->getDataGenerator()->create_course();
+        $this->setAdminUser();
+        $this->getDataGenerator()->enrol_user($users[1]->id, $course1->id);
+        $this->getDataGenerator()->enrol_user($users[6]->id, $course1->id);
+        $this->getDataGenerator()->enrol_user($users[7]->id, $course1->id);
+
+        // Add some other users as contacts.
+        \core_message\api::add_contact($users[1]->id, $users[2]->id);
+        \core_message\api::add_contact($users[3]->id, $users[1]->id);
+        \core_message\api::add_contact($users[1]->id, $users[4]->id);
+
+        // Set as the user performing the search.
+        $this->setUser($users[1]);
+
+        // Grant the authenticated user role the capability 'user:viewdetails' at site context.
+        $authenticatedrole = $DB->get_record('role', ['shortname' => 'user'], '*', MUST_EXIST);
+        assign_capability('moodle/user:viewdetails', CAP_ALLOW, $authenticatedrole->id, context_system::instance());
+
+        // Perform a search with $CFG->messagingallusers disabled.
+        set_config('messagingallusers', 0);
+        $result = core_message_external::message_search_users($users[1]->id, 'search');
+        $result = external_api::clean_returnvalue(core_message_external::message_search_users_returns(), $result);
+        $contacts = $result['contacts'];
+        $noncontacts = $result['noncontacts'];
+
+        // Check that we retrieved the correct contacts.
+        $this->assertCount(2, $contacts);
+        $this->assertEquals($users[2]->id, $contacts[0]['id']);
+        $this->assertEquals($users[3]->id, $contacts[1]['id']);
+
+        // Check that we retrieved the correct non-contacts.
+        // Site-wide messaging is disabled, but since we can see all users, we expect to be able to search for any users.
+        $this->assertCount(4, $noncontacts);
+        $this->assertEquals($users[5]->id, $noncontacts[0]['id']);
+        $this->assertEquals($users[6]->id, $noncontacts[1]['id']);
+        $this->assertEquals($users[7]->id, $noncontacts[2]['id']);
+        $this->assertEquals($users[8]->id, $noncontacts[3]['id']);
+    }
+
+    /**
+     * Tests searching users as another user without the 'moodle/user:viewdetails' capability.
+     */
+    public function test_message_search_users_without_cap() {
+        $this->resetAfterTest();
+
+        // Create some users.
+        $user1 = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
+
+        // The person doing the search for another user.
+        $this->setUser($user1);
+
+        // Ensure an exception is thrown.
+        $this->expectException('moodle_exception');
+        core_message_external::message_search_users($user2->id, 'User');
+        $this->assertDebuggingCalled();
+    }
+
+    /**
+     * Tests searching users with messaging disabled.
+     */
+    public function test_message_search_users_messaging_disabled() {
+        $this->resetAfterTest();
+
+        // Create some skeleton data just so we can call the WS.
+        $user = $this->getDataGenerator()->create_user();
+
+        // The person doing the search.
+        $this->setUser($user);
+
+        // Disable messaging.
+        set_config('messaging', 0);
+
+        // Ensure an exception is thrown.
+        $this->expectException('moodle_exception');
+        core_message_external::message_search_users($user->id, 'User');
     }
 
     /**
@@ -2227,13 +2653,13 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
         $this->send_message($user2, $user1, 'Sup mang?', 0, $time + 1);
         $this->send_message($user1, $user2, 'Writing PHPUnit tests!', 0, $time + 2);
         $this->send_message($user2, $user1, 'Word.', 0, $time + 3);
+        $convid = \core_message\api::get_conversation_between_users([$user1->id, $user2->id]);
 
         // Perform a search.
         $result = core_message_external::data_for_messagearea_search_messages($user1->id, 'o');
 
         // We need to execute the return values cleaning process to simulate the web service server.
-        $result = external_api::clean_returnvalue(core_message_external::data_for_messagearea_search_messages_returns(),
-            $result);
+        $result = external_api::clean_returnvalue(core_message_external::data_for_messagearea_search_messages_returns(), $result);
 
         // Confirm the data is correct.
         $messages = $result['contacts'];
@@ -2252,6 +2678,7 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
         $this->assertFalse($message1['isread']);
         $this->assertFalse($message1['isblocked']);
         $this->assertNull($message1['unreadcount']);
+        $this->assertEquals($convid, $message1['conversationid']);
 
         $this->assertEquals($user2->id, $message2['userid']);
         $this->assertEquals(fullname($user2), $message2['fullname']);
@@ -2263,6 +2690,7 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
         $this->assertTrue($message2['isread']);
         $this->assertFalse($message2['isblocked']);
         $this->assertNull($message2['unreadcount']);
+        $this->assertEquals($convid, $message2['conversationid']);
     }
 
     /**
@@ -2785,7 +3213,6 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
 
         // Retrieve the messages.
         $result = core_message_external::data_for_messagearea_messages($user1->id, $user2->id);
-        $this->assertDebuggingCalledCount(3);
 
         // We need to execute the return values cleaning process to simulate the web service server.
         $result = external_api::clean_returnvalue(core_message_external::data_for_messagearea_messages_returns(),
@@ -2850,7 +3277,6 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
 
         // Retrieve the messages from $time - 3, which should be the 3 most recent messages.
         $result = core_message_external::data_for_messagearea_messages($user1->id, $user2->id, 0, 0, false, $time - 3);
-        $this->assertDebuggingCalledCount(3);
 
         // We need to execute the return values cleaning process to simulate the web service server.
         $result = external_api::clean_returnvalue(core_message_external::data_for_messagearea_messages_returns(),
@@ -2891,7 +3317,6 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
 
         // Retrieve the messages.
         $result = core_message_external::data_for_messagearea_messages($user1->id, $user2->id);
-        $this->assertDebuggingCalledCount(3);
 
         // We need to execute the return values cleaning process to simulate the web service server.
         $result = external_api::clean_returnvalue(core_message_external::data_for_messagearea_messages_returns(),
@@ -3022,14 +3447,11 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
         $this->assertContains($user1->id, $membersid);
         $this->assertContains($user2->id, $membersid);
         $this->assertContains($user3->id, $membersid);
-        $this->assertNotContains($user4->id, $membersid);
-        $this->assertNotContains($user5->id, $membersid);
+
         $membersfullnames = [$members[0]['fullname'], $members[1]['fullname'], $members[2]['fullname']];
         $this->assertContains(fullname($user1), $membersfullnames);
         $this->assertContains(fullname($user2), $membersfullnames);
         $this->assertContains(fullname($user3), $membersfullnames);
-        $this->assertNotContains(fullname($user4), $membersfullnames);
-        $this->assertNotContains(fullname($user5), $membersfullnames);
 
         // Confirm the messages data is correct.
         $messages = $result['messages'];
@@ -3154,7 +3576,6 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
         $this->assertContains($user1->id, $membersid);
         $this->assertContains($user2->id, $membersid);
         $this->assertContains($user3->id, $membersid);
-        $this->assertNotContains($user4->id, $membersid);
 
         // Confirm the message data is correct.
         $messages = $result['messages'];
@@ -3255,7 +3676,6 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
 
         // Get the most recent message.
         $result = core_message_external::data_for_messagearea_get_most_recent_message($user1->id, $user2->id);
-        $this->assertDebuggingCalledCount(3);
 
         // We need to execute the return values cleaning process to simulate the web service server.
         $result = external_api::clean_returnvalue(core_message_external::data_for_messagearea_get_most_recent_message_returns(),
@@ -3289,7 +3709,6 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
 
         // Get the most recent message.
         $result = core_message_external::data_for_messagearea_get_most_recent_message($user1->id, $user2->id);
-        $this->assertDebuggingCalledCount(3);
 
         // We need to execute the return values cleaning process to simulate the web service server.
         $result = external_api::clean_returnvalue(core_message_external::data_for_messagearea_get_most_recent_message_returns(),
@@ -4443,6 +4862,7 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
             $this->assertArrayHasKey('id', $conv);
             $this->assertArrayHasKey('name', $conv);
             $this->assertArrayHasKey('subname', $conv);
+            $this->assertArrayHasKey('imageurl', $conv);
             $this->assertArrayHasKey('type', $conv);
             $this->assertArrayHasKey('membercount', $conv);
             $this->assertArrayHasKey('isfavourite', $conv);
@@ -4458,6 +4878,10 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
                 $this->assertArrayHasKey('showonlinestatus', $member);
                 $this->assertArrayHasKey('isblocked', $member);
                 $this->assertArrayHasKey('iscontact', $member);
+                $this->assertArrayHasKey('isdeleted', $member);
+                $this->assertArrayHasKey('canmessage', $member);
+                $this->assertArrayHasKey('requirescontact', $member);
+                $this->assertArrayHasKey('contactrequests', $member);
             }
             $this->assertArrayHasKey('messages', $conv);
             foreach ($conv['messages'] as $message) {
@@ -4467,6 +4891,41 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
                 $this->assertArrayHasKey('timecreated', $message);
             }
         }
+    }
+
+    /**
+     * Test verifying that html format messages are supported, and that message_format_message_text() is being called appropriately.
+     */
+    public function test_get_conversations_message_format() {
+        $this->resetAfterTest();
+
+        global $DB;
+        // Create some users.
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+
+        // Create conversation.
+        $conversation = \core_message\api::create_conversation(
+            \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL,
+            [$user1->id, $user2->id]
+        );
+
+        // Send some messages back and forth.
+        $time = 1;
+        testhelper::send_fake_message_to_conversation($user2, $conversation->id, 'Sup mang?', $time + 1);
+        $mid = testhelper::send_fake_message_to_conversation($user1, $conversation->id, '<a href="#">A link</a>', $time + 2);
+        $message = $DB->get_record('messages', ['id' => $mid]);
+
+        // The user in scope.
+        $this->setUser($user1);
+
+        // Verify the format of the html message.
+        $expectedmessagetext = message_format_message_text($message);
+        $result = core_message_external::get_conversations($user1->id);
+        $result = external_api::clean_returnvalue(core_message_external::get_conversations_returns(), $result);
+        $conversations = $result['conversations'];
+        $messages = $conversations[0]['messages'];
+        $this->assertEquals($expectedmessagetext, $messages[0]['text']);
     }
 
     /**
@@ -4680,6 +5139,114 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
     }
 
     /**
+     * Test verifying that group linked conversations are returned and contain a subname matching the course name.
+     */
+    public function test_get_conversations_group_linked() {
+        $this->resetAfterTest();
+        global $CFG, $DB;
+
+        // Create some users.
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+        $user3 = self::getDataGenerator()->create_user();
+
+        $course1 = $this->getDataGenerator()->create_course();
+
+        // Create a group with a linked conversation.
+        $this->setAdminUser();
+        $this->getDataGenerator()->enrol_user($user1->id, $course1->id);
+        $this->getDataGenerator()->enrol_user($user2->id, $course1->id);
+        $this->getDataGenerator()->enrol_user($user3->id, $course1->id);
+        $group1 = $this->getDataGenerator()->create_group([
+            'courseid' => $course1->id,
+            'enablemessaging' => 1,
+            'picturepath' => $CFG->dirroot . '/lib/tests/fixtures/gd-logo.png'
+        ]);
+
+        // Add users to group1.
+        $this->getDataGenerator()->create_group_member(array('groupid' => $group1->id, 'userid' => $user1->id));
+        $this->getDataGenerator()->create_group_member(array('groupid' => $group1->id, 'userid' => $user2->id));
+
+        $result = core_message_external::get_conversations($user1->id, 0, 20, null, false);
+        $result = external_api::clean_returnvalue(core_message_external::get_conversations_returns(), $result);
+        $conversations = $result['conversations'];
+
+        $this->assertEquals(2, $conversations[0]['membercount']);
+        $this->assertEquals($course1->shortname, $conversations[0]['subname']);
+        $groupimageurl = get_group_picture_url($group1, $group1->courseid, true);
+        $this->assertEquals($groupimageurl, $conversations[0]['imageurl']);
+
+        // Now, disable the conversation linked to the group and verify it's no longer returned.
+        $DB->set_field('message_conversations', 'enabled', 0, ['id' => $conversations[0]['id']]);
+        $result = core_message_external::get_conversations($user1->id, 0, 20, null, false);
+        $result = external_api::clean_returnvalue(core_message_external::get_conversations_returns(), $result);
+        $conversations = $result['conversations'];
+        $this->assertCount(0, $conversations);
+    }
+
+    /**
+     * Test verifying get_conversations when there are users in a group and/or individual conversation. The reason this
+     * test is performed is because we do not need as much data for group conversations (saving DB calls), so we want
+     * to confirm this happens.
+     */
+    public function test_get_conversations_user_in_group_and_individual_chat() {
+        $this->resetAfterTest();
+
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+        $user3 = self::getDataGenerator()->create_user();
+
+        $conversation = \core_message\api::create_conversation(
+            \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL,
+            [
+                $user1->id,
+                $user2->id
+            ],
+            'Individual conversation'
+        );
+
+        testhelper::send_fake_message_to_conversation($user1, $conversation->id);
+
+        $conversation = \core_message\api::create_conversation(
+            \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP,
+            [
+                $user1->id,
+                $user2->id,
+            ],
+            'Group conversation'
+        );
+
+        testhelper::send_fake_message_to_conversation($user1, $conversation->id);
+
+        \core_message\api::create_contact_request($user1->id, $user2->id);
+        \core_message\api::create_contact_request($user1->id, $user3->id);
+
+        $this->setUser($user2);
+        $result = core_message_external::get_conversations($user2->id);
+        $result = external_api::clean_returnvalue(core_message_external::get_conversations_returns(), $result);
+        $conversations = $result['conversations'];
+
+        $groupconversation = array_shift($conversations);
+        $individualconversation = array_shift($conversations);
+
+        $this->assertEquals('Group conversation', $groupconversation['name']);
+        $this->assertEquals('Individual conversation', $individualconversation['name']);
+
+        $this->assertCount(1, $groupconversation['members']);
+        $this->assertCount(1, $individualconversation['members']);
+
+        $groupmember = reset($groupconversation['members']);
+        $this->assertNull($groupmember['requirescontact']);
+        $this->assertNull($groupmember['canmessage']);
+        $this->assertEmpty($groupmember['contactrequests']);
+
+        $individualmember = reset($individualconversation['members']);
+        $this->assertNotNull($individualmember['requirescontact']);
+        $this->assertNotNull($individualmember['canmessage']);
+        $this->assertNotEmpty($individualmember['contactrequests']);
+    }
+
+    /**
      * Test returning members in a conversation with no contact requests.
      */
     public function test_get_conversation_members_messaging_disabled() {
@@ -4764,7 +5331,8 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
         $this->assertEquals(true, $member1->showonlinestatus);
         $this->assertEquals(false, $member1->iscontact);
         $this->assertEquals(false, $member1->isblocked);
-        $this->assertObjectNotHasAttribute('contactrequests', $member1);
+        $this->assertObjectHasAttribute('contactrequests', $member1);
+        $this->assertEmpty($member1->contactrequests);
 
         $this->assertEquals($user2->id, $member2->id);
         $this->assertEquals(fullname($user2), $member2->fullname);
@@ -4772,7 +5340,8 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
         $this->assertEquals(true, $member2->showonlinestatus);
         $this->assertEquals(true, $member2->iscontact);
         $this->assertEquals(false, $member2->isblocked);
-        $this->assertObjectNotHasAttribute('contactrequests', $member2);
+        $this->assertObjectHasAttribute('contactrequests', $member2);
+        $this->assertEmpty($member2->contactrequests);
 
         $this->assertEquals($user3->id, $member3->id);
         $this->assertEquals(fullname($user3), $member3->fullname);
@@ -4780,7 +5349,8 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
         $this->assertEquals(true, $member3->showonlinestatus);
         $this->assertEquals(false, $member3->iscontact);
         $this->assertEquals(true, $member3->isblocked);
-        $this->assertObjectNotHasAttribute('contactrequests', $member3);
+        $this->assertObjectHasAttribute('contactrequests', $member3);
+        $this->assertEmpty($member3->contactrequests);
     }
 
     /**
@@ -4839,7 +5409,7 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
         $this->assertEquals(true, $member1->showonlinestatus);
         $this->assertEquals(false, $member1->iscontact);
         $this->assertEquals(false, $member1->isblocked);
-        $this->assertCount(3, $member1->contactrequests);
+        $this->assertCount(2, $member1->contactrequests);
 
         $this->assertEquals($user2->id, $member2->id);
         $this->assertEquals(fullname($user2), $member2->fullname);
@@ -4847,7 +5417,7 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
         $this->assertEquals(true, $member2->showonlinestatus);
         $this->assertEquals(true, $member2->iscontact);
         $this->assertEquals(false, $member2->isblocked);
-        $this->assertCount(2, $member2->contactrequests);
+        $this->assertCount(1, $member2->contactrequests);
 
         $this->assertEquals($user3->id, $member3->id);
         $this->assertEquals(fullname($user3), $member3->fullname);
@@ -4855,12 +5425,11 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
         $this->assertEquals(true, $member3->showonlinestatus);
         $this->assertEquals(false, $member3->iscontact);
         $this->assertEquals(true, $member3->isblocked);
-        $this->assertCount(2, $member3->contactrequests);
+        $this->assertCount(1, $member3->contactrequests);
 
         // Confirm the contact requests are OK.
         $request1 = array_shift($member1->contactrequests);
         $request2 = array_shift($member1->contactrequests);
-        $request3 = array_shift($member1->contactrequests);
 
         $this->assertEquals($user1->id, $request1->userid);
         $this->assertEquals($user2->id, $request1->requesteduserid);
@@ -4868,26 +5437,15 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
         $this->assertEquals($user1->id, $request2->userid);
         $this->assertEquals($user3->id, $request2->requesteduserid);
 
-        $this->assertEquals($user1->id, $request3->userid);
-        $this->assertEquals($user4->id, $request3->requesteduserid);
-
         $request1 = array_shift($member2->contactrequests);
-        $request2 = array_shift($member2->contactrequests);
 
         $this->assertEquals($user1->id, $request1->userid);
         $this->assertEquals($user2->id, $request1->requesteduserid);
 
-        $this->assertEquals($user2->id, $request2->userid);
-        $this->assertEquals($user3->id, $request2->requesteduserid);
-
         $request1 = array_shift($member3->contactrequests);
-        $request2 = array_shift($member3->contactrequests);
 
         $this->assertEquals($user1->id, $request1->userid);
         $this->assertEquals($user3->id, $request1->requesteduserid);
-
-        $this->assertEquals($user2->id, $request2->userid);
-        $this->assertEquals($user3->id, $request2->requesteduserid);
     }
 
     /**
@@ -4915,5 +5473,353 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
 
         $this->expectException('moodle_exception');
         core_message_external::get_conversation_members($user3->id, $conversationid);
+    }
+
+    /**
+     * Test verifying multiple messages can be sent to an individual conversation.
+     */
+    public function test_send_messages_to_conversation_individual() {
+        $this->resetAfterTest(true);
+
+        // Get a bunch of conversations, some group, some individual and in different states.
+        list($user1, $user2, $user3, $user4, $ic1, $ic2, $ic3,
+            $gc1, $gc2, $gc3, $gc4, $gc5, $gc6) = $this->create_conversation_test_data();
+
+        // Enrol the users in the same course, so the default privacy controls (course + contacts) can be used.
+        $course1 = $this->getDataGenerator()->create_course();
+        $this->getDataGenerator()->enrol_user($user1->id, $course1->id);
+        $this->getDataGenerator()->enrol_user($user2->id, $course1->id);
+        $this->getDataGenerator()->enrol_user($user3->id, $course1->id);
+        $this->getDataGenerator()->enrol_user($user4->id, $course1->id);
+
+        // The user making the request.
+        $this->setUser($user1);
+
+        // Try to send a message as user1 to a conversation user1 is a a part of.
+        $messages = [
+            [
+                'text' => 'a message from user 1',
+                'textformat' => FORMAT_MOODLE
+            ],
+            [
+                'text' => 'another message from user 1',
+                'textformat' => FORMAT_MOODLE
+            ],
+        ];
+        // Redirect messages.
+        // This marks messages as read, but we can still observe and verify the number of conversation recipients,
+        // based on the message_viewed events generated as part of marking the message as read for each user.
+        $this->preventResetByRollback();
+        $sink = $this->redirectMessages();
+        $writtenmessages = core_message_external::send_messages_to_conversation($ic1->id, $messages);
+
+        external_api::clean_returnvalue(core_message_external::send_messages_to_conversation_returns(), $writtenmessages);
+
+        $this->assertCount(2, $writtenmessages);
+        $this->assertObjectHasAttribute('id', $writtenmessages[0]);
+        $this->assertEquals($user1->id, $writtenmessages[0]->useridfrom);
+        $this->assertEquals('<p>a message from user 1</p>', $writtenmessages[0]->text);
+        $this->assertNotEmpty($writtenmessages[0]->timecreated);
+
+        $this->assertObjectHasAttribute('id', $writtenmessages[1]);
+        $this->assertEquals($user1->id, $writtenmessages[1]->useridfrom);
+        $this->assertEquals('<p>another message from user 1</p>', $writtenmessages[1]->text);
+        $this->assertNotEmpty($writtenmessages[1]->timecreated);
+    }
+
+    /**
+     * Test verifying multiple messages can be sent to an group conversation.
+     */
+    public function test_send_messages_to_conversation_group() {
+        $this->resetAfterTest(true);
+
+        // Get a bunch of conversations, some group, some individual and in different states.
+        list($user1, $user2, $user3, $user4, $ic1, $ic2, $ic3,
+            $gc1, $gc2, $gc3, $gc4, $gc5, $gc6) = $this->create_conversation_test_data();
+
+        // Enrol the users in the same course, so the default privacy controls (course + contacts) can be used.
+        $course1 = $this->getDataGenerator()->create_course();
+        $this->getDataGenerator()->enrol_user($user1->id, $course1->id);
+        $this->getDataGenerator()->enrol_user($user2->id, $course1->id);
+        $this->getDataGenerator()->enrol_user($user3->id, $course1->id);
+        $this->getDataGenerator()->enrol_user($user4->id, $course1->id);
+
+        // The user making the request.
+        $this->setUser($user1);
+
+        // Try to send a message as user1 to a conversation user1 is a a part of.
+        $messages = [
+            [
+                'text' => 'a message from user 1 to group conv',
+                'textformat' => FORMAT_MOODLE
+            ],
+            [
+                'text' => 'another message from user 1 to group conv',
+                'textformat' => FORMAT_MOODLE
+            ],
+        ];
+        // Redirect messages.
+        // This marks messages as read, but we can still observe and verify the number of conversation recipients,
+        // based on the message_viewed events generated as part of marking the message as read for each user.
+        $this->preventResetByRollback();
+        $sink = $this->redirectMessages();
+        $writtenmessages = core_message_external::send_messages_to_conversation($gc2->id, $messages);
+
+        external_api::clean_returnvalue(core_message_external::send_messages_to_conversation_returns(), $writtenmessages);
+
+        $this->assertCount(2, $writtenmessages);
+        $this->assertObjectHasAttribute('id', $writtenmessages[0]);
+        $this->assertEquals($user1->id, $writtenmessages[0]->useridfrom);
+        $this->assertEquals('<p>a message from user 1 to group conv</p>', $writtenmessages[0]->text);
+        $this->assertNotEmpty($writtenmessages[0]->timecreated);
+
+        $this->assertObjectHasAttribute('id', $writtenmessages[1]);
+        $this->assertEquals($user1->id, $writtenmessages[1]->useridfrom);
+        $this->assertEquals('<p>another message from user 1 to group conv</p>', $writtenmessages[1]->text);
+        $this->assertNotEmpty($writtenmessages[1]->timecreated);
+    }
+
+    /**
+     * Test verifying multiple messages can not be sent to a non existent conversation.
+     */
+    public function test_send_messages_to_conversation_non_existent_conversation() {
+        $this->resetAfterTest(true);
+
+        // Get a bunch of conversations, some group, some individual and in different states.
+        list($user1, $user2, $user3, $user4, $ic1, $ic2, $ic3,
+            $gc1, $gc2, $gc3, $gc4, $gc5, $gc6) = $this->create_conversation_test_data();
+
+        // The user making the request.
+        $this->setUser($user1);
+
+        // Try to send a message as user1 to a conversation user1 is a a part of.
+        $messages = [
+            [
+                'text' => 'a message from user 1',
+                'textformat' => FORMAT_MOODLE
+            ],
+            [
+                'text' => 'another message from user 1',
+                'textformat' => FORMAT_MOODLE
+            ],
+        ];
+        $this->expectException(\moodle_exception::class);
+        $writtenmessages = core_message_external::send_messages_to_conversation(0, $messages);
+    }
+
+    /**
+     * Test verifying multiple messages can not be sent to a conversation by a non-member.
+     */
+    public function test_send_messages_to_conversation_non_member() {
+        $this->resetAfterTest(true);
+
+        // Get a bunch of conversations, some group, some individual and in different states.
+        list($user1, $user2, $user3, $user4, $ic1, $ic2, $ic3,
+            $gc1, $gc2, $gc3, $gc4, $gc5, $gc6) = $this->create_conversation_test_data();
+
+        // Enrol the users in the same course, so the default privacy controls (course + contacts) can be used.
+        $course1 = $this->getDataGenerator()->create_course();
+        $this->getDataGenerator()->enrol_user($user1->id, $course1->id);
+        $this->getDataGenerator()->enrol_user($user2->id, $course1->id);
+        $this->getDataGenerator()->enrol_user($user3->id, $course1->id);
+        $this->getDataGenerator()->enrol_user($user4->id, $course1->id);
+
+        // The user making the request. This user is not a member of group conversation 1 (gc1).
+        $this->setUser($user1);
+
+        // Try to send a message as user1 to a conversation user1 is a a part of.
+        $messages = [
+            [
+                'text' => 'a message from user 1 to group conv',
+                'textformat' => FORMAT_MOODLE
+            ],
+            [
+                'text' => 'another message from user 1 to group conv',
+                'textformat' => FORMAT_MOODLE
+            ],
+        ];
+        $this->expectException(\moodle_exception::class);
+        $writtenmessages = core_message_external::send_messages_to_conversation($gc1->id, $messages);
+    }
+
+    /**
+     * Test getting a conversation that doesn't exist.
+     */
+    public function test_get_conversation_no_conversation() {
+        $this->resetAfterTest();
+
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+
+        $name = 'lol conversation';
+        $conversation = \core_message\api::create_conversation(
+            \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL,
+            [
+                $user1->id,
+                $user2->id,
+            ],
+            $name
+        );
+        $conversationid = $conversation->id;
+
+        $this->setUser($user1);
+
+        $this->expectException('moodle_exception');
+        $conv = core_message_external::get_conversation($user1->id, $conversationid + 1);
+        external_api::clean_returnvalue(core_message_external::get_conversation_returns(), $conv);
+    }
+
+    /**
+     * Test getting a conversation with no messages.
+     */
+    public function test_get_conversation_no_messages() {
+        $this->resetAfterTest();
+
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+
+        $name = 'lol conversation';
+        $conversation = \core_message\api::create_conversation(
+            \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL,
+            [
+                $user1->id,
+                $user2->id,
+            ],
+            $name
+        );
+        $conversationid = $conversation->id;
+
+        $this->setUser($user1);
+
+        $conv = core_message_external::get_conversation($user1->id, $conversationid);
+        external_api::clean_returnvalue(core_message_external::get_conversation_returns(), $conv);
+
+        $conv = (array) $conv;
+        $this->assertEquals($conversationid, $conv['id']);
+        $this->assertEquals($name, $conv['name']);
+        $this->assertArrayHasKey('subname', $conv);
+        $this->assertEquals(\core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL, $conv['type']);
+        $this->assertEquals(2, $conv['membercount']);
+        $this->assertEquals(false, $conv['isfavourite']);
+        $this->assertEquals(true, $conv['isread']);
+        $this->assertEquals(0, $conv['unreadcount']);
+        $this->assertCount(1, $conv['members']);
+        foreach ($conv['members'] as $member) {
+            $member = (array) $member;
+            $this->assertArrayHasKey('id', $member);
+            $this->assertArrayHasKey('fullname', $member);
+            $this->assertArrayHasKey('profileimageurl', $member);
+            $this->assertArrayHasKey('profileimageurlsmall', $member);
+            $this->assertArrayHasKey('isonline', $member);
+            $this->assertArrayHasKey('showonlinestatus', $member);
+            $this->assertArrayHasKey('isblocked', $member);
+            $this->assertArrayHasKey('iscontact', $member);
+        }
+        $this->assertEmpty($conv['messages']);
+    }
+
+    /**
+     * Test getting a conversation with messages.
+     */
+    public function test_get_conversation_with_messages() {
+        $this->resetAfterTest();
+
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+
+        // Some random conversation.
+        $otherconversation = \core_message\api::create_conversation(
+            \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL,
+            [
+                $user1->id,
+                $user2->id,
+            ]
+        );
+
+        $conversation = \core_message\api::create_conversation(
+            \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL,
+            [
+                $user1->id,
+                $user2->id,
+            ]
+        );
+        $conversationid = $conversation->id;
+
+        $time = time();
+        $message1id = testhelper::send_fake_message_to_conversation($user1, $conversation->id, 'A', $time - 10);
+        $message2id = testhelper::send_fake_message_to_conversation($user2, $conversation->id, 'B', $time - 5);
+        $message3id = testhelper::send_fake_message_to_conversation($user1, $conversation->id, 'C', $time);
+
+        // Add some messages to the other convo to make sure they aren't included.
+        testhelper::send_fake_message_to_conversation($user1, $otherconversation->id, 'foo');
+
+        $this->setUser($user1);
+
+        // Test newest first.
+        $conv = core_message_external::get_conversation(
+            $user1->id,
+            $conversationid,
+            false,
+            false,
+            0,
+            0,
+            0,
+            0,
+            true
+        );
+        external_api::clean_returnvalue(core_message_external::get_conversation_returns(), $conv);
+
+        $conv = (array) $conv;
+        $this->assertEquals(false, $conv['isread']);
+        $this->assertEquals(1, $conv['unreadcount']);
+        $this->assertCount(3, $conv['messages']);
+        $this->assertEquals($message3id, $conv['messages'][0]->id);
+        $this->assertEquals($user1->id, $conv['messages'][0]->useridfrom);
+        $this->assertEquals($message2id, $conv['messages'][1]->id);
+        $this->assertEquals($user2->id, $conv['messages'][1]->useridfrom);
+        $this->assertEquals($message1id, $conv['messages'][2]->id);
+        $this->assertEquals($user1->id, $conv['messages'][2]->useridfrom);
+
+        // Test newest last.
+        $conv = core_message_external::get_conversation(
+            $user1->id,
+            $conversationid,
+            false,
+            false,
+            0,
+            0,
+            0,
+            0,
+            false
+        );
+        external_api::clean_returnvalue(core_message_external::get_conversation_returns(), $conv);
+
+        $conv = (array) $conv;
+        $this->assertCount(3, $conv['messages']);
+        $this->assertEquals($message3id, $conv['messages'][2]->id);
+        $this->assertEquals($user1->id, $conv['messages'][2]->useridfrom);
+        $this->assertEquals($message2id, $conv['messages'][1]->id);
+        $this->assertEquals($user2->id, $conv['messages'][1]->useridfrom);
+        $this->assertEquals($message1id, $conv['messages'][0]->id);
+        $this->assertEquals($user1->id, $conv['messages'][0]->useridfrom);
+
+        // Test message offest and limit.
+        $conv = core_message_external::get_conversation(
+            $user1->id,
+            $conversationid,
+            false,
+            false,
+            0,
+            0,
+            1,
+            1,
+            true
+        );
+        external_api::clean_returnvalue(core_message_external::get_conversation_returns(), $conv);
+
+        $conv = (array) $conv;
+        $this->assertCount(1, $conv['messages']);
+        $this->assertEquals($message2id, $conv['messages'][0]->id);
+        $this->assertEquals($user2->id, $conv['messages'][0]->useridfrom);
     }
 }
