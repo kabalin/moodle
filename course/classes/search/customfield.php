@@ -52,7 +52,6 @@ class customfield extends \core_search\base_mod {
      *
      * @param \core_search\document $doc
      * @return \moodle_url
-     * @throws \moodle_exception
      */
     public function get_context_url(\core_search\document $doc) {
         return $this->get_doc_url($doc);
@@ -63,7 +62,6 @@ class customfield extends \core_search\base_mod {
      *
      * @param \core_search\document $doc
      * @return \moodle_url
-     * @throws \moodle_exception
      */
     public function get_doc_url(\core_search\document $doc) {
         return new \moodle_url('/course/view.php', array('id' => $doc->get('courseid')));
@@ -75,7 +73,6 @@ class customfield extends \core_search\base_mod {
      * @param \stdClass $record
      * @param array $options
      * @return \core_search\document|bool
-     * @throws \moodle_exception
      */
     public function get_document($record, $options = array()) {
         try {
@@ -124,7 +121,6 @@ class customfield extends \core_search\base_mod {
      *
      *  @param int $id
      *  @return int
-     *  @throws \dml_exception
      */
     public function check_access($id) {
             global $DB;
@@ -144,8 +140,6 @@ class customfield extends \core_search\base_mod {
      * @param int $modifiedfrom timestamp
      * @param \context|null $context Restriction context
      * @return \moodle_recordset|null Recordset or null if no change possible
-     * @throws \moodle_exception
-     * @throws \dml_exception
      */
     public function get_document_recordset($modifiedfrom = 0, \context $context = null) {
         global $DB;

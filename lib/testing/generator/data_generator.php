@@ -1204,7 +1204,7 @@ EOD;
      * @param   array $data Array with 'name', 'shortname' and 'type' of the field
      * @return  \stdClass   The created field
      */
-    public function create_custom_field($category, $data): \core_customfield\field {
+    public function create_custom_field($category, $data): \core_customfield\field_controller {
         $handler = core_course\customfield\course_handler::instance();
         $data['configdata'] = empty($data['configdata']) ? [] : $data['configdata'];
         $field = $handler->new_field($category, $data['type']);

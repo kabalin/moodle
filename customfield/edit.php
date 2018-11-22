@@ -30,7 +30,7 @@ $type       = optional_param('type', null, PARAM_COMPONENT);
 admin_externalpage_setup('course_customfield');
 
 if ($id) {
-    $record  = new \core_customfield\field($id);
+    $record  = \core_customfield\api::field_factory($id);
     $handler = \core_customfield\handler::get_handler_for_field($record);
     $typestr = get_string('pluginname', 'customfield_'.$record->get('type'));
     $title   = get_string('editingfield', 'core_customfield', $typestr);

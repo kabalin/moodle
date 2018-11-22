@@ -15,20 +15,38 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package   customfield_checkbox
+ * @package   customfield_date
  * @copyright 2018 David Matamoros <davidmc@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace customfield_checkbox;
+namespace customfield_date;
 
 defined('MOODLE_INTERNAL') || die;
 
 /**
  * Class field
  *
- * @package customfield_checkbox
+ * @package customfield_date
  */
-class field extends \core_customfield\field {
-    const TYPE = 'checkbox';
+class field_controller extends \core_customfield\field_controller {
+    const TYPE = 'date';
+
+    /**
+     * Validate the data from the config form.
+     *
+     * @param array $data
+     * @param array $files
+     * @return array associative array of error messages
+     */
+    public function validate_config_form(array $data, $files = array()) : array {
+        $errors = array();
+
+        // Make sure the start year is not greater than the end year.
+        if ($data['configdata']['startyear'] > $data['configdata']['endyear']) {
+            $errors['configdata[startyear]'] = get_string('startyearafterend', 'customfield_date');
+        }
+
+        return $errors;
+    }
 }

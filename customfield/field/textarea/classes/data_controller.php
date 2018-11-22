@@ -37,7 +37,6 @@ class data_controller extends \core_customfield\data_controller {
      * Add fields for editing a textarea field.
      *
      * @param \moodleform $mform
-     * @throws \coding_exception
      */
     public function edit_field_add(\MoodleQuickForm $mform) {
 
@@ -48,8 +47,6 @@ class data_controller extends \core_customfield\data_controller {
      *
      * @param \stdClass $datanew data coming from the form
      * @return mixed returns data id if success of db insert/update, false on fail, 0 if not permitted
-     * @throws \moodle_exception
-     * @throws \dml_exception
      */
     public function edit_save_data(\stdClass $datanew) {
         $fromform = $datanew->{api::field_inputname($this->get_field()).'_editor'};
@@ -76,10 +73,6 @@ class data_controller extends \core_customfield\data_controller {
      * Load data for this custom field, ready for editing.
      *
      * @param \stdClass $data
-     *
-     * @throws \coding_exception
-     * @throws \dml_exception
-     * @throws \moodle_exception
      */
     public function add_customfield_data_to_object(\stdClass $data) {
         if ($this->get('id')) {
@@ -111,7 +104,6 @@ class data_controller extends \core_customfield\data_controller {
      * Get the filearea for the content.
      *
      * @return string
-     * @throws \coding_exception
      */
     public function get_filearea() {
         if ($fieldid = $this->get('id')) {

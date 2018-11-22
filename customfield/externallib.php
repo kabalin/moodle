@@ -40,14 +40,11 @@ class core_customfield_external extends external_api {
 
     /**
      * @param $id
-     * @throws coding_exception
-     * @throws dml_exception
-     * @throws moodle_exception
      */
     public static function delete_entry($id) {
         $params = self::validate_parameters(self::delete_entry_parameters(), ['id' => $id]);
 
-        $record = new \core_customfield\field($params['id']);
+        $record = \core_customfield\api::field_factory($params['id']);
         $handler = \core_customfield\handler::get_handler_for_field($record);
         if (!$handler->can_configure()) {
             throw new moodle_exception('nopermissionconfigure', 'core_customfield');
@@ -79,10 +76,6 @@ class core_customfield_external extends external_api {
      * @param string $area
      * @param int $itemid
      * @return array|object|stdClass
-     * @throws coding_exception
-     * @throws dml_exception
-     * @throws moodle_exception
-     * @throws require_login_exception
      */
     public static function reload_template($component, $area, $itemid) {
         global $PAGE;
@@ -147,8 +140,6 @@ class core_customfield_external extends external_api {
 
     /**
      * @param $id
-     * @throws coding_exception
-     * @throws moodle_exception
      */
     public static function delete_category($id) {
         $category = new \core_customfield\category_controller($id);
@@ -228,7 +219,7 @@ class core_customfield_external extends external_api {
     public static function move_field($id, $categoryid, $beforeid) {
         $params = self::validate_parameters(self::move_field_parameters(),
             ['id' => $id, 'categoryid' => $categoryid, 'beforeid' => $beforeid]);
-        $field = new \core_customfield\field($params['id']);
+        $field = \core_customfield\api::field_factory($params['id']);
         $handler = \core_customfield\handler::get_handler_for_field($field);
         self::validate_context($handler->get_configuration_context());
         if (!$handler->can_configure()) {

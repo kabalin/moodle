@@ -1,4 +1,4 @@
-@core @core_course @core_customfield
+@core @core_course @core_customfield @aaa
 Feature: Teachers can edit course custom fields
   In order to have additional data on the course
   As a teacher
@@ -48,3 +48,26 @@ Feature: Teachers can edit course custom fields
     When I set the field "coursesearchbox" to "testcontent"
      And I press "Go"
     Then I should see "Course 1"
+
+  Scenario: Create a course from the management interface
+   When I log in as "admin"
+    And I go to the courses management page
+    And I should see the "Categories" management page
+    And I click on category "Miscellaneous" in the management interface
+    And I should see the "Course categories and courses" management page
+    And I click on "Create new course" "link" in the "#course-listing" "css_element"
+    When I set the following fields to these values:
+      | Course full name | Course 2 |
+      | Course short name | C2 |
+      | Format | topics |
+      | Test field | testcontent2 |
+    And I press "Save and return"
+    Then I should see the "Course categories and courses" management page
+    And I click on "Sort by Course time created ascending" "link" in the ".course-listing-actions" "css_element"
+    And I click on "Course 2" "link" in the "region-main" "region"
+    And I click on "Edit" "link" in the ".course-detail" "css_element"
+    And the following fields match these values:
+      | Course full name | Course 2 |
+      | Course short name | C2 |
+      | Format | topics |
+      | Test field | testcontent2 |

@@ -44,11 +44,10 @@ class plugin extends plugin_base {
     /**
      * Add fields for editing a textarea field.
      *
-     * @param \core_customfield\field $field
+     * @param \core_customfield\field_controller $field
      * @param \MoodleQuickForm $mform
-     * @throws \coding_exception
      */
-    public static function add_field_to_config_form(\core_customfield\field $field, \MoodleQuickForm $mform) {
+    public static function add_field_to_config_form(\core_customfield\field_controller $field, \MoodleQuickForm $mform) {
         global $PAGE;
         $mform->addElement('header', 'header_specificsettings', get_string('specificsettings', 'customfield_textarea'));
         $mform->setExpanded('header_specificsettings', true);
@@ -70,15 +69,20 @@ class plugin extends plugin_base {
     /**
      * Add fields for editing a textarea field.
      *
-     * @param \moodleform $mform
-     * @throws \coding_exception
+     * @param \core_customfield\field_controller $field
+     * @param \MoodleQuickForm                   $mform
      */
-    public static function edit_field_add(\core_customfield\field $field, \MoodleQuickForm $mform) {
+    public static function edit_field_add(\core_customfield\field_controller $field, \MoodleQuickForm $mform) {
         $desceditoroptions = self::value_editor_options($field);
         $mform->addElement('editor', api::field_inputname($field).'_editor', format_string($field->get('name')), null, $desceditoroptions);
     }
 
-    public static function value_editor_options(\core_customfield\field $field, data_controller $data = null) {
+    /**
+     * @param \core_customfield\field_controller $field
+     * @param data_controller|null               $data
+     * @return array
+     */
+    public static function value_editor_options(\core_customfield\field_controller $field, data_controller $data = null) {
         global $CFG;
         require_once($CFG->libdir.'/formslib.php');
         if ($data) {
@@ -92,10 +96,10 @@ class plugin extends plugin_base {
     /**
      * Prepare the field data to set in the configuration form
      *
-     * @param field $field
+     * @param field_controller $field
      * @return \stdClass
      */
-    public static function prepare_field_for_form(\core_customfield\field $field) : \stdClass {
+    public static function prepare_field_for_form(\core_customfield\field_controller $field) : \stdClass {
         $fieldrecord = parent::prepare_field_for_form($field);
 
         if (!empty($fieldrecord->configdata['defaultvalue'])) {

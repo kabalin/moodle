@@ -37,11 +37,10 @@ abstract class plugin_base {
     /**
      * Add fields for editing a text field.
      *
-     * @param field $field
+     * @param field_controller $field
      * @param \MoodleQuickForm $mform
-     * @throws \coding_exception
      */
-    public static function add_field_to_config_form(field $field, \MoodleQuickForm $mform) {
+    public static function add_field_to_config_form(field_controller $field, \MoodleQuickForm $mform) {
 
     }
 
@@ -57,10 +56,10 @@ abstract class plugin_base {
     /**
      * Display the field data
      * 
-     * @param data $data
+     * @param data_controller $data
      * @return string
      */
-    public static function display(data $data) {
+    public static function display(data_controller $data) {
         global $OUTPUT;
         $type = $data->get_field()->get('type');
         $classpath = "\\customfield_{$type}\\output\\display";
@@ -71,10 +70,10 @@ abstract class plugin_base {
     /**
      * Prepare the field data to set in the configuration form
      *
-     * @param field $field
+     * @param field_controller $field
      * @return \stdClass
      */
-    public static function prepare_field_for_form(field $field) : \stdClass {
+    public static function prepare_field_for_form(field_controller $field) : \stdClass {
         $fieldrecord = $field->to_record();
         $fieldrecord->configdata = $field->get('configdata');
 

@@ -15,20 +15,20 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package   customfield_select
+ * @package   customfield_checkbox
  * @copyright 2018 David Matamoros <davidmc@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace customfield_select;
+namespace customfield_checkbox;
 
 defined('MOODLE_INTERNAL') || die;
 
 /**
  * Class field
  *
- * @package customfield_select
+ * @package customfield_checkbox
  */
-class field extends \core_customfield\field {
-    const TYPE = 'select';
+class field_controller  extends \core_customfield\field_controller {
+    const TYPE = 'checkbox';
 }

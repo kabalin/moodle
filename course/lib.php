@@ -2488,9 +2488,8 @@ function create_course($data, $editoroptions = NULL) {
         core_tag_tag::set_item_tags('core', 'course', $course->id, context_course::instance($course->id), $data->tags);
     }
 
-    // Save custom fields.
-    // This check if $data contains customfield_*.
-    if (strpos(implode('', array_keys(get_object_vars($data))), 'customfield')) {
+    // Save custom fields if there are any of them in the form.
+    if (count(preg_grep('/^customfield_/', array_keys((array)$data)))) {
         $handler = core_course\customfield\course_handler::instance();
         $data->id = $course->id;
         $data->contextid = $context->id;
@@ -2580,8 +2579,8 @@ function update_course($data, $editoroptions = NULL) {
         }
     }
 
-    // This check if $data contains customfield_*.
-    if (strpos(implode('', array_keys(get_object_vars($data))), 'customfield')) {
+    // Update custom fields if there are any of them in the form.
+    if (count(preg_grep('/^customfield_/', array_keys((array)$data)))) {
         $handler = core_course\customfield\course_handler::instance();
         $data->contextid = $context->id;
         $handler->save_customfield_data($data);

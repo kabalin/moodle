@@ -39,11 +39,10 @@ class plugin extends plugin_base {
     /**
      * Add fields for editing a checkbox field.
      *
-     * @param field $field
+     * @param field_controller $field
      * @param \MoodleQuickForm $mform
-     * @throws \coding_exception
      */
-    public static function add_field_to_config_form(\core_customfield\field $field, \MoodleQuickForm $mform) {
+    public static function add_field_to_config_form(\core_customfield\field_controller $field, \MoodleQuickForm $mform) {
         $mform->addElement('header', 'header_specificsettings', get_string('specificsettings', 'customfield_checkbox'));
         $mform->setExpanded('header_specificsettings', true);
 
@@ -62,10 +61,10 @@ class plugin extends plugin_base {
     /**
      * Add fields for editing a textarea field.
      *
-     * @param \core_customfield\field $field
+     * @param \core_customfield\field_controller $field
      * @param \MoodleQuickForm $mform
      */
-    public static function edit_field_add(\core_customfield\field $field, \MoodleQuickForm $mform) {
+    public static function edit_field_add(\core_customfield\field_controller $field, \MoodleQuickForm $mform) {
         $config = $field->get('configdata');
         $checkbox = $mform->addElement('advcheckbox', api::field_inputname($field), format_string($field->get('name')));
         if ((api::datafield($field) == '1') || $config['checkbydefault'] == 1) {
