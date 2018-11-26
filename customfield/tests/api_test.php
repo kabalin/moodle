@@ -118,6 +118,332 @@ class core_customfield_api_testcase extends advanced_testcase {
         $this->assertInstanceOf('customfield_textarea\field_controller', api::field_factory($field4->get('id')));
     }
 
+    /**
+     * Tests for \core_customfield\api::move_category() behaviour.
+     *
+     * This replicates what is happening when categories are moved
+     * in the interface using drag-drop.
+     */
+    public function test_move_category() {
+        // Create the categories.
+        $categorydata            = new stdClass();
+        $categorydata->name      = 'aaaa';
+        $categorydata->component = 'core_course';
+        $categorydata->area      = 'course';
+        $categorydata->itemid    = 0;
+        $categorydata->contextid = 1;
+        $category0               = new category_controller(0, $categorydata);
+        $category0->save();
+        $id0 = $category0->get('id');
+
+        $categorydata->name = 'bbbb';
+        $category1          = new category_controller(0, $categorydata);
+        $category1->save();
+        $id1 = $category1->get('id');
+
+        $categorydata->name = 'cccc';
+        $category2          = new category_controller(0, $categorydata);
+        $category2->save();
+        $id2 = $category2->get('id');
+
+        $categorydata->name = 'dddd';
+        $category3          = new category_controller(0, $categorydata);
+        $category3->save();
+        $id3 = $category3->get('id');
+
+        $categorydata->name = 'eeee';
+        $category4          = new category_controller(0, $categorydata);
+        $category4->save();
+        $id4 = $category4->get('id');
+
+        $categorydata->name = 'ffff';
+        $category5          = new category_controller(0, $categorydata);
+        $category5->save();
+        $id5 = $category5->get('id');
+
+        // Check order after re-fetch.
+        $category0 = new category_controller($id0);
+        $category1 = new category_controller($id1);
+        $category2 = new category_controller($id2);
+        $category3 = new category_controller($id3);
+        $category4 = new category_controller($id4);
+        $category5 = new category_controller($id5);
+
+        $this->assertSame((int) $category0->get('sortorder'), 0);
+        $this->assertSame((int) $category1->get('sortorder'), 1);
+        $this->assertSame((int) $category2->get('sortorder'), 2);
+        $this->assertSame((int) $category3->get('sortorder'), 3);
+        $this->assertSame((int) $category4->get('sortorder'), 4);
+        $this->assertSame((int) $category5->get('sortorder'), 5);
+
+        // Move up 1 position.
+        api::move_category(new category_controller($id3), $id2);
+        $category0 = new category_controller($id0);
+        $category1 = new category_controller($id1);
+        $category2 = new category_controller($id2);
+        $category3 = new category_controller($id3);
+        $category4 = new category_controller($id4);
+        $category5 = new category_controller($id5);
+        $this->assertSame((int) $category0->get('sortorder'), 0);
+        $this->assertSame((int) $category1->get('sortorder'), 1);
+        $this->assertSame((int) $category2->get('sortorder'), 3);
+        $this->assertSame((int) $category3->get('sortorder'), 2);
+        $this->assertSame((int) $category4->get('sortorder'), 4);
+        $this->assertSame((int) $category5->get('sortorder'), 5);
+
+        // Move down 1 position.
+        api::move_category(new category_controller($id2), $id3);
+        $category0 = new category_controller($id0);
+        $category1 = new category_controller($id1);
+        $category2 = new category_controller($id2);
+        $category3 = new category_controller($id3);
+        $category4 = new category_controller($id4);
+        $category5 = new category_controller($id5);
+        $this->assertSame((int) $category0->get('sortorder'), 0);
+        $this->assertSame((int) $category1->get('sortorder'), 1);
+        $this->assertSame((int) $category2->get('sortorder'), 2);
+        $this->assertSame((int) $category3->get('sortorder'), 3);
+        $this->assertSame((int) $category4->get('sortorder'), 4);
+        $this->assertSame((int) $category5->get('sortorder'), 5);
+
+        // Move up 2 positions.
+        api::move_category(new category_controller($id4), $id2);
+        $category0 = new category_controller($id0);
+        $category1 = new category_controller($id1);
+        $category2 = new category_controller($id2);
+        $category3 = new category_controller($id3);
+        $category4 = new category_controller($id4);
+        $category5 = new category_controller($id5);
+        $this->assertSame((int) $category0->get('sortorder'), 0);
+        $this->assertSame((int) $category1->get('sortorder'), 1);
+        $this->assertSame((int) $category2->get('sortorder'), 3);
+        $this->assertSame((int) $category3->get('sortorder'), 4);
+        $this->assertSame((int) $category4->get('sortorder'), 2);
+        $this->assertSame((int) $category5->get('sortorder'), 5);
+
+        // Move down 2 positions.
+        api::move_category(new category_controller($id4), $id5);
+        $category0 = new category_controller($id0);
+        $category1 = new category_controller($id1);
+        $category2 = new category_controller($id2);
+        $category3 = new category_controller($id3);
+        $category4 = new category_controller($id4);
+        $category5 = new category_controller($id5);
+        $this->assertSame((int) $category0->get('sortorder'), 0);
+        $this->assertSame((int) $category1->get('sortorder'), 1);
+        $this->assertSame((int) $category2->get('sortorder'), 2);
+        $this->assertSame((int) $category3->get('sortorder'), 3);
+        $this->assertSame((int) $category4->get('sortorder'), 4);
+        $this->assertSame((int) $category5->get('sortorder'), 5);
+
+        // Move up 3 positions.
+        api::move_category(new category_controller($id4), $id1);
+        $category0 = new category_controller($id0);
+        $category1 = new category_controller($id1);
+        $category2 = new category_controller($id2);
+        $category3 = new category_controller($id3);
+        $category4 = new category_controller($id4);
+        $category5 = new category_controller($id5);
+        $this->assertSame((int) $category0->get('sortorder'), 0);
+        $this->assertSame((int) $category1->get('sortorder'), 2);
+        $this->assertSame((int) $category2->get('sortorder'), 3);
+        $this->assertSame((int) $category3->get('sortorder'), 4);
+        $this->assertSame((int) $category4->get('sortorder'), 1);
+        $this->assertSame((int) $category5->get('sortorder'), 5);
+
+        // Move down 3 positions.
+        api::move_category(new category_controller($id4), $id5);
+        $category0 = new category_controller($id0);
+        $category1 = new category_controller($id1);
+        $category2 = new category_controller($id2);
+        $category3 = new category_controller($id3);
+        $category4 = new category_controller($id4);
+        $category5 = new category_controller($id5);
+        $this->assertSame((int) $category0->get('sortorder'), 0);
+        $this->assertSame((int) $category1->get('sortorder'), 1);
+        $this->assertSame((int) $category2->get('sortorder'), 2);
+        $this->assertSame((int) $category3->get('sortorder'), 3);
+        $this->assertSame((int) $category4->get('sortorder'), 4);
+        $this->assertSame((int) $category5->get('sortorder'), 5);
+
+        //Move to the end of the list.
+        api::move_category(new category_controller($id2), 0);
+        $category0 = new category_controller($id0);
+        $category1 = new category_controller($id1);
+        $category2 = new category_controller($id2);
+        $category3 = new category_controller($id3);
+        $category4 = new category_controller($id4);
+        $category5 = new category_controller($id5);
+        $this->assertSame((int) $category0->get('sortorder'), 0);
+        $this->assertSame((int) $category1->get('sortorder'), 1);
+        $this->assertSame((int) $category2->get('sortorder'), 5);
+        $this->assertSame((int) $category3->get('sortorder'), 2);
+        $this->assertSame((int) $category4->get('sortorder'), 3);
+        $this->assertSame((int) $category5->get('sortorder'), 4);
+    }
+
+    /**
+     * Tests for \core_customfield\api::move_category() behaviour.
+     *
+     * This replicates what is happening when categories sort order
+     * is set incorrectly.
+     */
+    public function test_reorder_categories() {
+        // Create the categories.
+        $categorydata            = new stdClass();
+        $categorydata->name      = 'aaaa';
+        $categorydata->component = 'core_course';
+        $categorydata->area      = 'course';
+        $categorydata->itemid    = 0;
+        $categorydata->contextid = 1;
+        $category0               = new category_controller(0, $categorydata);
+        $category0->save();
+        $id0 = $category0->get('id');
+
+        $categorydata->name = 'bbbb';
+        $category1          = new category_controller(0, $categorydata);
+        $category1->save();
+        $id1 = $category1->get('id');
+
+        $categorydata->name = 'cccc';
+        $category2          = new category_controller(0, $categorydata);
+        $category2->save();
+        $id2 = $category2->get('id');
+
+        $categorydata->name = 'dddd';
+        $category3          = new category_controller(0, $categorydata);
+        $category3->save();
+        $id3 = $category3->get('id');
+
+        $categorydata->name = 'eeee';
+        $category4          = new category_controller(0, $categorydata);
+        $category4->save();
+        $id4 = $category4->get('id');
+
+        $categorydata->name = 'ffff';
+        $category5          = new category_controller(0, $categorydata);
+        $category5->save();
+        $id5 = $category5->get('id');
+
+        // Check order after re-fetch.
+        $category0 = new category_controller($id0);
+        $category1 = new category_controller($id1);
+        $category2 = new category_controller($id2);
+        $category3 = new category_controller($id3);
+        $category4 = new category_controller($id4);
+        $category5 = new category_controller($id5);
+
+        $this->assertSame((int) $category0->get('sortorder'), 0);
+        $this->assertSame((int) $category1->get('sortorder'), 1);
+        $this->assertSame((int) $category2->get('sortorder'), 2);
+        $this->assertSame((int) $category3->get('sortorder'), 3);
+        $this->assertSame((int) $category4->get('sortorder'), 4);
+        $this->assertSame((int) $category5->get('sortorder'), 5);
+
+        // Wrong sortorder values forced.
+        $category0->set('sortorder', 101);
+        $category0->save();
+        $category1->set('sortorder', 42);
+        $category1->save();
+        $category2->set('sortorder', 3);
+        $category2->save();
+        $category3->set('sortorder', 14);
+        $category3->save();
+        $category4->set('sortorder', 15);
+        $category4->save();
+        $category5->set('sortorder', 92);
+        $category5->save();
+
+        // Check order after re-fetch.
+        $category0 = new category_controller($id0);
+        $category1 = new category_controller($id1);
+        $category2 = new category_controller($id2);
+        $category3 = new category_controller($id3);
+        $category4 = new category_controller($id4);
+        $category5 = new category_controller($id5);
+
+        $this->assertSame((int) $category0->get('sortorder'), 101);
+        $this->assertSame((int) $category1->get('sortorder'), 42);
+        $this->assertSame((int) $category2->get('sortorder'), 3);
+        $this->assertSame((int) $category3->get('sortorder'), 14);
+        $this->assertSame((int) $category4->get('sortorder'), 15);
+        $this->assertSame((int) $category5->get('sortorder'), 92);
+
+        // Force reorder, reload and check status.
+        api::move_category($category0, 0);
+
+        $category0 = new category_controller($id0);
+        $category1 = new category_controller($id1);
+        $category2 = new category_controller($id2);
+        $category3 = new category_controller($id3);
+        $category4 = new category_controller($id4);
+        $category5 = new category_controller($id5);
+
+        $this->assertSame((int) $category2->get('sortorder'), 0);
+        $this->assertSame((int) $category3->get('sortorder'), 1);
+        $this->assertSame((int) $category4->get('sortorder'), 2);
+        $this->assertSame((int) $category1->get('sortorder'), 3);
+        $this->assertSame((int) $category5->get('sortorder'), 4);
+        $this->assertSame((int) $category0->get('sortorder'), 5);
+    }
+
+    /**
+     * Tests for \core_customfield\api::list_categories() behaviour.
+     */
+    public function test_list_categories() {
+        // Create the categories.
+        $options = [
+            'component' => 'core_course',
+            'area'      => 'course',
+            'itemid'    => 0,
+            'contextid' => 1
+        ];
+
+        $categorydata            = new stdClass();
+        $categorydata->name      = 'aaaa';
+        $categorydata->component = $options['component'];
+        $categorydata->area      = $options['area'];
+        $categorydata->itemid    = $options['itemid'];
+        $categorydata->contextid = $options['contextid'];
+        $category0               = new category_controller(0, $categorydata);
+        $category0->save();
+
+        $categorydata->name = 'bbbb';
+        $category1          = new category_controller(0, $categorydata);
+        $category1->save();
+
+        $categorydata->name = 'cccc';
+        $category2          = new category_controller(0, $categorydata);
+        $category2->save();
+
+        $categorydata->name = 'dddd';
+        $category3          = new category_controller(0, $categorydata);
+        $category3->save();
+
+        $categorydata->name = 'eeee';
+        $category4          = new category_controller(0, $categorydata);
+        $category4->save();
+
+        $categorydata->name = 'ffff';
+        $category5          = new category_controller(0, $categorydata);
+        $category5->save();
+
+        // Let's test counts.
+        $this->assertCount(6, api::list_categories($options['component'], $options['area'], $options['itemid']));
+        $category5->delete();
+        $this->assertCount(5, api::list_categories($options['component'], $options['area'], $options['itemid']));
+        $category4->delete();
+        $this->assertCount(4, api::list_categories($options['component'], $options['area'], $options['itemid']));
+        $category3->delete();
+        $this->assertCount(3, api::list_categories($options['component'], $options['area'], $options['itemid']));
+        $category2->delete();
+        $this->assertCount(2, api::list_categories($options['component'], $options['area'], $options['itemid']));
+        $category1->delete();
+        $this->assertCount(1, api::list_categories($options['component'], $options['area'], $options['itemid']));
+        $category0->delete();
+        $this->assertCount(0, api::list_categories($options['component'], $options['area'], $options['itemid']));
+    }
+
     public function test_load_data() {
 
     }
