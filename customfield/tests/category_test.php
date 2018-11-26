@@ -41,7 +41,11 @@ class core_customfield_category_testcase extends advanced_testcase {
         $this->resetAfterTest();
     }
 
-    public function test_create_category_and_correctlly_reorder() {
+
+    /**
+     * Tests for \core_customfield\category_controller::save() behaviour.
+     */
+    public function test_create_category_and_correct_order() {
 
         // Create the category.
         $categorydata            = new stdClass();
@@ -147,6 +151,9 @@ class core_customfield_category_testcase extends advanced_testcase {
         $this->assertSame((int) $category3->get('sortorder'), 3);
     }
 
+    /**
+     * Tests for \core_customfield\category_controller::set() behaviour.
+     */
     public function test_create_category_and_rename() {
         // Create the category.
         $categorydata            = new stdClass();
@@ -182,6 +189,9 @@ class core_customfield_category_testcase extends advanced_testcase {
         $this->assertSame($category0->get('name'), $newname);
     }
 
+    /**
+     * Tests for \core_customfield\category_controller::delete() behaviour.
+     */
     public function test_create_category_and_delete() {
         // Create the category.
         $categorydata            = new stdClass();
@@ -221,7 +231,13 @@ class core_customfield_category_testcase extends advanced_testcase {
         $this->assertSame((int) $category2->get('sortorder'), 2);
     }
 
-    public function test_create_categories_and_move_it_as_drag_and_drop() {
+    /**
+     * Tests for \core_customfield\api::move_category() behaviour.
+     *
+     * This replicates what is happening when categories are moved
+     * in the interface using drag-drop.
+     */
+    public function test_move_category() {
         // Create the categories.
         $categorydata            = new stdClass();
         $categorydata->name      = 'aaaa';
@@ -379,7 +395,13 @@ class core_customfield_category_testcase extends advanced_testcase {
         $this->assertSame((int) $category5->get('sortorder'), 4);
     }
 
-    public function test_categories_list_reorder() {
+    /**
+     * Tests for \core_customfield\api::move_category() behaviour.
+     *
+     * This replicates what is happening when categories sort order
+     * is set incorrectly.
+     */
+    public function test_reorder_categories() {
         // Create the categories.
         $categorydata            = new stdClass();
         $categorydata->name      = 'aaaa';
@@ -461,7 +483,6 @@ class core_customfield_category_testcase extends advanced_testcase {
         $this->assertSame((int) $category5->get('sortorder'), 92);
 
         // Force reorder, reload and check status.
-        //api::reorder_categories($categorydata->component, $categorydata->area, $categorydata->itemid);
         api::move_category($category0, 0);
 
         $category0 = new category_controller($id0);
@@ -479,6 +500,9 @@ class core_customfield_category_testcase extends advanced_testcase {
         $this->assertSame((int) $category0->get('sortorder'), 5);
     }
 
+    /**
+     * Tests for \core_customfield\category_controller::delete() behaviour.
+     */
     public function test_categories_before_delete() {
         // Create the category.
         $categorydata            = new stdClass();
@@ -575,7 +599,10 @@ class core_customfield_category_testcase extends advanced_testcase {
         }
     }
 
-    public function test_categories_list() {
+    /**
+     * Tests for \core_customfield\api::list_categories() behaviour.
+     */
+    public function test_list_categories() {
         // Create the categories.
         $options = [
             'component' => 'core_course',
