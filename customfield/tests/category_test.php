@@ -134,7 +134,7 @@ class core_customfield_category_testcase extends advanced_testcase {
     /**
      * Tests for \core_customfield\category_controller::set() behaviour.
      */
-    public function test_create_category_and_rename() {
+    public function test_rename_category() {
         // Create the category.
         $categorydata            = new stdClass();
         $categorydata->name      = 'aaaa';
@@ -172,7 +172,7 @@ class core_customfield_category_testcase extends advanced_testcase {
     /**
      * Tests for \core_customfield\category_controller::delete() behaviour.
      */
-    public function test_create_category_and_delete() {
+    public function test_delete_category() {
         // Create the category.
         $categorydata            = new stdClass();
         $categorydata->name      = 'aaaa';
@@ -214,7 +214,7 @@ class core_customfield_category_testcase extends advanced_testcase {
     /**
      * Tests for \core_customfield\category_controller::delete() behaviour.
      */
-    public function test_categories_delete() {
+    public function test_delete_category_with_fields() {
         // Create the category.
         $categorydata            = new stdClass();
         $categorydata->name      = 'aaaa';
