@@ -75,7 +75,7 @@ class category extends persistent {
                 ],
                 'sortorder' => [
                         'type' => PARAM_INT,
-                        'optional' => false,
+                        'optional' => true,
                         'default' => -1
                 ],
         );
