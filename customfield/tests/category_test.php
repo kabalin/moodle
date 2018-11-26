@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Tests for class core_course_category.
+ * Tests for class \core_customfield\category_controller.
  *
  * @package    core_customfield
  * @category   phpunit
@@ -23,20 +23,19 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace core_customfield;
-
-use advanced_testcase;
-use core\event\course_category_viewed;
-use stdClass;
-
 defined('MOODLE_INTERNAL') || die();
 
+use \core_customfield\category_controller;
+use \core_customfield\api;
+use \core_customfield\field_controller;
+
 /**
- * Functional test for class core_customfield_category
+ * Functional test for class \core_customfield\category_controller.
  */
 class core_customfield_category_testcase extends advanced_testcase {
+
     /**
-     * setUp.
+     * Tests set up.
      */
     public function setUp() {
         $this->resetAfterTest();
@@ -207,11 +206,11 @@ class core_customfield_category_testcase extends advanced_testcase {
         $id2 = $category2->get('id');
 
         // Confirm that exist in the database.
-        $this->assertTrue(category::record_exists($id0));
+        $this->assertTrue(category_controller::record_exists($id0));
 
         //Delete and confirm that is deleted.
         $category0->delete();
-        $this->assertFalse(category::record_exists($id0));
+        $this->assertFalse(category_controller::record_exists($id0));
 
         // Confirm correct order after delete.
         // Check order after re-fetch.
@@ -500,7 +499,7 @@ class core_customfield_category_testcase extends advanced_testcase {
                                     \"defaultvalue\":\"\",\"displaysize\":0,\"maxlength\":0,\"ispassword\":\"0\",
                                     \"link\":\"\",\"linktarget\":\"\"}";
 
-        $field0 = new \customfield_text\field();
+        $field0 = new \customfield_text\field_controller();
         $field0->set('name', $fielddata->nameshortname);
         $field0->set('shortname', $fielddata->nameshortname);
         $field0->set('categoryid', $category0->get('id'));
@@ -510,7 +509,7 @@ class core_customfield_category_testcase extends advanced_testcase {
         $field0->save();
 
         $fielddata->nameshortname = 'bbbb';
-        $field1                   = new \customfield_text\field();
+        $field1                   = new \customfield_text\field_controller();
         $field1->set('name', $fielddata->nameshortname);
         $field1->set('shortname', $fielddata->nameshortname);
         $field1->set('categoryid', $category0->get('id'));
@@ -520,7 +519,7 @@ class core_customfield_category_testcase extends advanced_testcase {
         $field1->save();
 
         $fielddata->nameshortname = 'cccc';
-        $field2                   = new \customfield_text\field();
+        $field2                   = new \customfield_text\field_controller();
         $field2->set('name', $fielddata->nameshortname);
         $field2->set('shortname', $fielddata->nameshortname);
         $field2->set('categoryid', $category0->get('id'));
@@ -530,7 +529,7 @@ class core_customfield_category_testcase extends advanced_testcase {
         $field2->save();
 
         $fielddata->nameshortname = 'dddd';
-        $field3                   = new \customfield_text\field();
+        $field3                   = new \customfield_text\field_controller();
         $field3->set('name', $fielddata->nameshortname);
         $field3->set('shortname', $fielddata->nameshortname);
         $field3->set('categoryid', $category0->get('id'));
@@ -540,7 +539,7 @@ class core_customfield_category_testcase extends advanced_testcase {
         $field3->save();
 
         $fielddata->nameshortname = 'eeee';
-        $field4                   = new \customfield_text\field();
+        $field4                   = new \customfield_text\field_controller();
         $field4->set('name', $fielddata->nameshortname);
         $field4->set('shortname', $fielddata->nameshortname);
         $field4->set('categoryid', $category0->get('id'));
@@ -550,7 +549,7 @@ class core_customfield_category_testcase extends advanced_testcase {
         $field4->save();
 
         $fielddata->nameshortname = 'ffff';
-        $field5                   = new \customfield_text\field();
+        $field5                   = new \customfield_text\field_controller();
         $field5->set('name', $fielddata->nameshortname);
         $field5->set('shortname', $fielddata->nameshortname);
         $field5->set('categoryid', $category0->get('id'));
@@ -572,17 +571,17 @@ class core_customfield_category_testcase extends advanced_testcase {
 
         // Check that the category fields has been deleted.
         foreach ($category0fieldsids as $fieldid) {
-            $this->assertFalse(field::record_exists($fieldid));
+            $this->assertFalse(field_controller::record_exists($fieldid));
         }
     }
 
     public function test_categories_list() {
         // Create the categories.
         $options = [
-                'component' => 'core_course',
-                'area'      => 'course',
-                'itemid'    => 0,
-                'contextid' => 1
+            'component' => 'core_course',
+            'area'      => 'course',
+            'itemid'    => 0,
+            'contextid' => 1
         ];
 
         $categorydata            = new stdClass();

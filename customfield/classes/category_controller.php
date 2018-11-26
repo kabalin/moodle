@@ -92,7 +92,7 @@ class category_controller {
      * @return bool
      */
     public static function record_exists(int $id) {
-        return category_model::record_exists($id);
+        return category::record_exists($id);
     }
 
     /**

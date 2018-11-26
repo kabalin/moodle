@@ -319,6 +319,7 @@ class api {
     /**
      * Returns an object for inplace editable
      *
+     * @param category_controller $category category that needs to be moved
      * @param bool $editable
      * @return inplace_editable
      */
@@ -337,16 +338,16 @@ class api {
     /**
      * Reorder categories, move given category before another category
      *
-     * @param category $category category that needs to be moved
+     * @param category_controller $category category that needs to be moved
      * @param int $beforeid id of the category this category needs to be moved before, 0 to move to the end
      */
-    public static function move_category(category $category, int $beforeid = 0) {
+    public static function move_category(category_controller $category, int $beforeid = 0) {
         global $DB;
         $records = $DB->get_records(category::TABLE, [
-                'component' => $category->get('component'),
-                'area' => $category->get('area'),
-                'itemid' => $category->get('itemid')
-            ], 'sortorder, id', '*');
+            'component' => $category->get('component'),
+            'area' => $category->get('area'),
+            'itemid' => $category->get('itemid')
+        ], 'sortorder, id', '*');
 
         $id = $category->get('id');
         $categoriesids = array_values(array_diff(array_keys($records), [$id]));
@@ -362,7 +363,7 @@ class api {
         foreach (array_values($categoriesids) as $idx => $categoryid) {
             // Use persistent class to update the sortorder for each category that needs updating.
             if ($records[$categoryid]->sortorder != $idx) {
-                $c = ($categoryid == $id) ? $category : new category(0, $records[$categoryid]);
+                $c = ($categoryid == $id) ? $category : new category_controller(0, $records[$categoryid]);
                 $c->set('sortorder', $idx);
                 $c->save();
             }
