@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Tests for class core_course_category.
+ * Tests for class \core_customfield\api.
  *
  * @package    core_customfield
  * @category   phpunit
@@ -23,25 +23,27 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace core_customfield;
-
-use advanced_testcase;
-use stdClass;
-
 defined('MOODLE_INTERNAL') || die();
 
+use \core_customfield\api;
+use \core_customfield\category_controller;
+
 /**
- * Functional test for class core_customfield_api
+ * Functional test for class \core_customfield\api
  */
 class core_customfield_api_testcase extends advanced_testcase {
+
     /**
-     * setUp.
+     * Tests set up.
      */
     public function setUp() {
         $this->resetAfterTest();
     }
 
-    public function test_get_field() {
+    /**
+     * Tests for \core_customfield\api::field_factory() behaviour.
+     */
+    public function test_field_factory() {
         // Create the category.
         $categorydata            = new stdClass();
         $categorydata->name      = 'aaaa';
@@ -49,7 +51,7 @@ class core_customfield_api_testcase extends advanced_testcase {
         $categorydata->area      = 'course';
         $categorydata->itemid    = 0;
         $categorydata->contextid = 1;
-        $category0               = new category(0, $categorydata);
+        $category0               = new category_controller(0, $categorydata);
         $category0->save();
 
         // Add fields to this category.
@@ -60,38 +62,37 @@ class core_customfield_api_testcase extends advanced_testcase {
                                     \"defaultvalue\":\"\",\"displaysize\":0,\"maxlength\":0,\"ispassword\":\"0\",
                                     \"link\":\"\",\"linktarget\":\"\"}";
 
-        $field0 = new \customfield_text\field();
+        $field0 = new \customfield_checkbox\field_controller();
         $field0->set('name', $fielddata->nameshortname);
         $field0->set('shortname', $fielddata->nameshortname);
         $field0->set('categoryid', $category0->get('id'));
-        $field0->set('type', 'text');
+        $field0->set('type', 'checkbox');
         $field0->set('configdata', $fielddata->configdata);
         $field0->set_category($category0);
         $field0->save();
-        $id0 = $field0->get('id');
 
         $fielddata->nameshortname = 'bbbb';
-        $field1                   = new \customfield_text\field();
+        $field1 = new \customfield_date\field_controller();
         $field1->set('name', $fielddata->nameshortname);
         $field1->set('shortname', $fielddata->nameshortname);
         $field1->set('categoryid', $category0->get('id'));
-        $field1->set('type', 'text');
+        $field1->set('type', 'date');
         $field1->set('configdata', $fielddata->configdata);
         $field1->set_category($category0);
         $field1->save();
 
         $fielddata->nameshortname = 'cccc';
-        $field2                   = new \customfield_text\field();
+        $field2 = new \customfield_select\field_controller();
         $field2->set('name', $fielddata->nameshortname);
         $field2->set('shortname', $fielddata->nameshortname);
         $field2->set('categoryid', $category0->get('id'));
-        $field2->set('type', 'text');
+        $field2->set('type', 'select');
         $field2->set('configdata', $fielddata->configdata);
         $field2->set_category($category0);
         $field2->save();
 
         $fielddata->nameshortname = 'dddd';
-        $field3                   = new \customfield_text\field();
+        $field3 = new \customfield_text\field_controller();
         $field3->set('name', $fielddata->nameshortname);
         $field3->set('shortname', $fielddata->nameshortname);
         $field3->set('categoryid', $category0->get('id'));
@@ -101,33 +102,20 @@ class core_customfield_api_testcase extends advanced_testcase {
         $field3->save();
 
         $fielddata->nameshortname = 'eeee';
-        $field4                   = new \customfield_text\field();
+        $field4 = new \customfield_textarea\field_controller();
         $field4->set('name', $fielddata->nameshortname);
         $field4->set('shortname', $fielddata->nameshortname);
         $field4->set('categoryid', $category0->get('id'));
-        $field4->set('type', 'text');
+        $field4->set('type', 'textarea');
         $field4->set('configdata', $fielddata->configdata);
         $field4->set_category($category0);
         $field4->save();
 
-        $fielddata->nameshortname = 'ffff';
-        $field5                   = new \customfield_date\field();
-        $field5->set('name', $fielddata->nameshortname);
-        $field5->set('shortname', $fielddata->nameshortname);
-        $field5->set('categoryid', $category0->get('id'));
-        $field5->set('type', 'date');
-        $field5->set('configdata', $fielddata->configdata);
-        $field5->set_category($category0);
-        $field5->save();
-
-        $this->assertInstanceOf('customfield_text\field', new field($field0->get('id')));
-        $this->assertInstanceOf('customfield_text\field', new field($field1->get('id')));
-        $this->assertInstanceOf('customfield_text\field', new field($field2->get('id')));
-        $this->assertInstanceOf('customfield_text\field', new field($field3->get('id')));
-        $this->assertInstanceOf('customfield_text\field', new field($field4->get('id')));
-        $this->assertInstanceOf('customfield_date\field', new field($field5->get('id')));
-        $this->assertNotInstanceOf('customfield_text\field', new field($field5->get('id')));
-        $this->assertNotInstanceOf('customfield_checkbox\field', new field($field0->get('id')));
+        $this->assertInstanceOf('customfield_checkbox\field_controller', api::field_factory($field0->get('id')));
+        $this->assertInstanceOf('customfield_date\field_controller', api::field_factory($field1->get('id')));
+        $this->assertInstanceOf('customfield_select\field_controller', api::field_factory($field2->get('id')));
+        $this->assertInstanceOf('customfield_text\field_controller', api::field_factory($field3->get('id')));
+        $this->assertInstanceOf('customfield_textarea\field_controller', api::field_factory($field4->get('id')));
     }
 
     public function test_load_data() {
