@@ -75,7 +75,7 @@ class category extends persistent {
                 ],
                 'sortorder' => [
                         'type' => PARAM_INT,
-                        'optional' => false,
+                        'optional' => true,
                         'default' => -1
                 ],
         );
@@ -107,7 +107,7 @@ class category extends persistent {
     protected function after_create() {
         // TODO: move this line to controller save.
         handler::get_handler_for_category(new category_controller($this->get('id')))->clear_fields_definitions_cache();
-        api::move_category($this, 0);
+        api::move_category(new category_controller($this->get('id')), 0);
     }
 
 

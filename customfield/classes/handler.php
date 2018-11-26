@@ -293,7 +293,7 @@ abstract class handler {
     /**
      * Returns array of categories, each of them contains a list of fields definitions.
      *
-     * @return category[]
+     * @return category_controller[]
      */
     public function get_fields_definitions() : array {
         if ($this->fieldsdefinitions === null) {
@@ -302,6 +302,9 @@ abstract class handler {
         return $this->fieldsdefinitions;
     }
 
+    /**
+     * Clears a list of categories with corresponding fields definitions.
+     */
     public function clear_fields_definitions_cache() {
         $this->fieldsdefinitions = null;
     }
