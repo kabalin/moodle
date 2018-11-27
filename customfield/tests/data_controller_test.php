@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Tests for class core_course_category.
+ * Tests for class \core_customfield\data_controller.
  *
  * @package    core_customfield
  * @category   phpunit
@@ -26,9 +26,14 @@
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Functional test for class core_customfield_data
+ * Functional test for class \core_customfield\data_controller.
  */
-class core_customfield_data_testcase extends advanced_testcase {
+class core_customfield_data_controller_testcase extends advanced_testcase {
 
-
+    /**
+     * Tests set up.
+     */
+    public function setUp() {
+        $this->resetAfterTest();
+    }
 }

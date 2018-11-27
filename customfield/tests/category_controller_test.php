@@ -31,7 +31,7 @@ use \core_customfield\field_controller;
 /**
  * Functional test for class \core_customfield\category_controller.
  */
-class core_customfield_category_testcase extends advanced_testcase {
+class core_customfield_category_controller_testcase extends advanced_testcase {
 
     /**
      * Tests set up.
