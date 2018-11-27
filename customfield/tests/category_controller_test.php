@@ -40,22 +40,36 @@ class core_customfield_category_controller_testcase extends advanced_testcase {
         $this->resetAfterTest();
     }
 
-
     /**
-     * Tests for \core_customfield\category_controller::save() behaviour.
+     * Helper that returns object containing default category properties.
+     *
+     * @return  stdClass
      */
-    public function test_create_category() {
-
-        // Create the category.
+    protected function category_data_provider() {
         $categorydata            = new stdClass();
-        $categorydata->name      = 'aaaa';
+        $categorydata->name      = 'Category1';
         $categorydata->component = 'core_course';
         $categorydata->area      = 'course';
         $categorydata->itemid    = 0;
         $categorydata->contextid = 1;
+        return $categorydata;
+    }
 
+    /**
+     * Tests for behaviour of:
+     * \core_customfield\category_controller::save()
+     * \core_customfield\category_controller::get()
+     * \core_customfield\category_controller::record_exists()
+     */
+    public function test_create_category() {
+
+        // Create the category.
+        $categorydata = $this->category_data_provider();
         $category0 = new category_controller(0, $categorydata);
         $category0->save();
+
+        // Confirm record exists.
+        $this->assertTrue(category_controller::record_exists($category0->get('id')));
 
         // Confirm that base data was inserted correctly.
         $this->assertSame($category0->get('name'), $categorydata->name);
@@ -74,13 +88,7 @@ class core_customfield_category_controller_testcase extends advanced_testcase {
     public function test_create_categories_order() {
 
         // Create the category.
-        $categorydata            = new stdClass();
-        $categorydata->name      = 'aaaa';
-        $categorydata->component = 'core_course';
-        $categorydata->area      = 'course';
-        $categorydata->itemid    = 0;
-        $categorydata->contextid = 1;
-
+        $categorydata = $this->category_data_provider();
         $category0 = new category_controller(0, $categorydata);
         $category0->save();
 
@@ -136,13 +144,7 @@ class core_customfield_category_controller_testcase extends advanced_testcase {
      */
     public function test_rename_category() {
         // Create the category.
-        $categorydata            = new stdClass();
-        $categorydata->name      = 'aaaa';
-        $categorydata->component = 'core_course';
-        $categorydata->area      = 'course';
-        $categorydata->itemid    = 0;
-        $categorydata->contextid = 1;
-
+        $categorydata = $this->category_data_provider();
         $category0 = new category_controller(0, $categorydata);
         $category0->save();
 
@@ -174,13 +176,7 @@ class core_customfield_category_controller_testcase extends advanced_testcase {
      */
     public function test_delete_category() {
         // Create the category.
-        $categorydata            = new stdClass();
-        $categorydata->name      = 'aaaa';
-        $categorydata->component = 'core_course';
-        $categorydata->area      = 'course';
-        $categorydata->itemid    = 0;
-        $categorydata->contextid = 1;
-
+        $categorydata = $this->category_data_provider();
         $category0 = new category_controller(0, $categorydata);
         $category0->save();
         $id0 = $category0->get('id');
@@ -216,13 +212,8 @@ class core_customfield_category_controller_testcase extends advanced_testcase {
      */
     public function test_delete_category_with_fields() {
         // Create the category.
-        $categorydata            = new stdClass();
-        $categorydata->name      = 'aaaa';
-        $categorydata->component = 'core_course';
-        $categorydata->area      = 'course';
-        $categorydata->itemid    = 0;
-        $categorydata->contextid = 1;
-        $category0               = new category_controller(0, $categorydata);
+        $categorydata = $this->category_data_provider();
+        $category0 = new category_controller(0, $categorydata);
         $category0->save();
 
         // Add fields to this category.
