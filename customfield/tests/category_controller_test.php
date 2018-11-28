@@ -217,72 +217,26 @@ class core_customfield_category_controller_testcase extends advanced_testcase {
         $category0->save();
 
         // Add fields to this category.
-        $fielddata                = new stdClass();
-        $fielddata->nameshortname = 'aaaa';
-        $fielddata->type          = 'text';
-        $fielddata->categoryid    = $category0->get('id');
-        $fielddata->configdata    = "{\"required\":\"0\",\"uniquevalues\":\"0\",\"locked\":\"0\",\"visibility\":\"0\",
-                                    \"defaultvalue\":\"\",\"displaysize\":0,\"maxlength\":0,\"ispassword\":\"0\",
-                                    \"link\":\"\",\"linktarget\":\"\"}";
+        $fielddata = new stdClass();
+        $fielddata->shortname = 'Field';
+        $fielddata->type = 'text';
+        $fielddata->categoryid = $category0->get('id');
+        $fielddata->configdata = '{"required": 0, "uniquevalues": 0, "locked": 0,
+            "visibility": 0, "defaultvalue": "", "displaysize": 0, "maxlength": 0,
+            "ispassword": 0, "link": "", "linktarget": ""}';
 
-        $field0 = new \customfield_text\field_controller();
-        $field0->set('name', $fielddata->nameshortname);
-        $field0->set('shortname', $fielddata->nameshortname);
-        $field0->set('categoryid', $category0->get('id'));
-        $field0->set('type', $fielddata->type);
-        $field0->set('configdata', $fielddata->configdata);
-        $field0->set_category($category0);
-        $field0->save();
-
-        $fielddata->nameshortname = 'bbbb';
-        $field1                   = new \customfield_text\field_controller();
-        $field1->set('name', $fielddata->nameshortname);
-        $field1->set('shortname', $fielddata->nameshortname);
-        $field1->set('categoryid', $category0->get('id'));
-        $field1->set('type', $fielddata->type);
-        $field1->set('configdata', $fielddata->configdata);
-        $field1->set_category($category0);
-        $field1->save();
-
-        $fielddata->nameshortname = 'cccc';
-        $field2                   = new \customfield_text\field_controller();
-        $field2->set('name', $fielddata->nameshortname);
-        $field2->set('shortname', $fielddata->nameshortname);
-        $field2->set('categoryid', $category0->get('id'));
-        $field2->set('type', $fielddata->type);
-        $field2->set('configdata', $fielddata->configdata);
-        $field2->set_category($category0);
-        $field2->save();
-
-        $fielddata->nameshortname = 'dddd';
-        $field3                   = new \customfield_text\field_controller();
-        $field3->set('name', $fielddata->nameshortname);
-        $field3->set('shortname', $fielddata->nameshortname);
-        $field3->set('categoryid', $category0->get('id'));
-        $field3->set('type', $fielddata->type);
-        $field3->set('configdata', $fielddata->configdata);
-        $field3->set_category($category0);
-        $field3->save();
-
-        $fielddata->nameshortname = 'eeee';
-        $field4                   = new \customfield_text\field_controller();
-        $field4->set('name', $fielddata->nameshortname);
-        $field4->set('shortname', $fielddata->nameshortname);
-        $field4->set('categoryid', $category0->get('id'));
-        $field4->set('type', $fielddata->type);
-        $field4->set('configdata', $fielddata->configdata);
-        $field4->set_category($category0);
-        $field4->save();
-
-        $fielddata->nameshortname = 'ffff';
-        $field5                   = new \customfield_text\field_controller();
-        $field5->set('name', $fielddata->nameshortname);
-        $field5->set('shortname', $fielddata->nameshortname);
-        $field5->set('categoryid', $category0->get('id'));
-        $field5->set('type', $fielddata->type);
-        $field5->set('configdata', $fielddata->configdata);
-        $field5->set_category($category0);
-        $field5->save();
+        $i = 0;
+        while ($i < 6) {
+            $field = new \customfield_text\field_controller();
+            $field->set('name', $fielddata->shortname . $i);
+            $field->set('shortname', $fielddata->shortname . $i);
+            $field->set('categoryid', $category0->get('id'));
+            $field->set('type', $fielddata->type);
+            $field->set('configdata', $fielddata->configdata);
+            $field->set_category($category0);
+            $field->save();
+            $i++;
+        }
 
         // Check that category have fields and store ids for future checks
         $this->assertCount(6, $category0->fields());
