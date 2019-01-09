@@ -67,13 +67,11 @@ class core_form_duration_testcase extends basic_testcase {
     }
 
     /**
-     * Testcase for testing contructor.
-     * @expectedException coding_exception
-     * @retrun void
+     * Testcase for testing constructor.
      */
     public function test_constructor() {
-        // Test trying to create with an invalid unit.
-        $this->element = $this->mform->addElement('duration', 'testel', null, array('defaultunit' => 123, 'optional' => false));
+        $this->expectException(coding_exception::class);
+        $this->mform->addElement('duration', 'testel', null, array('defaultunit' => 123));
     }
 
     /**
@@ -100,7 +98,8 @@ class core_form_duration_testcase extends basic_testcase {
         $this->assertEquals(array(1, 86400), $this->element->seconds_to_unit(86400));
         $this->assertEquals(array(25, 3600), $this->element->seconds_to_unit(90000));
 
-        $this->element = $this->mform->addElement('duration', 'testel', null, array('defaultunit' => 86400, 'optional' => false));
+        // Change default unit to 1 day.
+        $this->element = $this->mform->addElement('duration', 'testel', null, array('defaultunit' => 86400));
         $this->assertEquals(array(0, 86400), $this->element->seconds_to_unit(0)); // Zero minutes, for a nice default unit.
     }
 
@@ -122,9 +121,12 @@ class core_form_duration_testcase extends basic_testcase {
         $values = array('testel' => array('number' => 0, 'timeunit' => 3600));
         $this->assertEquals(array('testel' => 0), $el->exportValue($values));
 
+        // Make duration element optional (show a checkbox to turn it on).
         $el = $this->mform->addElement('duration', 'testel', null, array('optional' => true));
+        // By default element is disabled (off).
         $values = array('testel' => array('number' => 10, 'timeunit' => 1));
         $this->assertEquals(array('testel' => 0), $el->exportValue($values));
+        // Enable element.
         $values = array('testel' => array('number' => 20, 'timeunit' => 1, 'enabled' => 1));
         $this->assertEquals(array('testel' => 20), $el->exportValue($values));
     }
