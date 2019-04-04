@@ -33,6 +33,7 @@ MDL-52826 - Remove onsubmit events pointing to the global validation functions a
 MDL-50484 - _getPersistantData() returns id with _persistant prefixed to element id.
 MDL-55123 - corrected call to non-static functions in HTML_QuickForm to be PHP7.1-compliant
 MDL-60281 - replaced deprecated create_function() with lambda functions for PHP7.2 compatibility
+MDL-65217 - make default element id (html attribute) uniqie
 
 
 Pear

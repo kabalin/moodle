@@ -444,7 +444,7 @@ class HTML_QuickForm_element extends HTML_Common
         }
 
         $id = $this->getName();
-        $id = 'id_' . str_replace(array('qf_', '[', ']'), array('', '_', ''), $id);
+        $id = 'id_' . str_replace(array('qf_', '[', ']'), array('', '_', ''), $id) . '_' . random_string();
         $id = clean_param($id, PARAM_ALPHANUMEXT);
         $this->updateAttributes(array('id' => $id));
     }

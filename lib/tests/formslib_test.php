@@ -212,13 +212,13 @@ class core_formslib_testcase extends advanced_testcase {
         $el = new MoodleQuickForm_select('choose_one', 'Choose one',
             array(1 => 'One', '2' => 'Two'));
         $el->_generateId();
-        $this->assertSame('id_choose_one', $el->getAttribute('id'));
+        $this->assertRegexp('/^id_choose_one_\S{15}$/', $el->getAttribute('id'));
     }
 
     public function test_generate_id_like_repeat() {
         $el = new MoodleQuickForm_text('text[7]', 'Type something');
         $el->_generateId();
-        $this->assertSame('id_text_7', $el->getAttribute('id'));
+        $this->assertRegexp('/^id_text_7_\S{15}$/', $el->getAttribute('id'));
     }
 
     public function test_can_manually_set_id() {
@@ -231,7 +231,7 @@ class core_formslib_testcase extends advanced_testcase {
     public function test_generate_id_radio() {
         $el = new MoodleQuickForm_radio('radio', 'Label', 'Choice label', 'choice_value');
         $el->_generateId();
-        $this->assertSame('id_radio_choice_value', $el->getAttribute('id'));
+        $this->assertRegexp('/^id_radio_\S{15}_choice_value$/', $el->getAttribute('id'));
     }
 
     public function test_radio_can_manually_set_id() {
@@ -244,7 +244,7 @@ class core_formslib_testcase extends advanced_testcase {
     public function test_generate_id_radio_like_repeat() {
         $el = new MoodleQuickForm_radio('repeatradio[2]', 'Label', 'Choice label', 'val');
         $el->_generateId();
-        $this->assertSame('id_repeatradio_2_val', $el->getAttribute('id'));
+        $this->assertRegexp('/^id_repeatradio_2_\S{15}_val$/', $el->getAttribute('id'));
     }
 
     public function test_rendering() {
@@ -253,28 +253,28 @@ class core_formslib_testcase extends advanced_testcase {
         $form->display();
         $html = ob_get_clean();
 
-        $this->assertTag(array('tag'=>'select', 'id'=>'id_choose_one',
+        $this->assertTag(array('tag'=>'select', 'id'=>'regexp:/^id_choose_one_\S{15}$/',
             'attributes'=>array('name'=>'choose_one')), $html);
 
-        $this->assertTag(array('tag'=>'input', 'id'=>'id_text_0',
+        $this->assertTag(array('tag'=>'input', 'id'=>'regexp:/^id_text_0_\S{15}$/',
             'attributes'=>array('type'=>'text', 'name'=>'text[0]')), $html);
 
-        $this->assertTag(array('tag'=>'input', 'id'=>'id_text_1',
+        $this->assertTag(array('tag'=>'input', 'id'=>'regexp:/^id_text_1_\S{15}$/',
             'attributes'=>array('type'=>'text', 'name'=>'text[1]')), $html);
 
-        $this->assertTag(array('tag'=>'input', 'id'=>'id_radio_choice_value',
+        $this->assertTag(array('tag'=>'input', 'id'=>'regexp:/^id_radio_\S{15}_choice_value$/',
             'attributes'=>array('type'=>'radio', 'name'=>'radio', 'value'=>'choice_value')), $html);
 
         $this->assertTag(array('tag'=>'input', 'id'=>'customelementid2',
             'attributes'=>array('type'=>'radio', 'name'=>'radio2')), $html);
 
-        $this->assertTag(array('tag'=>'input', 'id'=>'id_repeatradio_0_2',
+        $this->assertTag(array('tag'=>'input', 'id'=>'regexp:/^id_repeatradio_0_\S{15}_2$/',
             'attributes'=>array('type'=>'radio', 'name'=>'repeatradio[0]', 'value'=>'2')), $html);
 
-        $this->assertTag(array('tag'=>'input', 'id'=>'id_repeatradio_2_1',
+        $this->assertTag(array('tag'=>'input', 'id'=>'regexp:/^id_repeatradio_2_\S{15}_1$/',
             'attributes'=>array('type'=>'radio', 'name'=>'repeatradio[2]', 'value'=>'1')), $html);
 
-        $this->assertTag(array('tag'=>'input', 'id'=>'id_repeatradio_2_2',
+        $this->assertTag(array('tag'=>'input', 'id'=>'regexp:/^id_repeatradio_2_\S{15}_2$/',
             'attributes'=>array('type'=>'radio', 'name'=>'repeatradio[2]', 'value'=>'2')), $html);
     }
 
@@ -564,17 +564,17 @@ class core_formslib_testcase extends advanced_testcase {
         $form->display();
         $html = ob_get_clean();
 
-        $this->assertTag(array('id' => 'fitem_fgroup_id_grade1'), $html);
+        $this->assertTag(array('id' => 'regexp:/^fitem_fgroup_id_grade1_\S{15}$/'), $html);
         $this->assertTag(array('id' => 'id_grade1_modgrade_type'), $html);
         $this->assertTag(array('id' => 'id_grade1_modgrade_point'), $html);
         $this->assertTag(array('id' => 'id_grade1_modgrade_scale'), $html);
 
-        $this->assertTag(array('id' => 'fitem_fgroup_id_grade2'), $html);
+        $this->assertTag(array('id' => 'regexp:/^fitem_fgroup_id_grade2_\S{15}$/'), $html);
         $this->assertTag(array('id' => 'id_grade2_modgrade_type'), $html);
         $this->assertTag(array('id' => 'id_grade2_modgrade_point'), $html);
         $this->assertTag(array('id' => 'id_grade2_modgrade_scale'), $html);
 
-        $this->assertTag(array('id' => 'fitem_fgroup_id_grade_3'), $html);
+        $this->assertTag(array('id' => 'regexp:/^fitem_fgroup_id_grade_3_\S{15}$/'), $html);
         $this->assertTag(array('id' => 'id_grade_3_modgrade_type'), $html);
         $this->assertTag(array('id' => 'id_grade_3_modgrade_point'), $html);
         $this->assertTag(array('id' => 'id_grade_3_modgrade_scale'), $html);
@@ -594,17 +594,17 @@ class core_formslib_testcase extends advanced_testcase {
         $html = ob_get_clean();
 
         // Test advcheckbox id's.
-        $this->assertTag(array('id' => 'id_advcheckboxpersistant'), $html);
-        $this->assertTag(array('id' => 'id_advcheckboxnotpersistant'), $html);
-        $this->assertNotTag(array('id' => 'id_advcheckboxnotpersistant_persistant'), $html);
-        $this->assertTag(array('id' => 'id_advcheckboxfrozen'), $html);
+        $this->assertTag(array('id' => 'regexp:/^id_advcheckboxpersistant_\S{15}$/'), $html);
+        $this->assertTag(array('id' => 'regexp:/^id_advcheckboxnotpersistant_\S{15}$/'), $html);
+        $this->assertNotTag(array('id' => 'regexp:/^id_advcheckboxnotpersistant_persistant_\S{15}$/'), $html);
+        $this->assertTag(array('id' => 'regexp:/^id_advcheckboxfrozen_\S{15}$/'), $html);
 
         // Check text element id's.
-        $this->assertTag(array('id' => 'id_textpersistant'), $html);
-        $this->assertTag(array('id' => 'id_textnotpersistant'), $html);
-        $this->assertNotTag(array('id' => 'id_textnotpersistant_persistant'), $html);
-        $this->assertTag(array('id' => 'id_textfrozen'), $html);
-        $this->assertNotTag(array('id' => 'id_textfrozen_persistant'), $html);
+        $this->assertTag(array('id' => 'regexp:/^id_textpersistant_\S{15}$/'), $html);
+        $this->assertTag(array('id' => 'regexp:/^id_textnotpersistant_\S{15}$/'), $html);
+        $this->assertNotTag(array('id' => 'regexp:/^id_textnotpersistant_persistant_\S{15}$/'), $html);
+        $this->assertTag(array('id' => 'regexp:/^id_textfrozen_\S{15}$/'), $html);
+        $this->assertNotTag(array('id' => 'regexp:/^id_textfrozen_persistant_\S{15}$/'), $html);
 
     }
 
