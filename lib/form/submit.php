@@ -103,6 +103,11 @@ class MoodleQuickForm_submit extends HTML_QuickForm_submit implements templatabl
     function onQuickFormEvent($event, $arg, &$caller)
     {
         switch ($event) {
+            case 'updateValue':
+                if ($caller->isNoSubmitButton($this->getName())){
+                    $caller->_flagSubmitted = false;
+                }
+                break;
             case 'createElement':
                 parent::onQuickFormEvent($event, $arg, $caller);
                 if ($caller->isNoSubmitButton($arg[0])){
@@ -115,10 +120,8 @@ class MoodleQuickForm_submit extends HTML_QuickForm_submit implements templatabl
                     $this->updateAttributes(array('data-skip-validation' => 1, 'data-no-submit' => 1, 'onclick' => $onClick));
                 }
                 return true;
-                break;
         }
         return parent::onQuickFormEvent($event, $arg, $caller);
-
     }
 
     /**
