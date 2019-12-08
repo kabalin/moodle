@@ -37,12 +37,12 @@ class filter_glossary extends moodle_text_filter {
     protected $cache = null;
 
     public function setup($page, $context) {
-        if ($page->requires->should_create_one_time_item_now('filter_glossary_autolinker')) {
-            $page->requires->yui_module(
-                    'moodle-filter_glossary-autolinker',
-                    'M.filter_glossary.init_filter_autolinking',
-                    array(array('courseid' => 0)));
-            $page->requires->strings_for_js(array('ok'), 'moodle');
+        if ($page->requires->should_create_one_time_item_now('filter_glossary_concept')) {
+            // Context is not important here, as glossary is likely not in the
+            // same context as the content to which filter is applied, we pass system
+            // context to satisfy fragment API requirements, but actual glossary entry
+            // permission check is done in the fragment callback.
+            $page->requires->js_call_amd('filter_glossary/concept', 'init', array(context_system::instance()->id));
         }
     }
 
@@ -125,13 +125,14 @@ class filter_glossary extends moodle_text_filter {
 
         if ($concept->category) { // Link to a category.
             $title = get_string('glossarycategory', 'filter_glossary',
-                    ['glossary' => $glossaries[$concept->glossaryid], 'category' => $concept->concept]);
+                ['glossary' => $glossaries[$concept->glossaryid], 'category' => $concept->concept]);
             $link = new moodle_url('/mod/glossary/view.php',
-                    ['g' => $concept->glossaryid, 'mode' => 'cat', 'hook' => $concept->id]);
+                ['g' => $concept->glossaryid, 'mode' => 'cat', 'hook' => $concept->id]);
             $attributes = array(
-                    'href'  => $link,
-                    'title' => $title,
-                    'class' => 'glossary autolink category glossaryid' . $concept->glossaryid);
+                'href'  => $link,
+                'title' => $title,
+                'class' => 'glossary autolink category glossaryid' . $concept->glossaryid,
+            );
 
         } else { // Link to entry or alias.
             $title = get_string('glossaryconcept', 'filter_glossary',
@@ -141,11 +142,13 @@ class filter_glossary extends moodle_text_filter {
             // for example "entry list" means the popup would only contain
             // a link that opens another popup.
             $link = new moodle_url('/mod/glossary/showentry.php',
-                    ['eid' => $concept->id, 'displayformat' => 'dictionary']);
+                ['eid' => $concept->id, 'displayformat' => 'dictionary']);
             $attributes = array(
-                    'href'  => $link,
-                    'title' => str_replace('&amp;', '&', $title), // Undo the s() mangling.
-                    'class' => 'glossary autolink concept glossaryid' . $concept->glossaryid);
+                'href'  => $link,
+                'data-eid' => $concept->id,
+                'title' => str_replace('&amp;', '&', $title), // Undo the s() mangling.
+                'class' => 'glossary autolink concept glossaryid' . $concept->glossaryid,
+            );
         }
 
         // This flag is optionally set by resource_pluginfile()
