@@ -51,6 +51,7 @@ function($, ModalFactory, ModalEvents, Fragment) {
         ModalFactory.create({
             title: triggerElement.attr('title'),
             body: Fragment.loadFragment('filter_glossary', 'get_concept', contextId, params),
+            large: true,
         }, triggerElement).done(function(modal) {
             // When we close the dialogue by clicking on X in the top right corner.
             modal.getRoot().on(ModalEvents.hidden, function() {
