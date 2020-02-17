@@ -64,14 +64,11 @@ class core_form_duration_testcase extends basic_testcase {
     }
 
     /**
-     * Testcase for testing contructor.
-     *
-     * @expectedException coding_exception
+     * Testcase for testing constructor.
      */
     public function test_constructor() {
-        // Test trying to create with an invalid unit.
-        $mform = $this->get_test_form();
-        $mform->addElement('duration', 'testel', null, ['defaultunit' => 123, 'optional' => false]);
+        $this->expectException(coding_exception::class);
+        $this->mform->addElement('duration', 'testel', null, array('defaultunit' => 123));
     }
 
     /**
@@ -79,7 +76,7 @@ class core_form_duration_testcase extends basic_testcase {
      */
     public function test_constructor_limited_units() {
         $mform = $this->get_test_form();
-        $mform->addElement('duration', 'testel', null, ['units' => [MINSECS, 1], 'optional' => false]);
+        $mform->addElement('duration', 'testel', null, ['units' => [MINSECS, 1]]);
         $html = $mform->toHtml();
         $html = preg_replace('~ +>~', '>', $html); // Clean HTML to avoid spurious errors.
         $this->assertContains('<option value="60" selected>minutes</option>', $html);
@@ -112,8 +109,7 @@ class core_form_duration_testcase extends basic_testcase {
         $this->assertEquals([1, DAYSECS], $element->seconds_to_unit(86400));
         $this->assertEquals([25, HOURSECS], $element->seconds_to_unit(90000));
 
-        $element = $mform->addElement('duration', 'testel', null,
-                ['defaultunit' => DAYSECS, 'optional' => false]);
+        $element = $mform->addElement('duration', 'testel', null, ['defaultunit' => DAYSECS]);
         $this->assertEquals([0, DAYSECS], $element->seconds_to_unit(0)); // Zero minutes, for a nice default unit.
     }
 
@@ -142,22 +138,16 @@ class core_form_duration_testcase extends basic_testcase {
         $this->assertEquals(['testel' => 0], $el->exportValue($values, true));
         $this->assertEquals(0, $el->exportValue($values));
 
+        // Optional element.
         $el = $mform->addElement('duration', 'testel', null, ['optional' => true]);
+        // By default element is disabled (off).
         $values = ['testel' => ['number' => 10, 'timeunit' => 1]];
         $this->assertEquals(['testel' => 0], $el->exportValue($values, true));
         $this->assertEquals(0, $el->exportValue($values));
-        $values = ['testel' => ['number' => 20, 'timeunit' => 1, 'enabled' => 1]];
-        $this->assertEquals(['testel' => 20], $el->exportValue($values, true));
-        $this->assertEquals(20, $el->exportValue($values));
-
-        // Optional element.
-        $el2 = $mform->addElement('duration', 'testel', '', ['optional' => true]);
+        // Enable element.
         $values = ['testel' => ['number' => 10, 'timeunit' => 1, 'enabled' => 1]];
-        $this->assertEquals(['testel' => 10], $el2->exportValue($values, true));
-        $this->assertEquals(10, $el2->exportValue($values));
-        $values = ['testel' => ['number' => 10, 'timeunit' => 1, 'enabled' => 0]];
-        $this->assertEquals(['testel' => 0], $el2->exportValue($values, true));
-        $this->assertEquals(null, $el2->exportValue($values));
+        $this->assertEquals(['testel' => 10], $el->exportValue($values, true));
+        $this->assertEquals(10, $el->exportValue($values));
     }
 }
 
