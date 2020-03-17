@@ -1155,24 +1155,22 @@ abstract class moodleform {
                             call_user_func_array(array(&$mform, 'addHelpButton'), $params);
                             break;
                         case 'disabledif' :
-                            foreach ($namecloned as $num => $name){
-                                if ($params[0] == $name){
-                                    $params[0] = $params[0]."[$i]";
-                                    break;
-                                }
-                            }
-                            $params = array_merge(array($realelementname), $params);
-                            call_user_func_array(array(&$mform, 'disabledIf'), $params);
-                            break;
                         case 'hideif' :
-                            foreach ($namecloned as $num => $name){
-                                if ($params[0] == $name){
-                                    $params[0] = $params[0]."[$i]";
+                            $pos = strpos($params[0], '[');
+                            $ending = '';
+                            if ($pos !== false) {
+                                $ending = substr($params[0], $pos);
+                                $params[0] = substr($params[0], 0, $pos);
+                            }
+                            foreach ($namecloned as $num => $name) {
+                                if ($params[0] == $name) {
+                                    $params[0] = $params[0] . "[$i]" . $ending;
                                     break;
                                 }
                             }
                             $params = array_merge(array($realelementname), $params);
-                            call_user_func_array(array(&$mform, 'hideIf'), $params);
+                            $function = ($option === 'disabledif') ? 'disabledIf' : 'hideIf';
+                            call_user_func_array(array(&$mform, $function), $params);
                             break;
                         case 'rule' :
                             if (is_string($params)){
