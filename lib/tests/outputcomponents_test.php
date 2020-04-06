@@ -140,11 +140,16 @@ class core_outputcomponents_testcase extends advanced_testcase {
         $user2 = $this->getDataGenerator()->create_user(array('picture'=>0, 'email'=>'user2@example.com'));
         $context2 = context_user::instance($user2->id);
 
+        // User 3 is deleted and their context is also deleted (testing legacy code).
         $user3 = $this->getDataGenerator()->create_user(array('picture'=>1, 'deleted'=>1, 'email'=>'user3@example.com'));
-        $context3 = context_user::instance($user3->id, IGNORE_MISSING);
+        context_helper::delete_instance(CONTEXT_USER, $user3->id);
         $this->assertEquals(0, $user3->picture);
         $this->assertNotEquals('user3@example.com', $user3->email);
-        $this->assertFalse($context3);
+
+        // User 4 is correctly deleted (context is present).
+        $user4 = $this->getDataGenerator()->create_user(['picture' => 1, 'deleted' => 1, 'email' => 'user4@example.com']);
+        $this->assertNotEmpty(context_user::instance($user4->id));
+        $this->assertEquals(0, $user4->picture);
 
         // Try legacy picture == 1.
         $user1->picture = 1;
@@ -195,6 +200,15 @@ class core_outputcomponents_testcase extends advanced_testcase {
         $this->assertSame($CFG->wwwroot.'/theme/image.php/boost/core/1/u/f2', $up3->get_url($page, $renderer)->out(false));
         $this->assertGreaterThan($reads, $DB->perf_get_reads());
 
+        // Deleted user with context (but somehow with valid email and picture flag) - no DB queries.
+        $reads = $DB->perf_get_reads();
+        $user4->email = 'user4@example.com';
+        $user4->picture = 1;
+        $up4 = new user_picture($user4);
+        $this->assertEquals($reads, $DB->perf_get_reads());
+        $this->assertSame($CFG->wwwroot.'/theme/image.php/boost/core/1/u/f2', $up4->get_url($page, $renderer)->out(false));
+        $this->assertEquals($reads, $DB->perf_get_reads());
+
         // Test gravatar.
         set_config('enablegravatar', 1);
 
@@ -203,6 +217,9 @@ class core_outputcomponents_testcase extends advanced_testcase {
         $user3->picture = 0;
         $up3 = new user_picture($user3);
         $this->assertSame($CFG->wwwroot.'/theme/image.php/boost/core/1/u/f2', $up3->get_url($page, $renderer)->out(false));
+        $user4->picture = 0;
+        $up4 = new user_picture($user4);
+        $this->assertSame($CFG->wwwroot.'/theme/image.php/boost/core/1/u/f2', $up4->get_url($page, $renderer)->out(false));
 
         // Http version.
         $CFG->wwwroot = str_replace('https:', 'http:', $CFG->wwwroot);
