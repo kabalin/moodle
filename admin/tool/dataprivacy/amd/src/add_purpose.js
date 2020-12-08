@@ -67,7 +67,7 @@ define(['jquery', 'core/str', 'core/ajax', 'core/notification', 'core/modal_fact
                         type: ModalFactory.types.SAVE_CANCEL,
                         title: strings[0],
                         body: '',
-                    }, trigger).done(function(modal) {
+                    }).done(function(modal) {
                         this.setupFormModal(modal, strings[1]);
                     }.bind(this));
                 }.bind(this))
@@ -153,6 +153,9 @@ define(['jquery', 'core/str', 'core/ajax', 'core/notification', 'core/modal_fact
         };
 
         AddPurpose.prototype.destroy = function() {
+            // Focus on the trigger element that actually launched the modal.
+            $(SELECTORS.PURPOSE_LINK).focus();
+
             Y.use('moodle-core-formchangechecker', function() {
                 M.core_formchangechecker.reset_form_dirty_state();
             });
