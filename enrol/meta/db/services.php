@@ -15,15 +15,28 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Meta link enrolment plugin version specification.
+ * Meta enrol external functions and service definitions.
  *
  * @package    enrol_meta
- * @copyright  2010 Petr Skoda {@link http://skodak.org}
+ * @copyright  2020 WKS KV Bildung
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
+defined('MOODLE_INTERNAL') || die;
 
-$plugin->version   = 2021052501;        // The current plugin version (Date: YYYYMMDDXX)
-$plugin->requires  = 2021052500;        // Requires this Moodle version
-$plugin->component = 'enrol_meta';      // Full name of the plugin (used for diagnostics)
+$functions = [
+    'enrol_meta_add_instances' => [
+        'classname' => \enrol_meta\external\add_instances::class,
+        'methodname' => 'execute',
+        'description' => 'Add meta enrolment instances',
+        'capabilities' => 'enrol/meta:config',
+        'type' => 'write',
+    ],
+    'enrol_meta_delete_instances' => [
+        'classname' => \enrol_meta\external\delete_instances::class,
+        'methodname' => 'execute',
+        'description' => 'Delete meta enrolment instances',
+        'capabilities' => 'enrol/meta:config',
+        'type' => 'write',
+    ],
+];
