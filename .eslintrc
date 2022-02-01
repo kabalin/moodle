@@ -5,7 +5,8 @@
     'jsdoc'
   ],
   'extends': [
-     'eslint:recommended'
+     'eslint:recommended',
+     'plugin:promise/recommended'
   ],
   'env': {
     'browser': true,
@@ -21,6 +22,14 @@
     'no-prototype-builtins': 'off',
     'no-redeclare': 'warn',
     'no-useless-escape': 'warn',
+
+    // === Promises (override recommended) ===
+    'promise/always-return': 'warn',
+    'promise/no-return-wrap': 'warn',
+    'promise/param-names': 'warn',
+    'promise/catch-or-return': ['warn', {terminationMethod: ['catch', 'fail']}],
+    'promise/no-native': 'warn',
+    'promise/avoid-new': 'warn',
 
     // === Deprecations ===
     "no-restricted-properties": ['warn', {
