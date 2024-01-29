@@ -127,6 +127,7 @@
                 "scss/dollar-variable-colon-space-after": "at-least-one-space",
                 "scss/dollar-variable-empty-line-before": null,
                 "scss/dollar-variable-pattern": "^([a-z][a-z0-9]*)([a-z0-9_-]+)*$",
+                "scss/at-extend-no-missing-placeholder": null,
                 "scss/at-mixin-pattern": "^([a-z][a-z0-9]*)([a-z0-9_-]+)*$",
                 "scss/no-global-function-names": null, # Support of @use is limited, scssphp and Bootstrap 5 do not support it yet.
                 "csstree/validator": {
