@@ -5,6 +5,8 @@
     "plugins": [
         "stylelint-csstree-validator"
     ],
+    "reportInvalidScopeDisables": true,
+    "reportNeedlessDisables": true,
     "rules": {
         "at-rule-empty-line-before": [ "always",
           {"except": [ "blockless-after-blockless"], ignore: ["after-comment", "inside-block"]}
