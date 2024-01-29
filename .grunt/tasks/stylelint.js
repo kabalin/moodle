@@ -22,36 +22,6 @@
 
 module.exports = grunt => {
 
-    const getCssConfigForFiles = files => {
-        return {
-            stylelint: {
-                css: {
-                    // Use a fully-qualified path.
-                    src: files,
-                    options: {
-                        configOverrides: {
-                            rules: {
-                                // These rules have to be disabled in .stylelintrc for scss compat.
-                                "at-rule-no-unknown": true,
-                            }
-                        }
-                    }
-                },
-            },
-        };
-    };
-
-    const getScssConfigForFiles = files => {
-        return {
-            stylelint: {
-                scss: {
-                    options: {syntax: 'scss'},
-                    src: files,
-                },
-            },
-        };
-    };
-
     /**
      * Register any stylelint tasks.
      *
@@ -61,11 +31,6 @@ module.exports = grunt => {
      */
     const registerStyleLintTasks = () => {
         const glob = require('glob');
-
-        // The stylelinters do not handle the case where a configuration was provided but no files were included.
-        // Keep track of whether any files were found.
-        let hasCss = false;
-        let hasScss = false;
 
         // The stylelint processors do not take a path argument. They always check all provided values.
         // As a result we must check through each glob and determine if any files match the current directory.
@@ -86,7 +51,6 @@ module.exports = grunt => {
                 });
                 if (matchesGlob) {
                     scssFiles.push(changedFilePath);
-                    hasScss = true;
                 }
 
                 // Check whether this watched path matches any watched CSS file.
@@ -95,7 +59,6 @@ module.exports = grunt => {
                 });
                 if (matchesGlob) {
                     cssFiles.push(changedFilePath);
-                    hasCss = true;
                 }
             });
         } else {
@@ -107,36 +70,27 @@ module.exports = grunt => {
             grunt.moodleEnv.scssSrc.forEach(path => {
                 if (path.startsWith(grunt.moodleEnv.runDir)) {
                     scssFiles.push(path);
-                    hasScss = true;
                 }
             });
 
             grunt.moodleEnv.cssSrc.forEach(path => {
                 if (path.startsWith(grunt.moodleEnv.runDir)) {
                     cssFiles.push(path);
-                    hasCss = true;
                 }
             });
         }
 
+        // Stylelint differentiates config for css/scss, we keep different tasks for historic reason.
+        grunt.config.merge({
+            stylelint: {
+                scss: scssFiles,
+                css: cssFiles,
+            },
+        });
+
         // Register the tasks.
-        const scssTasks = ['sass'];
-        if (hasScss) {
-            grunt.config.merge(getScssConfigForFiles(scssFiles));
-            scssTasks.unshift('stylelint:scss');
-        }
-        scssTasks.unshift('ignorefiles');
-
-        const cssTasks = ['ignorefiles'];
-        if (hasCss) {
-            grunt.config.merge(getCssConfigForFiles(cssFiles));
-            cssTasks.push('stylelint:css');
-        }
-
-        // The tasks must be registered, even if empty to ensure a consistent command list.
-        // They jsut won't run anything.
-        grunt.registerTask('scss', scssTasks);
-        grunt.registerTask('rawcss', cssTasks);
+        grunt.registerTask('scss', ['ignorefiles', 'stylelint:scss', 'sass']);
+        grunt.registerTask('rawcss', ['ignorefiles', 'stylelint:css']);
     };
 
     // Register CSS tasks.
