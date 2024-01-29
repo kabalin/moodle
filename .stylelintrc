@@ -99,7 +99,14 @@
         "value-keyword-case": ["lower", {"ignoreKeywords": ["/(@|$)/"]}],
         "value-list-comma-newline-after": "always-multi-line",
         "value-list-comma-space-after": "always-single-line",
-        "value-list-comma-space-before": "never"
+        "value-list-comma-space-before": "never",
+
+        # "no vendor" properties rules are disabled for now (autoprefixer use is expected in recommended config).
+        "at-rule-no-vendor-prefix": null,
+        "media-feature-name-no-vendor-prefix": null,
+        "property-no-vendor-prefix": null,
+        "selector-no-vendor-prefix": null,
+        "value-no-vendor-prefix": null
     },
     "overrides": [
         {
