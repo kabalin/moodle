@@ -9,7 +9,7 @@
     "reportNeedlessDisables": true,
     "rules": {
         "at-rule-empty-line-before": [ "always",
-          {"except": [ "blockless-after-blockless"], ignore: ["after-comment", "inside-block"]}
+            {"except": [ "blockless-after-blockless"], "ignore": ["after-comment", "inside-block"]}
         ],
         "at-rule-name-case": "lower",
         "at-rule-name-space-after": "always-single-line",
@@ -70,11 +70,16 @@
         "no-unknown-animations": true,
         "property-case": "lower",
         "property-no-unknown": true,
+        "rule-empty-line-before": [ "always",
+            {"ignore": ["after-comment", "inside-block"]}
+        ],
         "selector-attribute-brackets-space-inside": "never",
         "selector-attribute-operator-space-after": "never",
         "selector-attribute-operator-space-before": "never",
+        "selector-class-pattern": "^([a-z][a-z0-9]*)([a-z0-9_-]+)*$",
         "selector-combinator-space-after": "always",
         "selector-combinator-space-before": "always",
+        "selector-id-pattern": "^([a-z][a-z0-9]*)([a-z0-9_-]+)*$",
         "selector-list-comma-newline-after": "always",
         "selector-list-comma-space-before": "never",
         "selector-max-empty-lines": 0,
