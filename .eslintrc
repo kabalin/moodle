@@ -2,11 +2,13 @@
   'plugins': [
     '@babel',
     'promise',
-    'jsdoc'
+    'jsdoc',
+    'compat'
   ],
   'extends': [
     'eslint:recommended',
-    'plugin:promise/recommended'
+    'plugin:promise/recommended',
+    'plugin:compat/recommended'
   ],
   'env': {
     'browser': true,
@@ -19,6 +21,10 @@
   'globals': {
     'M': true,
     'Y': true
+  },
+  'settings': {
+      // Compat check confuses Notification variable at requirejs modules with Notifications API.
+      polyfills: ["Notification"]
   },
   // Warn about unused eslint-disable statements.
   'reportUnusedDisableDirectives': true,
@@ -156,6 +162,9 @@
     'promise/catch-or-return': ['warn', {terminationMethod: ['catch', 'fail', 'always'], allowFinally: true}],
     'promise/no-native': 'warn',
     'promise/avoid-new': 'warn',
+
+    // === Compatibility ===
+    'compat/compat': 'warn',
 
     // === Deprecations ===
     "no-restricted-properties": ['warn', {
