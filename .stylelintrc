@@ -9,6 +9,7 @@
     "reportInvalidScopeDisables": true,
     "reportNeedlessDisables": true,
     "rules": {
+        "alpha-value-notation": "number",
         "at-rule-empty-line-before": [ "always",
             {"except": [ "blockless-after-blockless"], "ignore": ["after-comment", "inside-block"]}
         ],
@@ -23,6 +24,7 @@
         "block-opening-brace-newline-after": "always",
         "block-opening-brace-space-after": "always-single-line",
         "block-opening-brace-space-before": "always",
+        "color-function-notation": "modern",
         "color-hex-case": ["lower", { "severity": "warning" }],
         "color-hex-length": ["short", { "severity": "warning" }],
         "color-no-invalid-hex": true,
@@ -64,12 +66,14 @@
         "media-query-list-comma-newline-after": "always-multi-line",
         "media-query-list-comma-space-after": "always-single-line",
         "media-query-list-comma-space-before": "never",
+        "media-feature-range-notation": "prefix",
         "no-descending-specificity": null,
         "no-empty-source": true,
         "no-eol-whitespace": true,
         "no-extra-semicolons": [true, { "severity": "warning" }],
         "no-invalid-double-slash-comments": true,
         "no-unknown-animations": true,
+        "number-leading-zero": true,
         "property-case": "lower",
         "property-no-unknown": true,
         "rule-empty-line-before": [ "always",
@@ -129,15 +133,16 @@
             "files": ["**/*.scss"],
             "extends": ["stylelint-config-standard-scss"],
             "rules": {
+                "csstree/validator": {
+                    "syntaxExtensions": ["sass"]
+                },
+                "scss/at-extend-no-missing-placeholder": null,
+                "scss/at-mixin-pattern": "^([a-z][a-z0-9]*)([a-z0-9_-]+)*$",
+                "scss/at-mixin-argumentless-call-parentheses": "always",
                 "scss/dollar-variable-colon-space-after": "at-least-one-space",
                 "scss/dollar-variable-empty-line-before": null,
                 "scss/dollar-variable-pattern": "^([a-z][a-z0-9]*)([a-z0-9_-]+)*$",
-                "scss/at-extend-no-missing-placeholder": null,
-                "scss/at-mixin-pattern": "^([a-z][a-z0-9]*)([a-z0-9_-]+)*$",
-                "scss/no-global-function-names": null, # Support of @use is limited, scssphp and Bootstrap 5 do not support it yet.
-                "csstree/validator": {
-                    "syntaxExtensions": ["sass"]
-                }
+                "scss/no-global-function-names": null # Support of @use is limited, scssphp and Bootstrap 5 do not support it yet.
             }
         }
     ]
