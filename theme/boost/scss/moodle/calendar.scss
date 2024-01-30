@@ -1,5 +1,6 @@
 /* calendar.less */
 
+/* stylelint-disable scss/dollar-variable-pattern -- Only one file that uses camelCase for variables. */
 // Calendar colour variables defined.
 $calendarEventCategoryColor: #e0cbe0 !default; // Pale purple.
 $calendarEventCourseColor: #ffd3bd !default; // Pale red.
