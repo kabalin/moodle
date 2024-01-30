@@ -45,6 +45,7 @@
     "stylelint-checkstyle-formatter": "0.1.2",
     "stylelint-config-standard-scss": "^11.1.0",
     "stylelint-csstree-validator": "^3.0.0",
+    "stylelint-no-unsupported-browser-features": "^7.0.0",
     "xpath": "0.0.32"
   },
   "engines": {

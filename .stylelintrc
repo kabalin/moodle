@@ -3,7 +3,8 @@
         "stylelint-config-standard"
     ],
     "plugins": [
-        "stylelint-csstree-validator"
+        "stylelint-csstree-validator",
+        "stylelint-no-unsupported-browser-features"
     ],
     "reportInvalidScopeDisables": true,
     "reportNeedlessDisables": true,
@@ -112,12 +113,16 @@
         {
             "files": ["**/*.css"],
             "rules": {
-                "declaration-property-value-no-unknown": true,
-                "media-feature-name-value-no-unknown": true,
                 "csstree/validator": {
                     # Limit csstree/validator to check only at-rule names and preludes.
                     "ignoreProperties": ["/.+/"]
-                }
+                },
+                "declaration-property-value-no-unknown": true,
+                "media-feature-name-value-no-unknown": true,
+                "plugin/no-unsupported-browser-features": [true, {
+                    "ignorePartialSupport": true,
+                    "severity": "warning"
+                }]
             }
         },
         {
